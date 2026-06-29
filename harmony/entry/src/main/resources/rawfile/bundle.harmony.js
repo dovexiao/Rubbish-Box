@@ -1274,7 +1274,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   _reactNative.AppRegistry.registerComponent(_$$_REQUIRE(_dependencyMap[6], "./app.json").name, function () {
     return _App.default;
   });
-},0,[1,2,3,537,919,615,2169],"index.js");
+},0,[1,2,3,537,919,615,2283],"index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   function _interopRequireDefault(e) {
     return e && e.__esModule ? e : {
@@ -179472,11 +179472,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         config.headers['Accept'] = '*/*';
         if (isFormData) {
           // multipart 需由 axios 自动带上 boundary；如果调用方已显式指定，则保留它
+          // 注意：此处必须使用首字母大写的 Content-Type，防止在鸿蒙端与底层强制追加的 Content-Type 产生双重 header
           if (!hasContentTypeHeader) {
-            config.headers['content-type'] = 'multipart/form-data';
+            config.headers['Content-Type'] = 'multipart/form-data';
           }
         } else {
-          config.headers['content-type'] = 'application/json';
+          config.headers['Content-Type'] = 'application/json';
         }
         config.headers['X-M-VERSION'] = _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/config").DEPLOY_VERSION || '';
         config.headers['X-M-TOKEN'] = token || '';
@@ -179585,6 +179586,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return _unified;
       }
       if (error != null && error.request) {
+        console.log(error == null ? void 0 : error.request, '=====');
         var _unified2 = {
           header: {},
           success: false,
@@ -240601,7 +240603,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   };
-},1307,[1,42,3,88,1308,1365,1373,1374,2156],"src\\navigation\\AppNavigator.tsx");
+},1307,[1,42,3,88,1308,1365,1373,1374,2270],"src\\navigation\\AppNavigator.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -247278,7 +247280,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       label: '退款详情'
     }]
   };
-},1374,[1375,1673,1677,1705,1707,1713,1715,1723,1726,1728,1730,1732,1739,1746,1750,1752,1754,1756,1758,1762,1768,1770,1772,1774,1776,1780,1782,1784,1787,1763,1789,1791,1793,1795,1797,1799,1801,1803,1805,1807,1809,1811,1813,1815,1817,1819,1821,1824,1826,1828,1832,1834,1836,2083,2085,2087,2088,2091,2094,2095,2097,2099,2103,2107,2109,2111,2113,2115,2119,2121,2123,2125,2127,2129,2131,2133,2135,2137,2139,2141,2144,2146,2148,2150,2152,2154],"src\\routes\\index.tsx");
+},1374,[1375,1673,1677,1819,1821,1827,1829,1837,1840,1842,1844,1846,1853,1860,1864,1866,1868,1870,1872,1876,1882,1884,1886,1888,1890,1894,1896,1898,1901,1877,1903,1905,1907,1909,1911,1913,1915,1917,1919,1921,1923,1925,1927,1929,1931,1933,1935,1938,1940,1942,1946,1948,1950,2197,2199,2201,2202,2205,2208,2209,2211,2213,2217,2221,2223,2225,2227,2229,2233,2235,2237,2239,2241,2243,2245,2247,2249,2251,2253,2255,2258,2260,2262,2264,2266,2268],"src\\routes\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -247305,36 +247307,44 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
   function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
   var Index = function Index() {
-    var _detail$imageMap;
+    var _route$params, _route$params2, _detail$imageMap;
+    var route = (0, _$$_REQUIRE(_dependencyMap[15], "@react-navigation/native").useRoute)();
+    var pageType = (_route$params = route.params) == null ? void 0 : _route$params.pageType;
+    var autoOpenAt = (_route$params2 = route.params) == null ? void 0 : _route$params2._autoOpenAt;
     var _useState = (0, _react.useState)(false),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       loading = _useState2[0],
       setLoading = _useState2[1];
-    var _useState3 = (0, _react.useState)(true),
+    var _useState3 = (0, _react.useState)(false),
       _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
-      hasDevice = _useState4[0],
-      setHasDevice = _useState4[1];
-    var _useState5 = (0, _react.useState)(0),
+      shouldOpenManagePop = _useState4[0],
+      setShouldOpenManagePop = _useState4[1];
+    var lastConsumedAutoOpenAt = (0, _react.useRef)();
+    var _useState5 = (0, _react.useState)(true),
       _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
-      unreadCount = _useState6[0],
-      setUnreadCount = _useState6[1];
-    var _useState7 = (0, _react.useState)(undefined),
+      hasDevice = _useState6[0],
+      setHasDevice = _useState6[1];
+    var _useState7 = (0, _react.useState)(0),
       _useState8 = (0, _slicedToArray2.default)(_useState7, 2),
-      detail = _useState8[0],
-      setDetail = _useState8[1];
-    var _useState9 = (0, _react.useState)(null),
+      unreadCount = _useState8[0],
+      setUnreadCount = _useState8[1];
+    var _useState9 = (0, _react.useState)(undefined),
       _useState0 = (0, _slicedToArray2.default)(_useState9, 2),
-      hasToken = _useState0[0],
-      setHasToken = _useState0[1];
-    var _useState1 = (0, _react.useState)(false),
+      detail = _useState0[0],
+      setDetail = _useState0[1];
+    var _useState1 = (0, _react.useState)(null),
       _useState10 = (0, _slicedToArray2.default)(_useState1, 2),
-      guestMode = _useState10[0],
-      setGuestMode = _useState10[1];
-    var _useState11 = (0, _react.useState)('rise'),
+      hasToken = _useState10[0],
+      setHasToken = _useState10[1];
+    var _useState11 = (0, _react.useState)(false),
       _useState12 = (0, _slicedToArray2.default)(_useState11, 2),
-      currentDeviceStatus = _useState12[0],
-      setCurrentDeviceStatus = _useState12[1];
-    var _useState13 = (0, _react.useState)({
+      guestMode = _useState12[0],
+      setGuestMode = _useState12[1];
+    var _useState13 = (0, _react.useState)('rise'),
+      _useState14 = (0, _slicedToArray2.default)(_useState13, 2),
+      currentDeviceStatus = _useState14[0],
+      setCurrentDeviceStatus = _useState14[1];
+    var _useState15 = (0, _react.useState)({
         rising30: false,
         falling30: false,
         rising120: false,
@@ -247344,30 +247354,30 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         openCovering: false,
         closeCovering: false
       }),
-      _useState14 = (0, _slicedToArray2.default)(_useState13, 2),
-      deviceStatus = _useState14[0],
-      setDeviceStatus = _useState14[1];
-    var _useState15 = (0, _react.useState)(false),
       _useState16 = (0, _slicedToArray2.default)(_useState15, 2),
-      inconsistentStatus = _useState16[0],
-      setInconsistentStatus = _useState16[1];
-    var _useState17 = (0, _react.useState)(0),
+      deviceStatus = _useState16[0],
+      setDeviceStatus = _useState16[1];
+    var _useState17 = (0, _react.useState)(false),
       _useState18 = (0, _slicedToArray2.default)(_useState17, 2),
-      gifNonce = _useState18[0],
-      setGifNonce = _useState18[1];
-    var _useState19 = (0, _react.useState)(false),
+      inconsistentStatus = _useState18[0],
+      setInconsistentStatus = _useState18[1];
+    var _useState19 = (0, _react.useState)(0),
       _useState20 = (0, _slicedToArray2.default)(_useState19, 2),
-      optioning = _useState20[0],
-      setOptioning = _useState20[1];
-    var optioningRef = (0, _react.useRef)(false);
+      gifNonce = _useState20[0],
+      setGifNonce = _useState20[1];
     var _useState21 = (0, _react.useState)(false),
       _useState22 = (0, _slicedToArray2.default)(_useState21, 2),
-      isAutoOpenBluetooth = _useState22[0],
-      setIsAutoOpenBluetooth = _useState22[1];
-    var _useState23 = (0, _react.useState)(null),
+      optioning = _useState22[0],
+      setOptioning = _useState22[1];
+    var optioningRef = (0, _react.useRef)(false);
+    var _useState23 = (0, _react.useState)(false),
       _useState24 = (0, _slicedToArray2.default)(_useState23, 2),
-      error = _useState24[0],
-      setError = _useState24[1];
+      isAutoOpenBluetooth = _useState24[0],
+      setIsAutoOpenBluetooth = _useState24[1];
+    var _useState25 = (0, _react.useState)(null),
+      _useState26 = (0, _slicedToArray2.default)(_useState25, 2),
+      error = _useState26[0],
+      setError = _useState26[1];
     (0, _react.useEffect)(function () {
       optioningRef.current = optioning;
     }, [optioning]);
@@ -247384,7 +247394,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           if (id !== undefined) {
             params.id = id;
           }
-          var lockRes = yield (0, _$$_REQUIRE(_dependencyMap[15], "D:\\xqkj\\bokeapp\\src/services/device").getLockInfo)(params);
+          var lockRes = yield (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/services/device").getLockInfo)(params);
           if (lockRes.success && lockRes.code === 200 && lockRes.data) {
             var _lockRes$data, _lockRes$data4, _lockRes$data5;
             setDetail(lockRes.data);
@@ -247409,13 +247419,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               }
               // 根据 fallStatus 判定
               switch (fallStatus) {
-                case _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.RISE:
+                case _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.RISE:
                   return 'rise';
-                case _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.FALL_SUCCESS:
+                case _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.FALL_SUCCESS:
                   return 'fall';
-                case _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.RISE_30:
+                case _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.RISE_30:
                   return 'rise30';
-                case _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.RISE_120:
+                case _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/constants").FALL_STATUS.RISE_120:
                   return 'rise120';
                 default:
                   return 'rise';
@@ -247436,7 +247446,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
 
           // 获取未读消息数
-          var unreadRes = yield (0, _$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/services/user").unreadCount)({});
+          var unreadRes = yield (0, _$$_REQUIRE(_dependencyMap[18], "D:\\xqkj\\bokeapp\\src/services/user").unreadCount)({});
           if (unreadRes.success && unreadRes.code === 200) {
             setUnreadCount(Number(unreadRes.data || 0));
           } else {
@@ -247459,10 +247469,15 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return _ref.apply(this, arguments);
       };
     }(), []);
-    (0, _$$_REQUIRE(_dependencyMap[18], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
+    (0, _$$_REQUIRE(_dependencyMap[19], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
+      var isNewAutoOpen = autoOpenAt !== undefined && autoOpenAt !== lastConsumedAutoOpenAt.current && String(pageType) === '16';
+      if (isNewAutoOpen) {
+        lastConsumedAutoOpenAt.current = autoOpenAt;
+        setShouldOpenManagePop(true);
+      }
       var stopped = false;
       var first = true;
-      var poller = (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      var poller = (0, _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
         if (stopped) return false;
 
         // 操作中暂停 10s 轮询请求（但不停止定时器），避免操作过程被后台刷新打断
@@ -247470,7 +247485,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         var silent = !first;
         first = false;
         try {
-          var _yield$Promise$all = yield Promise.all([(0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils").cacheGetSync)('token'), (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils").cacheGetSync)('guestMode')]),
+          var _yield$Promise$all = yield Promise.all([(0, _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/utils").cacheGetSync)('token'), (0, _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/utils").cacheGetSync)('guestMode')]),
             _yield$Promise$all2 = (0, _slicedToArray2.default)(_yield$Promise$all, 2),
             token = _yield$Promise$all2[0],
             guest = _yield$Promise$all2[1];
@@ -247512,7 +247527,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         stopped = true;
         poller.stop();
       };
-    }, [load]));
+    }, [autoOpenAt, load, pageType]));
     var showGuestWelcome = !hasToken && guestMode;
     var guestPopupRef = (0, _react.useRef)(null);
     var animationTimer = (0, _react.useRef)(null);
@@ -247596,11 +247611,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       setOptioning(option);
     }, [setOptioning]);
     (0, _react.useEffect)(function () {
-      _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.on('onAnimation', onAnimation);
-      _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.on('onOptioned', onOptioned);
+      _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.on('onAnimation', onAnimation);
+      _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.on('onOptioned', onOptioned);
       return function () {
-        _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.off('onAnimation', onAnimation);
-        _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.off('onOptioned', onOptioned);
+        _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.off('onAnimation', onAnimation);
+        _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/utils").eventCenter.off('onOptioned', onOptioned);
         if (animationTimer.current) {
           clearTimeout(animationTimer.current);
           animationTimer.current = null;
@@ -247618,7 +247633,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     } : undefined;
     var hasBluetoothAutoOpen = /*#__PURE__*/function () {
       var _ref4 = (0, _asyncToGenerator2.default)(function* () {
-        var deviceMap = (yield (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils").getBluetoothDeviceInfo)().catch(function () {
+        var deviceMap = (yield (0, _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/utils").getBluetoothDeviceInfo)().catch(function () {
           return {};
         })) || {};
         var rawList = detail == null ? void 0 : detail.bleNoList;
@@ -247639,7 +247654,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           var savedDeviceInfo = deviceMap == null ? void 0 : deviceMap[bleNo];
           var deviceId = savedDeviceInfo == null ? void 0 : savedDeviceInfo.deviceId;
           var bleName = String((savedDeviceInfo == null ? void 0 : savedDeviceInfo.name) || (savedDeviceInfo == null ? void 0 : savedDeviceInfo.localName) || '');
-          var res = yield (0, _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/utils/api").checkIfDeviceIgnoredOnIOS)(deviceId, bleNo, bleName).catch(function () {
+          var res = yield (0, _$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/utils/api").checkIfDeviceIgnoredOnIOS)(deviceId, bleNo, bleName).catch(function () {
             return {
               isIgnored: true
             };
@@ -247656,12 +247671,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
         }
         if (hasInvalid) {
-          yield (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils").setStorage)({
+          yield (0, _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/utils").setStorage)({
             key: 'bluetoothDeviceInfoList',
             data: nextDeviceMap
           });
           if (_reactNative.Platform.OS === 'ios' || _reactNative.Platform.OS === 'android') {
-            yield (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils").removeStorage)({
+            yield (0, _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/utils").removeStorage)({
               key: 'bluetoothDeviceInfo'
             });
           }
@@ -247675,7 +247690,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       };
     }();
     (0, _react.useEffect)(function () {
-      var _loopFunc = (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+      var _loopFunc = (0, _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/utils").loopFunc)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
           yield hasBluetoothAutoOpen();
           return true;
         }), 1000),
@@ -247688,7 +247703,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, [hasBluetoothAutoOpen]);
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(_PageContainer.default, {
       backgroundColor: bgImage ? 'transparent' : '#f6f7fa',
-      style: _$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.pageContainer,
+      style: _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.pageContainer,
       loading: loading,
       error: error,
       safeAreaEdges: ['top'],
@@ -247699,14 +247714,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundImage: detail != null && detail.id ? bgImage : undefined,
       statusBarStyle: !(detail != null && detail.id) ? 'dark-content' : undefined,
       children: showGuestWelcome ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-        style: _$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.guestContainer,
+        style: _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.guestContainer,
         children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-          style: _$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.guestTitle,
+          style: _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.guestTitle,
           children: "\u6B22\u8FCE\u4F7F\u7528 \u6CCA\u523B\u5730\u9501"
         }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_Flex.default, {
           align: "center",
           justify: "center",
-          style: _$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.guestAddBtn,
+          style: _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.guestAddBtn,
           isTouchView: true,
           onPress: function onPress() {
             var _guestPopupRef$curren;
@@ -247716,22 +247731,22 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             source: {
               uri: 'https://g.18qjz.cn/img/boklock/device_add.png'
             },
-            style: _$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.guestAddImage,
+            style: _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.guestAddImage,
             resizeMode: "contain"
           })
         }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-          style: _$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.guestToast,
+          style: _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.guestToast,
           children: "\u6765\u6DFB\u52A0\u4F60\u7684\u7B2C\u4E00\u53F0\u5730\u9501\u5427\uFF01"
         }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_Flex.default, {
           isTouchView: true,
           justify: "center",
           align: "center",
-          style: _$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.guestLoginBtn,
+          style: _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.guestLoginBtn,
           onPress: function onPress() {
-            (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Login');
+            (0, _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Login');
           },
           children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.guestLoginText,
+            style: _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.guestLoginText,
             children: "\u767B\u5F55"
           })
         }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_popConfirm.default, {
@@ -247742,13 +247757,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           onConfirm: function onConfirm() {
             var _guestPopupRef$curren2;
             (_guestPopupRef$curren2 = guestPopupRef.current) == null || _guestPopupRef$curren2.close == null || _guestPopupRef$curren2.close();
-            (0, _$$_REQUIRE(_dependencyMap[19], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Login');
+            (0, _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/utils").reLaunch)('Login');
           }
         })]
       }) : /*#__PURE__*/(0, _jsxRuntime.jsx)(_jsxRuntime.Fragment, {
         children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.ScrollView, {
           showsVerticalScrollIndicator: false,
-          contentContainerStyle: _$$_REQUIRE(_dependencyMap[21], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.content,
+          contentContainerStyle: _$$_REQUIRE(_dependencyMap[22], "D:\\xqkj\\bokeapp\\src/pages/index/style").styles.content,
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_Header.default, {
             unreadCount: unreadCount,
             lockInfo: detail,
@@ -247762,6 +247777,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             isMultiple: true,
             isAutoOpenBluetooth: isAutoOpenBluetooth,
             currentDeviceStatus: currentDeviceStatus,
+            shouldOpenManagePop: shouldOpenManagePop,
+            onManagePopOpened: function onManagePopOpened() {
+              return setShouldOpenManagePop(false);
+            },
             children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_LockVisual.default, {
               detail: detail,
               currentDeviceStatus: currentDeviceStatus,
@@ -247778,7 +247797,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Index;
-},1375,[1,150,202,2,25,42,3,1376,1604,1627,1606,553,552,1623,88,1221,1186,1220,1092,1190,1205,1672],"src\\pages\\multiple\\index.tsx");
+},1375,[1,150,202,2,25,42,3,1376,1604,1627,1606,553,552,1623,88,1087,1221,1186,1220,1092,1190,1205,1672],"src\\pages\\multiple\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -256983,7 +257002,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       isMultiple = _ref$isMultiple === void 0 ? false : _ref$isMultiple,
       children = _ref.children,
       isAutoOpenBluetooth = _ref.isAutoOpenBluetooth,
-      currentDeviceStatus = _ref.currentDeviceStatus;
+      currentDeviceStatus = _ref.currentDeviceStatus,
+      shouldOpenManagePop = _ref.shouldOpenManagePop,
+      onManagePopOpened = _ref.onManagePopOpened;
     var navigation = (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/hooks/useAppNavigation").useAppNavigation)();
     var _useState = (0, _react.useState)([]),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
@@ -257029,6 +257050,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         funs();
       }
     }, [detail]);
+    (0, _react.useEffect)(function () {
+      var _manageMultipleRef$cu;
+      if (!detail || !shouldOpenManagePop || !isMultiple || detail.role !== 1) {
+        return;
+      }
+      (_manageMultipleRef$cu = manageMultipleRef.current) == null || _manageMultipleRef$cu.open();
+      onManagePopOpened == null || onManagePopOpened();
+    }, [detail, shouldOpenManagePop, isMultiple, onManagePopOpened]);
     var sleep = function sleep(time) {
       return new Promise(function (resolve) {
         return setTimeout(resolve, time);
@@ -257352,7 +257381,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, [detail == null ? void 0 : detail.locationList]);
     var onDelete = /*#__PURE__*/function () {
       var _ref9 = (0, _asyncToGenerator2.default)(function* () {
-        var _manageMultipleRef$cu;
+        var _manageMultipleRef$cu2;
         (0, _$$_REQUIRE(_dependencyMap[16], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
           title: '删除中...'
         });
@@ -257361,7 +257390,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           data: 'reload'
         });
         setDeleteMultipleRef(false);
-        (_manageMultipleRef$cu = manageMultipleRef.current) == null || _manageMultipleRef$cu.close();
+        (_manageMultipleRef$cu2 = manageMultipleRef.current) == null || _manageMultipleRef$cu2.close();
         yield (0, _$$_REQUIRE(_dependencyMap[20], "D:\\xqkj\\bokeapp\\src/services/combine").deviceDelete)({
           id: detail == null ? void 0 : detail.id
         });
@@ -257511,8 +257540,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualBtn,
           disabled: optioning,
           onPress: function onPress() {
-            var _manageMultipleRef$cu2;
-            return (_manageMultipleRef$cu2 = manageMultipleRef.current) == null ? void 0 : _manageMultipleRef$cu2.open();
+            var _manageMultipleRef$cu3;
+            return (_manageMultipleRef$cu3 = manageMultipleRef.current) == null ? void 0 : _manageMultipleRef$cu3.open();
           },
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
             style: _$$_REQUIRE(_dependencyMap[21], "./style").styles.manualIconCircle,
@@ -257742,9 +257771,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               backgroundColor: '#333333'
             }, _$$_REQUIRE(_dependencyMap[21], "./style").styles.manageBtn),
             onPress: function onPress() {
-              var _manageMultipleRef$cu3;
+              var _manageMultipleRef$cu4;
               if (!(detail != null && detail.id)) return;
-              (_manageMultipleRef$cu3 = manageMultipleRef.current) == null || _manageMultipleRef$cu3.close();
+              (_manageMultipleRef$cu4 = manageMultipleRef.current) == null || _manageMultipleRef$cu4.close();
               navigation.navigate('CompositeManage', {
                 lockId: detail.id
               });
@@ -257756,8 +257785,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
             activeOpacity: 0.8,
             onPress: function onPress() {
-              var _manageMultipleRef$cu4;
-              (_manageMultipleRef$cu4 = manageMultipleRef.current) == null || _manageMultipleRef$cu4.close();
+              var _manageMultipleRef$cu5;
+              (_manageMultipleRef$cu5 = manageMultipleRef.current) == null || _manageMultipleRef$cu5.close();
               setDeleteMultipleRef(true);
             },
             style: Object.assign({}, _$$_REQUIRE(_dependencyMap[21], "./style").styles.manageBtn, _$$_REQUIRE(_dependencyMap[21], "./style").styles.manageDeteleBtn),
@@ -260048,7 +260077,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.bluetoothOperationLockFallStatusStore = exports.bindDeviceSuccessStore = exports.appStore = void 0;
+  exports.tabBarHeightStore = exports.bluetoothOperationLockFallStatusStore = exports.bindDeviceSuccessStore = exports.appStore = void 0;
   var appStore = exports.appStore = (0, _$$_REQUIRE(_dependencyMap[0], "jotai/vanilla").createStore)();
   // 和UI有关的全局数据存储在这里，和UI无关的全局数据存储在cache.ts文件中
 
@@ -260056,6 +260085,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
   // 非市电版本地锁，蓝牙操作状态
   var bluetoothOperationLockFallStatusStore = exports.bluetoothOperationLockFallStatusStore = (0, _$$_REQUIRE(_dependencyMap[1], "jotai").atom)('RISE');
+  var tabBarHeightStore = exports.tabBarHeightStore = (0, _$$_REQUIRE(_dependencyMap[1], "jotai").atom)(0);
 },1617,[1301,1300],"src\\store\\store.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
@@ -266336,8 +266366,30 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\aiAssistant\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   var COMMON_QUESTIONS = ['我的地锁现在什么状态？', '修改手机号', '降下地锁'];
+  var DEFAULT_MESSAGES = [{
+    id: '1',
+    role: 'assistant',
+    type: 'text',
+    content: '你好！我是你的泊刻地锁专属小助手，我能帮你看看地锁现在什么状态，也可以帮你升降地锁、管理成员，快来向我提问吧！',
+    isStreaming: false
+  }];
+  function hasActiveConfirmFlow(messages) {
+    return messages.some(function (message) {
+      if (message.type === 'confirm') {
+        return message.processing || message.submitted || Boolean(message.isReplyStreaming);
+      }
+      if (message.type === 'text' && message.confirm) {
+        var confirm = message.confirm;
+        return confirm.processing || confirm.submitted || Boolean(confirm.isReplyStreaming);
+      }
+      return false;
+    });
+  }
   var AiAssistant = function AiAssistant() {
     var insets = (0, _$$_REQUIRE(_dependencyMap[10], "react-native-safe-area-context").useSafeAreaInsets)();
+    var bottomSafePadding = Math.max(insets.bottom, (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(6));
+    var _useTabBarHeight = (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/hooks/useTabBarHeight").useTabBarHeight)(),
+      tabBarHeight = _useTabBarHeight.tabBarHeight;
     var _React$useState = _react.default.useState(''),
       _React$useState2 = (0, _slicedToArray2.default)(_React$useState, 2),
       inputText = _React$useState2[0],
@@ -266355,7 +266407,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       keyboardHeight = _React$useState8[0],
       setKeyboardHeight = _React$useState8[1];
     var messageListRef = (0, _react.useRef)(null);
-    var _useAIChat = (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/hooks/useAIChat").useAIChat)(),
+    var _useAIChat = (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/hooks/useAIChat").useAIChat)({
+        initialMessages: DEFAULT_MESSAGES
+      }),
       messages = _useAIChat.messages,
       isLoading = _useAIChat.isLoading,
       sendMessage = _useAIChat.sendMessage,
@@ -266390,20 +266444,25 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       scrollToBottom();
     }, [scrollToBottom]);
     var handleChangeType = (0, _react.useCallback)(function (nextType) {
-      setType(nextType);
       if (nextType === 'voice') {
         setIsInputFocused(false);
         _reactNative.Keyboard.dismiss();
       }
+      setType(nextType);
     }, []);
-    var handleConfirmCancel = (0, _react.useCallback)(function (sessionId) {
+    var handleToggleInputType = (0, _react.useCallback)(function () {
+      void handleChangeType(type === 'text' ? 'voice' : 'text');
+    }, [handleChangeType, type]);
+    var handleConfirmCancel = (0, _react.useCallback)(function (sessionId, confirmMessageId) {
       confirmToolCall(sessionId, {
-        approved: false
+        approved: false,
+        confirmMessageId: confirmMessageId
       });
     }, [confirmToolCall]);
-    var handleConfirmSubmit = (0, _react.useCallback)(function (sessionId) {
+    var handleConfirmSubmit = (0, _react.useCallback)(function (sessionId, confirmMessageId) {
       confirmToolCall(sessionId, {
-        approved: true
+        approved: true,
+        confirmMessageId: confirmMessageId
       });
     }, [confirmToolCall]);
     var handleSendMessage = (0, _react.useCallback)(function (text) {
@@ -266414,7 +266473,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       setIsInputFocused(false);
       _reactNative.Keyboard.dismiss();
     }, [inputText, isLoading, sendMessage]);
-    var _useHoldToTalk = (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/components/HoldToTalk").useHoldToTalk)({
+    var _useHoldToTalk = (0, _$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components/HoldToTalk").useHoldToTalk)({
         enabled: type === 'voice' && !isLoading,
         onResult: handleSendMessage,
         onVoiceFile: sendVoiceMessage
@@ -266422,37 +266481,35 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       voiceStatus = _useHoldToTalk.voiceStatus,
       isVoiceRecording = _useHoldToTalk.isVoiceRecording,
       voiceButtonRef = _useHoldToTalk.voiceButtonRef,
-      cancelAreaRef = _useHoldToTalk.cancelAreaRef,
-      gestureCaptureProps = _useHoldToTalk.gestureCaptureProps,
-      refreshBounds = _useHoldToTalk.refreshBounds;
-    (0, _react.useEffect)(function () {
-      if (type !== 'voice') {
-        return;
-      }
-      requestAnimationFrame(function () {
-        void refreshBounds();
-      });
-    }, [type, refreshBounds]);
+      gestureCaptureProps = _useHoldToTalk.gestureCaptureProps;
     var isExpandedInput = type === 'text' && (isInputFocused || inputText.length > 0);
     var canSend = inputText.trim().length > 0 && !isLoading;
     var hasStreamingAssistant = messages.some(function (message) {
       return message.role === 'assistant' && message.type === 'text' && message.isStreaming;
     });
-    var showThinking = isLoading && !hasStreamingAssistant;
+    var showThinking = isLoading && !hasStreamingAssistant && !hasActiveConfirmFlow(messages);
     var handleClickSend = function handleClickSend() {
       if (!canSend) return;
       handleSendMessage();
     };
+    (0, _$$_REQUIRE(_dependencyMap[15], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
+      if (_reactNative.Platform.OS !== 'android') {
+        return undefined;
+      }
+      _$$_REQUIRE(_dependencyMap[16], "react-native-avoid-softinput").AvoidSoftInput.setAdjustNothing();
+      return function () {
+        _reactNative.Keyboard.dismiss();
+        _$$_REQUIRE(_dependencyMap[16], "react-native-avoid-softinput").AvoidSoftInput.setDefaultAppSoftInputMode();
+      };
+    }, []));
     var renderInputToggleIcon = function renderInputToggleIcon() {
       return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
         activeOpacity: 0.85,
         style: _styles.default.questionInputContentLeft,
-        onPress: function onPress() {
-          return handleChangeType(type === 'text' ? 'voice' : 'text');
-        },
+        onPress: handleToggleInputType,
         children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
           name: type === 'text' ? 'icon_voice_input' : 'icon_keyboard',
-          size: (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(24),
+          size: (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(24),
           color: "#333333"
         })
       });
@@ -266464,13 +266521,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         onPress: handleClickSend,
         children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
           name: canSend ? 'icon_send1' : 'icon_send',
-          size: (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(24)
+          size: (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(24)
         })
       });
     };
     var renderVoiceButton = function renderVoiceButton() {
       var isIdle = voiceStatus === 'idle';
-      return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").LinearGradient, {
+      return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/components").LinearGradient, {
         colors: isIdle ? ['rgba(0,0,0,0)', 'rgba(0,0,0,0)', 'rgba(0,0,0,0)'] : voiceStatus === 'cancel' ? ['#fbcbca', '#fd908f', '#fbcbca'] : ['#cddef9', '#88affd', '#cddef9'],
         locations: [0, 0.5, 1],
         start: {
@@ -266490,13 +266547,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           })
         }), voiceStatus === 'recording' ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
           pointerEvents: "none",
-          children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/components/HoldToTalk").VoiceRipple, {})
+          children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components/HoldToTalk").VoiceRipple, {})
         }) : null]
       });
     };
     var renderQuestionInput = function renderQuestionInput() {
       if (isExpandedInput) {
-        return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").LinearGradient, {
+        return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/components").LinearGradient, {
           colors: ['#f7f7f7', '#ffffff'],
           start: {
             x: 0,
@@ -266509,7 +266566,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           style: [_styles.default.questionInputContent, _styles.default.questionInputContentFocused, _styles.default.questionInputShadow],
           children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
             style: _styles.default.questionInputContentExpanded,
-            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").TextInput, {
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/components").TextInput, {
               autoFocus: isInputFocused,
               multiline: true,
               scrollEnabled: false,
@@ -266536,10 +266593,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       if (type === 'voice') {
         var voiceInputBody = /*#__PURE__*/(0, _jsxRuntime.jsxs)(_jsxRuntime.Fragment, {
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, Object.assign({
-            ref: voiceButtonRef,
-            onLayout: function onLayout() {
-              void refreshBounds();
-            }
+            ref: voiceButtonRef
           }, gestureCaptureProps, {
             style: _styles.default.questionInputContentVoiceFull,
             children: renderVoiceButton()
@@ -266548,7 +266602,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             children: renderInputToggleIcon()
           })]
         });
-        return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").LinearGradient, {
+        return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/components").LinearGradient, {
           colors: isVoiceRecording ? ['rgba(0,0,0,0)', 'rgba(0,0,0,0)'] : ['#f7f7f7', '#ffffff'],
           start: {
             x: 0,
@@ -266562,7 +266616,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           children: voiceInputBody
         }, "voice");
       }
-      return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").LinearGradient, {
+      return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/components").LinearGradient, {
         colors: ['#f7f7f7', '#ffffff'],
         start: {
           x: 0,
@@ -266585,11 +266639,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }), renderSendButton()]
       });
     };
-    return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
+    return /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[17], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
       backgroundColor: "#f4f4f4",
       statusBarBackgroundColor: "#ffffff",
       statusBarStyle: "dark-content",
       safeAreaEdges: ['top'],
+      scrollable: false,
       header: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
         style: _styles.default.navHeader,
         children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
@@ -266632,12 +266687,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             }
           }) : null]
         }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-          ref: cancelAreaRef,
-          onLayout: function onLayout() {
-            void refreshBounds();
-          },
           style: [_styles.default.userInputContent, {
-            paddingBottom: keyboardHeight > 0 ? keyboardHeight - (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(60 + Math.max(insets.bottom, 6)) : (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(6)
+            paddingBottom: keyboardHeight > 0 ? keyboardHeight + (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(6) - tabBarHeight : bottomSafePadding
           }],
           children: [!isVoiceRecording && /*#__PURE__*/(0, _jsxRuntime.jsxs)(_Flex.default, {
             direction: "row",
@@ -266669,14 +266720,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             })]
           }), isVoiceRecording && /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
             style: [_styles.default.voiceRecordingHint, voiceStatus === 'cancel' && _styles.default.voiceRecordingHintCancel],
-            children: voiceStatus === 'cancel' ? '松手取消' : '松手发送，移出输入区取消'
+            children: voiceStatus === 'cancel' ? '松手取消' : '松手发送 上滑取消'
           }), renderQuestionInput()]
         })]
       })
     });
   };
   var _default = exports.default = AiAssistant;
-},1677,[1,25,42,3,1377,553,1678,1679,1688,88,1252,1689,1699,556,1591],"src\\pages\\aiAssistant\\index.tsx");
+},1677,[1,25,42,3,1377,553,1678,1679,1790,88,1252,556,1791,1793,1803,1092,1809,1591],"src\\pages\\aiAssistant\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -266690,8 +266741,28 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _videoGuideCard = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "../videoGuideCard"));
   var _jsxRuntime = _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime");
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\aiAssistant\\com\\messageItem\\index.tsx";
-  var getConfirmSessionId = function getConfirmSessionId(confirm) {
-    return confirm.sessionId;
+  var toConfirmCard = function toConfirmCard(message) {
+    if (!message.confirm) return null;
+    var confirm = message.confirm;
+    return {
+      id: `${message.id}-confirm`,
+      role: 'assistant',
+      type: 'confirm',
+      title: confirm.title,
+      content: confirm.content || '',
+      cancelText: confirm.cancelText,
+      confirmText: confirm.confirmText,
+      sessionId: confirm.sessionId,
+      replyId: confirm.replyId,
+      submitted: confirm.submitted,
+      processing: confirm.processing,
+      rejected: confirm.rejected,
+      approved: confirm.approved,
+      replyContent: confirm.replyContent,
+      isReplyStreaming: confirm.isReplyStreaming,
+      rejectedMessage: confirm.rejectedMessage,
+      rejectedHint: confirm.rejectedHint
+    };
   };
   function MessageItem(_ref) {
     var data = _ref.data,
@@ -266699,15 +266770,28 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       onConfirmSubmit = _ref.onConfirmSubmit;
     switch (data.type) {
       case 'text':
-        return /*#__PURE__*/(0, _jsxRuntime.jsx)(_textMessage.default, {
-          data: data,
-          onConfirmCancel: data.confirm ? function () {
-            return onConfirmCancel == null ? void 0 : onConfirmCancel(getConfirmSessionId(data.confirm));
-          } : undefined,
-          onConfirmSubmit: data.confirm ? function () {
-            return onConfirmSubmit == null ? void 0 : onConfirmSubmit(getConfirmSessionId(data.confirm));
-          } : undefined
-        });
+        {
+          var confirmCard = toConfirmCard(data);
+          if (!confirmCard) {
+            return /*#__PURE__*/(0, _jsxRuntime.jsx)(_textMessage.default, {
+              data: data
+            });
+          }
+          var sessionId = confirmCard.sessionId || confirmCard.replyId || confirmCard.id;
+          return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_react.default.Fragment, {
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_textMessage.default, {
+              data: data
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_confirmCard.default, {
+              data: confirmCard,
+              onCancel: function onCancel() {
+                return onConfirmCancel == null ? void 0 : onConfirmCancel(sessionId, confirmCard.id);
+              },
+              onConfirm: function onConfirm() {
+                return onConfirmSubmit == null ? void 0 : onConfirmSubmit(sessionId, confirmCard.id);
+              }
+            })]
+          }, data.id);
+        }
       case 'error':
         return /*#__PURE__*/(0, _jsxRuntime.jsx)(_textMessage.default, {
           data: data
@@ -266724,131 +266808,10636 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return /*#__PURE__*/(0, _jsxRuntime.jsx)(_confirmCard.default, {
           data: data,
           onCancel: function onCancel() {
-            return onConfirmCancel == null ? void 0 : onConfirmCancel(data.sessionId || data.replyId || data.id);
+            return onConfirmCancel == null ? void 0 : onConfirmCancel(data.sessionId || data.replyId || data.id, data.id);
           },
           onConfirm: function onConfirm() {
-            return onConfirmSubmit == null ? void 0 : onConfirmSubmit(data.sessionId || data.replyId || data.id);
+            return onConfirmSubmit == null ? void 0 : onConfirmSubmit(data.sessionId || data.replyId || data.id, data.id);
           }
         });
       default:
         return null;
     }
   }
-},1678,[1,42,1679,1681,1684,1686,88],"src\\pages\\aiAssistant\\com\\messageItem\\index.tsx");
+},1678,[1,42,1679,1784,1786,1788,88],"src\\pages\\aiAssistant\\com\\messageItem\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
   exports.default = TextMessageItem;
-  var _slicedToArray2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
-  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
-  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
+  var _react = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
+  var _MarkdownView = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/components/MarkdownView"));
   var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "./styles"));
   var _jsxRuntime = _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime");
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\aiAssistant\\com\\textMessage\\index.tsx";
-  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
-  var TYPEWRITER_INTERVAL = 40;
   function TextMessageItem(_ref) {
-    var _data$content;
-    var data = _ref.data,
-      onConfirmCancel = _ref.onConfirmCancel,
-      onConfirmSubmit = _ref.onConfirmSubmit;
+    var _data$content,
+      _this = this;
+    var data = _ref.data;
     var isError = data.type === 'error';
     var isUser = data.role === 'user';
-    var confirm = !isError && data.type === 'text' ? data.confirm : undefined;
-    var showConfirmActions = Boolean(confirm && !confirm.submitted && !confirm.rejected && !confirm.approved);
-    var getConfirmTitle = function getConfirmTitle() {
-      if (!confirm) return null;
-      if (confirm.approved) {
-        return {
-          text: '执行完成',
-          style: _styles.default.confirmTitleCompleted
-        };
-      }
-      if (confirm.rejected) {
-        return {
-          text: '已取消',
-          style: _styles.default.confirmTitleCancelled
-        };
-      }
-      return {
-        text: confirm.title || '需要确认',
-        style: _styles.default.confirmTitle
-      };
-    };
-    var confirmTitle = getConfirmTitle();
-    var _useState = (0, _react.useState)(data.content),
-      _useState2 = (0, _slicedToArray2.default)(_useState, 2),
-      displayText = _useState2[0],
-      setDisplayText = _useState2[1];
-    var targetRef = (0, _react.useRef)(data.content);
-    (0, _react.useEffect)(function () {
-      targetRef.current = data.content;
-      if (isUser || isError) {
-        setDisplayText(data.content);
-        return;
-      }
-      if (!('isStreaming' in data) || !data.isStreaming) {
-        setDisplayText(data.content);
-        return;
-      }
-      var timer = setInterval(function () {
-        setDisplayText(function (prev) {
-          var target = targetRef.current;
-          if (prev.length >= target.length) return prev;
-          return target.slice(0, prev.length + 1);
-        });
-      }, TYPEWRITER_INTERVAL);
-      return function () {
-        return clearInterval(timer);
-      };
-    }, [data.content, data.type, isUser, isError, data]);
     var isStreaming = !isError && 'isStreaming' in data && data.isStreaming;
-    var isThinking = !isUser && !isError && isStreaming && !((_data$content = data.content) != null ? _data$content : '').trim();
+    var content = (_data$content = data.content) != null ? _data$content : '';
+    var isEmptyStreaming = !isUser && !isError && isStreaming && !content.trim();
+    var isExecuteJsonStreaming = !isUser && !isError && isStreaming && (0, _$$_REQUIRE(_dependencyMap[6], "../../utils/extractJsonCardsFromMarkdown").isStreamingExecuteJsonContent)(content);
+    var showThinking = isEmptyStreaming || isExecuteJsonStreaming;
+    if (showThinking) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: [_styles.default.messageRow, _styles.default.messageRowAssistant],
+        children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+          style: [_styles.default.bubble, _styles.default.bubbleAssistant, _styles.default.bubbleThinking],
+          children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+            style: [_styles.default.text, _styles.default.thinkingText],
+            selectable: true,
+            children: "\u6B63\u5728\u601D\u8003\u4E2D..."
+          })
+        })
+      });
+    }
+    var renderMessageContent = function renderMessageContent() {
+      if (isUser) {
+        return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+          style: _styles.default.text,
+          selectable: true,
+          children: content
+        });
+      }
+      if (isError) {
+        return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+          style: [_styles.default.text, _styles.default.errorText],
+          selectable: true,
+          children: content
+        });
+      }
+      return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+        style: _styles.default.markdownWrap,
+        children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_MarkdownView.default, {
+          content: content,
+          isStreaming: Boolean(isStreaming)
+        }), isStreaming ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+          style: _styles.default.cursor,
+          children: "|"
+        }) : null]
+      });
+    };
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
       style: [_styles.default.messageRow, isUser ? _styles.default.messageRowUser : _styles.default.messageRowAssistant],
-      children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-        style: [_styles.default.bubble, isUser ? _styles.default.bubbleUser : isError ? _styles.default.bubbleError : _styles.default.bubbleAssistant, confirm ? _styles.default.bubbleWithConfirm : null],
-        children: [confirmTitle ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-          style: confirmTitle.style,
-          children: confirmTitle.text
-        }) : null, /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
-          style: [_styles.default.text, isThinking && _styles.default.thinkingText, isError && _styles.default.errorText],
-          children: [isUser ? data.content : isThinking ? '正在思考中...' : displayText, !isUser && isStreaming && !isThinking ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _styles.default.cursor,
-            children: "|"
-          }) : null]
-        }), confirm != null && confirm.rejected && confirm.rejectedHint ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-          style: _styles.default.rejectedHint,
-          children: confirm.rejectedHint
-        }) : null, showConfirmActions ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-          style: _styles.default.confirmSection,
-          children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-            style: _styles.default.confirmActions,
-            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
-              activeOpacity: 0.85,
-              style: _styles.default.cancelBtn,
-              onPress: onConfirmCancel,
-              children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                style: _styles.default.cancelBtnText,
-                children: confirm.cancelText || '取消'
-              })
-            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
-              activeOpacity: 0.85,
-              style: _styles.default.confirmBtn,
-              onPress: onConfirmSubmit,
-              children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-                style: _styles.default.confirmBtnText,
-                children: confirm.confirmText || '确认执行'
-              })
-            })]
-          })
-        }) : null]
+      children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: [_styles.default.bubble, isUser ? _styles.default.bubbleUser : isError ? _styles.default.bubbleError : _styles.default.bubbleAssistant],
+        children: renderMessageContent()
       })
     });
   }
-},1679,[1,25,42,3,1680,88],"src\\pages\\aiAssistant\\com\\textMessage\\index.tsx");
+},1679,[1,42,3,1680,1780,88,1781],"src\\pages\\aiAssistant\\com\\textMessage\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[1], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
+  var _clipboard = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "@react-native-clipboard/clipboard"));
+  var _reactNativeMarkdownDisplay = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[4], "react-native-markdown-display"));
+  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime");
+  var _this = this,
+    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\components\\MarkdownView\\index.tsx";
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  var SELECTABLE_RULE_KEYS = ['text', 'textgroup', 'strong', 'em', 's', 'code_inline', 'code_block', 'fence', 'hardbreak', 'softbreak', 'link'];
+  function withSelectableRules(rules) {
+    var next = Object.assign({}, rules);
+    SELECTABLE_RULE_KEYS.forEach(function (key) {
+      var rule = rules[key];
+      if (!rule) return;
+      next[key] = function () {
+        var element = rule.apply(void 0, arguments);
+        if (_react.default.isValidElement(element) && element.type === _reactNative.Text) {
+          return _react.default.cloneElement(element, {
+            selectable: true
+          });
+        }
+        return element;
+      };
+    });
+    return next;
+  }
+  var selectableRenderRules = withSelectableRules(_reactNativeMarkdownDisplay.renderRules);
+  function isEmptyTableCell(node, children) {
+    var _node$content;
+    if ((_node$content = node.content) != null && _node$content.trim()) {
+      return false;
+    }
+    var hasText = false;
+    _react.default.Children.forEach(children, function (child) {
+      if (typeof child === 'string' && child.trim()) {
+        hasText = true;
+        return;
+      }
+      if (_react.default.isValidElement(child) && child.type === _reactNative.Text) {
+        var _children;
+        var text = String((_children = child.props.children) != null ? _children : '');
+        if (text.trim()) {
+          hasText = true;
+        }
+      }
+    });
+    return !hasText;
+  }
+  var markdownRenderRules = Object.assign({}, selectableRenderRules, {
+    table: function table(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.ScrollView, {
+        horizontal: true,
+        nestedScrollEnabled: true,
+        showsHorizontalScrollIndicator: true,
+        style: styles._VIEW_SAFE_tableScroll,
+        contentContainerStyle: styles._VIEW_SAFE_tableScrollContent,
+        children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+          style: styles._VIEW_SAFE_table,
+          children: children
+        })
+      }, node.key);
+    },
+    th: function th(node, children, parent, styles) {
+      if (isEmptyTableCell(node, children)) {
+        return null;
+      }
+      return selectableRenderRules.th(node, children, parent, styles);
+    },
+    td: function td(node, children, parent, styles) {
+      if (isEmptyTableCell(node, children)) {
+        return null;
+      }
+      return selectableRenderRules.td(node, children, parent, styles);
+    }
+  });
+  function MarkdownView(_ref) {
+    var _content$trim;
+    var content = _ref.content,
+      style = _ref.style;
+    var trimmed = (_content$trim = content == null ? void 0 : content.trim()) != null ? _content$trim : '';
+    var markdownStyle = (0, _react.useMemo)(function () {
+      return _$$_REQUIRE(_dependencyMap[6], "./styles").markdownStyles;
+    }, []);
+    var normalizedContent = (0, _react.useMemo)(function () {
+      return (0, _$$_REQUIRE(_dependencyMap[7], "./normalizeMarkdownTables").normalizeMarkdownTables)(trimmed);
+    }, [trimmed]);
+    if (!trimmed) {
+      return null;
+    }
+    var handleLinkPress = function handleLinkPress(url) {
+      var target = url.trim();
+      if (!target) return false;
+      if (/^https?:\/\//i.test(target)) {
+        _reactNative.Linking.openURL(target).catch(function () {
+          (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            title: '无法打开链接',
+            icon: 'none'
+          });
+        });
+        return false;
+      }
+      _clipboard.default.setString(target);
+      (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        title: '链接已复制',
+        icon: 'none'
+      });
+      return false;
+    };
+    return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+      style: style,
+      children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNativeMarkdownDisplay.default, {
+        style: markdownStyle,
+        mergeStyle: false,
+        rules: markdownRenderRules,
+        onLinkPress: handleLinkPress,
+        children: normalizedContent
+      })
+    });
+  }
+  var _default = exports.default = (0, _react.memo)(MarkdownView);
+},1680,[1,42,3,1231,1681,88,1778,1779,1190],"src\\components\\MarkdownView\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, "AstRenderer", {
+    enumerable: true,
+    get: function get() {
+      return _AstRenderer.default;
+    }
+  });
+  Object.defineProperty(exports, "FitImage", {
+    enumerable: true,
+    get: function get() {
+      return _reactNativeFitImage.default;
+    }
+  });
+  Object.defineProperty(exports, "MarkdownIt", {
+    enumerable: true,
+    get: function get() {
+      return _markdownIt.default;
+    }
+  });
+  exports.default = void 0;
+  Object.defineProperty(exports, "getUniqueID", {
+    enumerable: true,
+    get: function get() {
+      return _getUniqueID.default;
+    }
+  });
+  Object.defineProperty(exports, "hasParents", {
+    enumerable: true,
+    get: function get() {
+      return _hasParents.default;
+    }
+  });
+  Object.defineProperty(exports, "openUrl", {
+    enumerable: true,
+    get: function get() {
+      return _openUrl.default;
+    }
+  });
+  Object.defineProperty(exports, "parser", {
+    enumerable: true,
+    get: function get() {
+      return _parser.default;
+    }
+  });
+  Object.defineProperty(exports, "removeTextStyleProps", {
+    enumerable: true,
+    get: function get() {
+      return _removeTextStyleProps.default;
+    }
+  });
+  Object.defineProperty(exports, "renderRules", {
+    enumerable: true,
+    get: function get() {
+      return _renderRules.default;
+    }
+  });
+  Object.defineProperty(exports, "stringToTokens", {
+    enumerable: true,
+    get: function get() {
+      return _$$_REQUIRE(_dependencyMap[1], "./lib/util/stringToTokens").stringToTokens;
+    }
+  });
+  Object.defineProperty(exports, "styles", {
+    enumerable: true,
+    get: function get() {
+      return _$$_REQUIRE(_dependencyMap[2], "./lib/styles").styles;
+    }
+  });
+  Object.defineProperty(exports, "textStyleProps", {
+    enumerable: true,
+    get: function get() {
+      return _textStyleProps.default;
+    }
+  });
+  Object.defineProperty(exports, "tokensToAST", {
+    enumerable: true,
+    get: function get() {
+      return _tokensToAST.default;
+    }
+  });
+  var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[3], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[4], "react-native");
+  var _propTypes = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "prop-types"));
+  var _parser = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "./lib/parser"));
+  var _getUniqueID = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[7], "./lib/util/getUniqueID"));
+  var _hasParents = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[8], "./lib/util/hasParents"));
+  var _openUrl = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[9], "./lib/util/openUrl"));
+  var _tokensToAST = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[10], "./lib/util/tokensToAST"));
+  var _renderRules = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[11], "./lib/renderRules"));
+  var _AstRenderer = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[12], "./lib/AstRenderer"));
+  var _markdownIt = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[13], "markdown-it"));
+  var _removeTextStyleProps = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[14], "./lib/util/removeTextStyleProps"));
+  var _reactNativeFitImage = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[15], "react-native-fit-image"));
+  var _textStyleProps = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[16], "./lib/data/textStyleProps"));
+  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[17], "react/jsx-runtime");
+  var _this = this,
+    _jsxFileName = "D:\\xqkj\\bokeapp\\node_modules\\react-native-markdown-display\\src\\index.js";
+  /**
+   * Base Markdown component
+   * @author Mient-jan Stelling + contributors
+   */
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  // we use StyleSheet.flatten here to make sure we have an object, in case someone
+  // passes in a StyleSheet.create result to the style prop
+  var getStyle = function getStyle(mergeStyle, style) {
+    var useStyles = {};
+    if (mergeStyle === true && style !== null) {
+      // make sure we get anything user defuned
+      Object.keys(style).forEach(function (value) {
+        useStyles[value] = Object.assign({}, _reactNative.StyleSheet.flatten(style[value]));
+      });
+
+      // combine any existing styles
+      Object.keys(_$$_REQUIRE(_dependencyMap[2], "./lib/styles").styles).forEach(function (value) {
+        useStyles[value] = Object.assign({}, _$$_REQUIRE(_dependencyMap[2], "./lib/styles").styles[value], _reactNative.StyleSheet.flatten(style[value]));
+      });
+    } else {
+      useStyles = Object.assign({}, _$$_REQUIRE(_dependencyMap[2], "./lib/styles").styles);
+      if (style !== null) {
+        Object.keys(style).forEach(function (value) {
+          useStyles[value] = Object.assign({}, _reactNative.StyleSheet.flatten(style[value]));
+        });
+      }
+    }
+    Object.keys(useStyles).forEach(function (value) {
+      useStyles['_VIEW_SAFE_' + value] = (0, _removeTextStyleProps.default)(useStyles[value]);
+    });
+    return _reactNative.StyleSheet.create(useStyles);
+  };
+  var getRenderer = function getRenderer(renderer, rules, style, mergeStyle, onLinkPress, maxTopLevelChildren, topLevelMaxExceededItem, allowedImageHandlers, defaultImageHandler, debugPrintTree) {
+    if (renderer && rules) {
+      console.warn('react-native-markdown-display you are using renderer and rules at the same time. This is not possible, props.rules is ignored');
+    }
+    if (renderer && style) {
+      console.warn('react-native-markdown-display you are using renderer and style at the same time. This is not possible, props.style is ignored');
+    }
+
+    // these checks are here to prevent extra overhead.
+    if (renderer) {
+      if (!(typeof renderer === 'function') || renderer instanceof _AstRenderer.default) {
+        return renderer;
+      } else {
+        throw new Error('Provided renderer is not compatible with function or AstRenderer. please change');
+      }
+    } else {
+      var useStyles = getStyle(mergeStyle, style);
+      return new _AstRenderer.default(Object.assign({}, _renderRules.default, rules || {}), useStyles, onLinkPress, maxTopLevelChildren, topLevelMaxExceededItem, allowedImageHandlers, defaultImageHandler, debugPrintTree);
+    }
+  };
+  var Markdown = _react.default.memo(function (_ref) {
+    var children = _ref.children,
+      _ref$renderer = _ref.renderer,
+      renderer = _ref$renderer === void 0 ? null : _ref$renderer,
+      _ref$rules = _ref.rules,
+      rules = _ref$rules === void 0 ? null : _ref$rules,
+      _ref$style = _ref.style,
+      style = _ref$style === void 0 ? null : _ref$style,
+      _ref$mergeStyle = _ref.mergeStyle,
+      mergeStyle = _ref$mergeStyle === void 0 ? true : _ref$mergeStyle,
+      _ref$markdownit = _ref.markdownit,
+      markdownit = _ref$markdownit === void 0 ? (0, _markdownIt.default)({
+        typographer: true
+      }) : _ref$markdownit,
+      onLinkPress = _ref.onLinkPress,
+      _ref$maxTopLevelChild = _ref.maxTopLevelChildren,
+      maxTopLevelChildren = _ref$maxTopLevelChild === void 0 ? null : _ref$maxTopLevelChild,
+      _ref$topLevelMaxExcee = _ref.topLevelMaxExceededItem,
+      topLevelMaxExceededItem = _ref$topLevelMaxExcee === void 0 ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+        children: "..."
+      }, "dotdotdot") : _ref$topLevelMaxExcee,
+      _ref$allowedImageHand = _ref.allowedImageHandlers,
+      allowedImageHandlers = _ref$allowedImageHand === void 0 ? ['data:image/png;base64', 'data:image/gif;base64', 'data:image/jpeg;base64', 'https://', 'http://'] : _ref$allowedImageHand,
+      _ref$defaultImageHand = _ref.defaultImageHandler,
+      defaultImageHandler = _ref$defaultImageHand === void 0 ? 'https://' : _ref$defaultImageHand,
+      _ref$debugPrintTree = _ref.debugPrintTree,
+      debugPrintTree = _ref$debugPrintTree === void 0 ? false : _ref$debugPrintTree;
+    var momoizedRenderer = (0, _react.useMemo)(function () {
+      return getRenderer(renderer, rules, style, mergeStyle, onLinkPress, maxTopLevelChildren, topLevelMaxExceededItem, allowedImageHandlers, defaultImageHandler, debugPrintTree);
+    }, [maxTopLevelChildren, onLinkPress, renderer, rules, style, mergeStyle, topLevelMaxExceededItem, allowedImageHandlers, defaultImageHandler, debugPrintTree]);
+    var momoizedParser = (0, _react.useMemo)(function () {
+      return markdownit;
+    }, [markdownit]);
+    return (0, _parser.default)(children, momoizedRenderer.render, momoizedParser);
+  });
+  Markdown.propTypes = {
+    children: _propTypes.default.oneOfType([_propTypes.default.node, _propTypes.default.array]).isRequired,
+    renderer: _propTypes.default.oneOfType([_propTypes.default.func, _propTypes.default.instanceOf(_AstRenderer.default)]),
+    onLinkPress: _propTypes.default.func,
+    maxTopLevelChildren: _propTypes.default.number,
+    topLevelMaxExceededItem: _propTypes.default.any,
+    rules: function rules(props, propName, componentName) {
+      var invalidProps = [];
+      var prop = props[propName];
+      if (!prop) {
+        return;
+      }
+      if (typeof prop === 'object') {
+        invalidProps = Object.keys(prop).filter(function (key) {
+          return typeof prop[key] !== 'function';
+        });
+      }
+      if (typeof prop !== 'object') {
+        return new Error(`Invalid prop \`${propName}\` supplied to \`${componentName}\`. Must be of shape {[index:string]:function} `);
+      } else if (invalidProps.length > 0) {
+        return new Error(`Invalid prop \`${propName}\` supplied to \`${componentName}\`. These ` + `props are not of type function \`${invalidProps.join(', ')}\` `);
+      }
+    },
+    markdownit: _propTypes.default.instanceOf(_markdownIt.default),
+    style: _propTypes.default.any,
+    mergeStyle: _propTypes.default.bool,
+    allowedImageHandlers: _propTypes.default.arrayOf(_propTypes.default.string),
+    defaultImageHandler: _propTypes.default.string,
+    debugPrintTree: _propTypes.default.bool
+  };
+  var _default = exports.default = Markdown;
+},1681,[1,1682,1683,42,3,300,1684,1686,1694,1695,1685,1696,1699,1710,1777,1697,1698,88],"node_modules\\react-native-markdown-display\\src\\index.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.stringToTokens = stringToTokens;
+  function stringToTokens(source, markdownIt) {
+    var result = [];
+    try {
+      result = markdownIt.parse(source, {});
+    } catch (err) {
+      console.warn(err);
+    }
+    return result;
+  }
+},1682,[],"node_modules\\react-native-markdown-display\\src\\lib\\util\\stringToTokens.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.styles = void 0;
+  var _defineProperty2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/defineProperty"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
+  // this is converted to a stylesheet internally at run time with StyleSheet.create(
+  var styles = exports.styles = {
+    // The main container
+    body: {},
+    // Headings
+    heading1: {
+      flexDirection: 'row',
+      fontSize: 32
+    },
+    heading2: {
+      flexDirection: 'row',
+      fontSize: 24
+    },
+    heading3: {
+      flexDirection: 'row',
+      fontSize: 18
+    },
+    heading4: {
+      flexDirection: 'row',
+      fontSize: 16
+    },
+    heading5: {
+      flexDirection: 'row',
+      fontSize: 13
+    },
+    heading6: {
+      flexDirection: 'row',
+      fontSize: 11
+    },
+    // Horizontal Rule
+    hr: {
+      backgroundColor: '#000000',
+      height: 1
+    },
+    // Emphasis
+    strong: {
+      fontWeight: 'bold'
+    },
+    em: {
+      fontStyle: 'italic'
+    },
+    s: {
+      textDecorationLine: 'line-through'
+    },
+    // Blockquotes
+    blockquote: {
+      backgroundColor: '#F5F5F5',
+      borderColor: '#CCC',
+      borderLeftWidth: 4,
+      marginLeft: 5,
+      paddingHorizontal: 5
+    },
+    // Lists
+    bullet_list: {},
+    ordered_list: {},
+    list_item: {
+      flexDirection: 'row',
+      justifyContent: 'flex-start'
+    },
+    // @pseudo class, does not have a unique render rule
+    bullet_list_icon: {
+      marginLeft: 10,
+      marginRight: 10
+    },
+    // @pseudo class, does not have a unique render rule
+    bullet_list_content: {
+      flex: 1
+    },
+    // @pseudo class, does not have a unique render rule
+    ordered_list_icon: {
+      marginLeft: 10,
+      marginRight: 10
+    },
+    // @pseudo class, does not have a unique render rule
+    ordered_list_content: {
+      flex: 1
+    },
+    // Code
+    code_inline: Object.assign({
+      borderWidth: 1,
+      borderColor: '#CCCCCC',
+      backgroundColor: '#f5f5f5',
+      padding: 10,
+      borderRadius: 4
+    }, _reactNative.Platform.select((0, _defineProperty2.default)((0, _defineProperty2.default)({}, 'ios', {
+      fontFamily: 'Courier'
+    }), 'android', {
+      fontFamily: 'monospace'
+    }))),
+    code_block: Object.assign({
+      borderWidth: 1,
+      borderColor: '#CCCCCC',
+      backgroundColor: '#f5f5f5',
+      padding: 10,
+      borderRadius: 4
+    }, _reactNative.Platform.select((0, _defineProperty2.default)((0, _defineProperty2.default)({}, 'ios', {
+      fontFamily: 'Courier'
+    }), 'android', {
+      fontFamily: 'monospace'
+    }))),
+    fence: Object.assign({
+      borderWidth: 1,
+      borderColor: '#CCCCCC',
+      backgroundColor: '#f5f5f5',
+      padding: 10,
+      borderRadius: 4
+    }, _reactNative.Platform.select((0, _defineProperty2.default)((0, _defineProperty2.default)({}, 'ios', {
+      fontFamily: 'Courier'
+    }), 'android', {
+      fontFamily: 'monospace'
+    }))),
+    // Tables
+    table: {
+      borderWidth: 1,
+      borderColor: '#000000',
+      borderRadius: 3
+    },
+    thead: {},
+    tbody: {},
+    th: {
+      flex: 1,
+      padding: 5
+    },
+    tr: {
+      borderBottomWidth: 1,
+      borderColor: '#000000',
+      flexDirection: 'row'
+    },
+    td: {
+      flex: 1,
+      padding: 5
+    },
+    // Links
+    link: {
+      textDecorationLine: 'underline'
+    },
+    blocklink: {
+      flex: 1,
+      borderColor: '#000000',
+      borderBottomWidth: 1
+    },
+    // Images
+    image: {
+      flex: 1
+    },
+    // Text Output
+    text: {},
+    textgroup: {},
+    paragraph: {
+      marginTop: 10,
+      marginBottom: 10,
+      flexWrap: 'wrap',
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+      width: '100%'
+    },
+    hardbreak: {
+      width: '100%',
+      height: 1
+    },
+    softbreak: {},
+    // Believe these are never used but retained for completeness
+    pre: {},
+    inline: {},
+    span: {}
+  };
+},1683,[1,202,3],"node_modules\\react-native-markdown-display\\src\\lib\\styles.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = parser;
+  var _tokensToAST = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "./util/tokensToAST"));
+  var _groupTextTokens = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "./util/groupTextTokens"));
+  var _omitListItemParagraph = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "./util/omitListItemParagraph"));
+  /**
+   *
+   * @param {string} source
+   * @param {function} [renderer]
+   * @param {AstRenderer} [markdownIt]
+   * @return {View}
+   */
+  function parser(source, renderer, markdownIt) {
+    if (Array.isArray(source)) {
+      return renderer(source);
+    }
+    var tokens = (0, _$$_REQUIRE(_dependencyMap[4], "./util/stringToTokens").stringToTokens)(source, markdownIt);
+    tokens = (0, _$$_REQUIRE(_dependencyMap[5], "./util/cleanupTokens").cleanupTokens)(tokens);
+    tokens = (0, _groupTextTokens.default)(tokens);
+    tokens = (0, _omitListItemParagraph.default)(tokens);
+    var astTree = (0, _tokensToAST.default)(tokens);
+    return renderer(astTree);
+  }
+},1684,[1,1685,1688,1690,1682,1691],"node_modules\\react-native-markdown-display\\src\\lib\\parser.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = tokensToAST;
+  var _defineProperty2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/defineProperty"));
+  var _slicedToArray2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/slicedToArray"));
+  var _getUniqueID = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "./getUniqueID"));
+  var _getTokenTypeByToken = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "./getTokenTypeByToken"));
+  /**
+   *
+   * @param {{type: string, tag:string, content: string, children: *, attrs: Array, meta, info, block: boolean}} token
+   * @param {number} tokenIndex
+   * @return {{type: string, content, tokenIndex: *, index: number, attributes: {}, children: *}}
+   */
+  function createNode(token, tokenIndex) {
+    var type = (0, _getTokenTypeByToken.default)(token);
+    var content = token.content;
+    var attributes = {};
+    if (token.attrs) {
+      attributes = token.attrs.reduce(function (prev, curr) {
+        var _curr = (0, _slicedToArray2.default)(curr, 2),
+          name = _curr[0],
+          value = _curr[1];
+        return Object.assign({}, prev, (0, _defineProperty2.default)({}, name, value));
+      }, {});
+    }
+    return {
+      type: type,
+      sourceType: token.type,
+      sourceInfo: token.info,
+      sourceMeta: token.meta,
+      block: token.block,
+      markup: token.markup,
+      key: (0, _getUniqueID.default)() + '_' + type,
+      content: content,
+      tokenIndex: tokenIndex,
+      index: 0,
+      attributes: attributes,
+      children: tokensToAST(token.children)
+    };
+  }
+
+  /**
+   *
+   * @param {Array<{type: string, tag:string, content: string, children: *, attrs: Array}>}tokens
+   * @return {Array}
+   */
+  function tokensToAST(tokens) {
+    var stack = [];
+    var children = [];
+    if (!tokens || tokens.length === 0) {
+      return [];
+    }
+    for (var i = 0; i < tokens.length; i++) {
+      var token = tokens[i];
+      var astNode = createNode(token, i);
+      if (!(astNode.type === 'text' && astNode.children.length === 0 && astNode.content === '')) {
+        astNode.index = children.length;
+        if (token.nesting === 1) {
+          children.push(astNode);
+          stack.push(children);
+          children = astNode.children;
+        } else if (token.nesting === -1) {
+          children = stack.pop();
+        } else if (token.nesting === 0) {
+          children.push(astNode);
+        }
+      }
+    }
+    return children;
+  }
+},1685,[1,202,25,1686,1687],"node_modules\\react-native-markdown-display\\src\\lib\\util\\tokensToAST.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = getUniqueID;
+  var uuid = new Date().getTime();
+  function getUniqueID() {
+    uuid++;
+    return `rnmr_${uuid.toString(16)}`;
+  }
+},1686,[],"node_modules\\react-native-markdown-display\\src\\lib\\util\\getUniqueID.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = getTokenTypeByToken;
+  var regSelectOpenClose = /_open|_close/g;
+
+  /**
+   *
+   * @example {
+      "type": "heading_open",
+      "tag": "h1",
+      "attrs": null,
+      "map": [
+        1,
+        2
+      ],
+      "nesting": 1,
+      "level": 0,
+      "children": null,
+      "content": "",
+      "markup": "#",
+      "info": "",
+      "meta": null,
+      "block": true,
+      "hidden": false
+    }
+   * @param token
+   * @return {String}
+   */
+  function getTokenTypeByToken(token) {
+    var cleanedType = 'unknown';
+    if (token.type) {
+      cleanedType = token.type.replace(regSelectOpenClose, '');
+    }
+    switch (cleanedType) {
+      case 'heading':
+        {
+          cleanedType = `${cleanedType}${token.tag.substr(1)}`;
+          break;
+        }
+      default:
+        {
+          break;
+        }
+    }
+    return cleanedType;
+  }
+},1687,[],"node_modules\\react-native-markdown-display\\src\\lib\\util\\getTokenTypeByToken.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = groupTextTokens;
+  var _Token = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "./Token"));
+  function groupTextTokens(tokens) {
+    var result = [];
+    var hasGroup = false;
+    tokens.forEach(function (token, index) {
+      if (!token.block && !hasGroup) {
+        hasGroup = true;
+        result.push(new _Token.default('textgroup', 1));
+        result.push(token);
+      } else if (!token.block && hasGroup) {
+        result.push(token);
+      } else if (token.block && hasGroup) {
+        hasGroup = false;
+        result.push(new _Token.default('textgroup', -1));
+        result.push(token);
+      } else {
+        result.push(token);
+      }
+    });
+    return result;
+  }
+},1688,[1,1689],"node_modules\\react-native-markdown-display\\src\\lib\\util\\groupTextTokens.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _createClass2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/createClass"));
+  var _classCallCheck2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/classCallCheck"));
+  var Token = exports.default = /*#__PURE__*/(0, _createClass2.default)(function Token(type) {
+    var nesting = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+    var children = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    var block = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+    (0, _classCallCheck2.default)(this, Token);
+    this.type = type;
+    this.nesting = nesting;
+    this.children = children;
+    this.block = block;
+  });
+},1689,[1,14,13],"node_modules\\react-native-markdown-display\\src\\lib\\util\\Token.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = omitListItemParagraph;
+  function omitListItemParagraph(tokens) {
+    // used to ensure that we remove the correct ending paragraph token
+    var depth = null;
+    return tokens.filter(function (token, index) {
+      // update depth if we've already removed a starting paragraph token
+      if (depth !== null) {
+        depth = depth + token.nesting;
+      }
+
+      // check for a list_item token followed by paragraph token (to remove)
+      if (token.type === 'list_item' && token.nesting === 1 && depth === null) {
+        var next = index + 1 in tokens ? tokens[index + 1] : null;
+        if (next && next.type === 'paragraph' && next.nesting === 1) {
+          depth = 0;
+          return true;
+        }
+      } else if (token.type === 'paragraph') {
+        if (token.nesting === 1 && depth === 1) {
+          // remove the paragraph token immediately after the list_item token
+          return false;
+        } else if (token.nesting === -1 && depth === 0) {
+          // remove the ending paragraph token; reset depth
+          depth = null;
+          return false;
+        }
+      }
+      return true;
+    });
+  }
+},1690,[],"node_modules\\react-native-markdown-display\\src\\lib\\util\\omitListItemParagraph.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.cleanupTokens = cleanupTokens;
+  var _getTokenTypeByToken = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "./getTokenTypeByToken"));
+  var _flattenInlineTokens = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "./flattenInlineTokens"));
+  var _renderInlineAsText = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "./renderInlineAsText"));
+  function cleanupTokens(tokens) {
+    tokens = (0, _flattenInlineTokens.default)(tokens);
+    tokens.forEach(function (token) {
+      token.type = (0, _getTokenTypeByToken.default)(token);
+
+      // set image and hardbreak to block elements
+      if (token.type === 'image' || token.type === 'hardbreak') {
+        token.block = true;
+      }
+
+      // Set img alt text
+      if (token.type === 'image') {
+        token.attrs[token.attrIndex('alt')][1] = (0, _renderInlineAsText.default)(token.children);
+      }
+    });
+
+    /**
+     * changing a link token to a blocklink to fix issue where link tokens with
+     * nested non text tokens breaks component
+     */
+    var stack = [];
+    tokens = tokens.reduce(function (acc, token, index) {
+      if (token.type === 'link' && token.nesting === 1) {
+        stack.push(token);
+      } else if (stack.length > 0 && token.type === 'link' && token.nesting === -1) {
+        if (stack.some(function (stackToken) {
+          return stackToken.block;
+        })) {
+          stack[0].type = 'blocklink';
+          stack[0].block = true;
+          token.type = 'blocklink';
+          token.block = true;
+        }
+        stack.push(token);
+        while (stack.length) {
+          acc.push(stack.shift());
+        }
+      } else if (stack.length > 0) {
+        stack.push(token);
+      } else {
+        acc.push(token);
+      }
+      return acc;
+    }, []);
+    return tokens;
+  }
+},1691,[1,1687,1692,1693],"node_modules\\react-native-markdown-display\\src\\lib\\util\\cleanupTokens.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = flattenTokens;
+  function flattenTokens(tokens) {
+    return tokens.reduce(function (acc, curr) {
+      if (curr.type === 'inline' && curr.children && curr.children.length > 0) {
+        var children = flattenTokens(curr.children);
+        while (children.length) {
+          acc.push(children.shift());
+        }
+      } else {
+        acc.push(curr);
+      }
+      return acc;
+    }, []);
+  }
+},1692,[],"node_modules\\react-native-markdown-display\\src\\lib\\util\\flattenInlineTokens.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = renderInlineAsText;
+  function renderInlineAsText(tokens) {
+    var result = '';
+    for (var i = 0, len = tokens.length; i < len; i++) {
+      if (tokens[i].type === 'text') {
+        result += tokens[i].content;
+      } else if (tokens[i].type === 'image') {
+        result += renderInlineAsText(tokens[i].children);
+      }
+    }
+    return result;
+  }
+},1693,[],"node_modules\\react-native-markdown-display\\src\\lib\\util\\renderInlineAsText.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = hasParents;
+  /**
+   *
+   * @param {Array} parents
+   * @param {string} type
+   * @return {boolean}
+   */
+  function hasParents(parents, type) {
+    return parents.findIndex(function (el) {
+      return el.type === type;
+    }) > -1;
+  }
+},1694,[],"node_modules\\react-native-markdown-display\\src\\lib\\util\\hasParents.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = openUrl;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  function openUrl(url, customCallback) {
+    if (customCallback) {
+      var result = customCallback(url);
+      if (url && result && typeof result === 'boolean') {
+        _reactNative.Linking.openURL(url);
+      }
+    } else if (url) {
+      _reactNative.Linking.openURL(url);
+    }
+  }
+},1695,[3],"node_modules\\react-native-markdown-display\\src\\lib\\util\\openUrl.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _react = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "react"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
+  var _reactNativeFitImage = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "react-native-fit-image"));
+  var _openUrl = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "./util/openUrl"));
+  var _hasParents = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "./util/hasParents"));
+  var _textStyleProps = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "./data/textStyleProps"));
+  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime");
+  var _this = this,
+    _jsxFileName = "D:\\xqkj\\bokeapp\\node_modules\\react-native-markdown-display\\src\\lib\\renderRules.js";
+  var renderRules = {
+    // when unknown elements are introduced, so it wont break
+    unknown: function unknown(node, children, parent, styles) {
+      return null;
+    },
+    // The main container
+    body: function body(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_body,
+        children: children
+      }, node.key);
+    },
+    // Headings
+    heading1: function heading1(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_heading1,
+        children: children
+      }, node.key);
+    },
+    heading2: function heading2(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_heading2,
+        children: children
+      }, node.key);
+    },
+    heading3: function heading3(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_heading3,
+        children: children
+      }, node.key);
+    },
+    heading4: function heading4(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_heading4,
+        children: children
+      }, node.key);
+    },
+    heading5: function heading5(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_heading5,
+        children: children
+      }, node.key);
+    },
+    heading6: function heading6(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_heading6,
+        children: children
+      }, node.key);
+    },
+    // Horizontal Rule
+    hr: function hr(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_hr
+      }, node.key);
+    },
+    // Emphasis
+    strong: function strong(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+        style: styles.strong,
+        children: children
+      }, node.key);
+    },
+    em: function em(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+        style: styles.em,
+        children: children
+      }, node.key);
+    },
+    s: function s(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+        style: styles.s,
+        children: children
+      }, node.key);
+    },
+    // Blockquotes
+    blockquote: function blockquote(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_blockquote,
+        children: children
+      }, node.key);
+    },
+    // Lists
+    bullet_list: function bullet_list(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_bullet_list,
+        children: children
+      }, node.key);
+    },
+    ordered_list: function ordered_list(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_ordered_list,
+        children: children
+      }, node.key);
+    },
+    // this is a unique and quite annoying render rule because it has
+    // child items that can be styled (the list icon and the list content)
+    // outside of the AST tree so there are some work arounds in the
+    // AST renderer specifically to get the styling right here
+    list_item: function list_item(node, children, parent, styles) {
+      var inheritedStyles = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+      // we need to grab any text specific stuff here that is applied on the list_item style
+      // and apply it onto bullet_list_icon. the AST renderer has some workaround code to make
+      // the content classes apply correctly to the child AST tree items as well
+      // as code that forces the creation of the inheritedStyles object for list_items
+      var refStyle = Object.assign({}, inheritedStyles, _reactNative.StyleSheet.flatten(styles.list_item));
+      var arr = Object.keys(refStyle);
+      var modifiedInheritedStylesObj = {};
+      for (var b = 0; b < arr.length; b++) {
+        if (_textStyleProps.default.includes(arr[b])) {
+          modifiedInheritedStylesObj[arr[b]] = refStyle[arr[b]];
+        }
+      }
+      if ((0, _hasParents.default)(parent, 'bullet_list')) {
+        return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+          style: styles._VIEW_SAFE_list_item,
+          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+            style: [modifiedInheritedStylesObj, styles.bullet_list_icon],
+            accessible: false,
+            children: _reactNative.Platform.select({
+              android: "\u2022",
+              ios: "\xB7",
+              default: "\u2022"
+            })
+          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+            style: styles._VIEW_SAFE_bullet_list_content,
+            children: children
+          })]
+        }, node.key);
+      }
+      if ((0, _hasParents.default)(parent, 'ordered_list')) {
+        var orderedListIndex = parent.findIndex(function (el) {
+          return el.type === 'ordered_list';
+        });
+        var orderedList = parent[orderedListIndex];
+        var listItemNumber;
+        if (orderedList.attributes && orderedList.attributes.start) {
+          listItemNumber = orderedList.attributes.start + node.index;
+        } else {
+          listItemNumber = node.index + 1;
+        }
+        return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+          style: styles._VIEW_SAFE_list_item,
+          children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.Text, {
+            style: [modifiedInheritedStylesObj, styles.ordered_list_icon],
+            children: [listItemNumber, node.markup]
+          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+            style: styles._VIEW_SAFE_ordered_list_content,
+            children: children
+          })]
+        }, node.key);
+      }
+
+      // we should not need this, but just in case
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_list_item,
+        children: children
+      }, node.key);
+    },
+    // Code
+    code_inline: function code_inline(node, children, parent, styles) {
+      var inheritedStyles = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+        style: [inheritedStyles, styles.code_inline],
+        children: node.content
+      }, node.key);
+    },
+    code_block: function code_block(node, children, parent, styles) {
+      var inheritedStyles = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+      // we trim new lines off the end of code blocks because the parser sends an extra one.
+      var content = node.content;
+      if (typeof node.content === 'string' && node.content.charAt(node.content.length - 1) === '\n') {
+        content = node.content.substring(0, node.content.length - 1);
+      }
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+        style: [inheritedStyles, styles.code_block],
+        children: content
+      }, node.key);
+    },
+    fence: function fence(node, children, parent, styles) {
+      var inheritedStyles = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+      // we trim new lines off the end of code blocks because the parser sends an extra one.
+      var content = node.content;
+      if (typeof node.content === 'string' && node.content.charAt(node.content.length - 1) === '\n') {
+        content = node.content.substring(0, node.content.length - 1);
+      }
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+        style: [inheritedStyles, styles.fence],
+        children: content
+      }, node.key);
+    },
+    // Tables
+    table: function table(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_table,
+        children: children
+      }, node.key);
+    },
+    thead: function thead(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_thead,
+        children: children
+      }, node.key);
+    },
+    tbody: function tbody(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_tbody,
+        children: children
+      }, node.key);
+    },
+    th: function th(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_th,
+        children: children
+      }, node.key);
+    },
+    tr: function tr(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_tr,
+        children: children
+      }, node.key);
+    },
+    td: function td(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_td,
+        children: children
+      }, node.key);
+    },
+    // Links
+    link: function link(node, children, parent, styles, onLinkPress) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+        style: styles.link,
+        onPress: function onPress() {
+          return (0, _openUrl.default)(node.attributes.href, onLinkPress);
+        },
+        children: children
+      }, node.key);
+    },
+    blocklink: function blocklink(node, children, parent, styles, onLinkPress) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableWithoutFeedback, {
+        onPress: function onPress() {
+          return (0, _openUrl.default)(node.attributes.href, onLinkPress);
+        },
+        style: styles.blocklink,
+        children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+          style: styles.image,
+          children: children
+        })
+      }, node.key);
+    },
+    // Images
+    image: function image(node, children, parent, styles, allowedImageHandlers, defaultImageHandler) {
+      var _node$attributes = node.attributes,
+        src = _node$attributes.src,
+        alt = _node$attributes.alt;
+
+      // we check that the source starts with at least one of the elements in allowedImageHandlers
+      var show = allowedImageHandlers.filter(function (value) {
+        return src.toLowerCase().startsWith(value.toLowerCase());
+      }).length > 0;
+      if (show === false && defaultImageHandler === null) {
+        return null;
+      }
+      var imageProps = {
+        indicator: true,
+        key: node.key,
+        style: styles._VIEW_SAFE_image,
+        source: {
+          uri: show === true ? src : `${defaultImageHandler}${src}`
+        }
+      };
+      if (alt) {
+        imageProps.accessible = true;
+        imageProps.accessibilityLabel = alt;
+      }
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNativeFitImage.default, Object.assign({}, imageProps));
+    },
+    // Text Output
+    text: function text(node, children, parent, styles) {
+      var inheritedStyles = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+        style: [inheritedStyles, styles.text],
+        children: node.content
+      }, node.key);
+    },
+    textgroup: function textgroup(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+        style: styles.textgroup,
+        children: children
+      }, node.key);
+    },
+    paragraph: function paragraph(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_paragraph,
+        children: children
+      }, node.key);
+    },
+    hardbreak: function hardbreak(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+        style: styles.hardbreak,
+        children: '\n'
+      }, node.key);
+    },
+    softbreak: function softbreak(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+        style: styles.softbreak,
+        children: '\n'
+      }, node.key);
+    },
+    // Believe these are never used but retained for completeness
+    pre: function pre(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: styles._VIEW_SAFE_pre,
+        children: children
+      }, node.key);
+    },
+    inline: function inline(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+        style: styles.inline,
+        children: children
+      }, node.key);
+    },
+    span: function span(node, children, parent, styles) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+        style: styles.span,
+        children: children
+      }, node.key);
+    }
+  };
+  var _default = exports.default = renderRules;
+},1696,[1,42,3,1697,1695,1694,1698,88],"node_modules\\react-native-markdown-display\\src\\lib\\renderRules.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  "use strict";
+
+  var __extends = this && this.__extends || function () {
+    var extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+    return function (d, b) {
+      extendStatics(d, b);
+      function __() {
+        this.constructor = d;
+      }
+      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+  }();
+  var __assign = this && this.__assign || Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  exports.__esModule = true;
+  var React = _$$_REQUIRE(_dependencyMap[0], "react");
+  var react_1 = _$$_REQUIRE(_dependencyMap[0], "react");
+  var react_native_1 = _$$_REQUIRE(_dependencyMap[1], "react-native");
+  var propTypes = __assign({}, react_native_1.Image.propTypes, {
+    indicator: _$$_REQUIRE(_dependencyMap[2], "prop-types").bool,
+    indicatorColor: _$$_REQUIRE(_dependencyMap[2], "prop-types").string,
+    indicatorSize: _$$_REQUIRE(_dependencyMap[2], "prop-types").oneOfType([_$$_REQUIRE(_dependencyMap[2], "prop-types").oneOf(['small', 'large']), _$$_REQUIRE(_dependencyMap[2], "prop-types").number]),
+    originalHeight: _$$_REQUIRE(_dependencyMap[2], "prop-types").number,
+    originalWidth: _$$_REQUIRE(_dependencyMap[2], "prop-types").number
+  });
+  var styles = react_native_1.StyleSheet.create({
+    container: {
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
+  });
+  var FitImage = function (_super) {
+    __extends(FitImage, _super);
+    function FitImage(props) {
+      var _this = _super.call(this, props) || this;
+      _this.ImageComponent = react_native_1.ImageBackground || react_native_1.Image;
+      _this.mounted = false;
+      _this.sizeStyle = {};
+      _this.shouldDisplayIndicator = function () {
+        return _this.state.isLoading && _this.props.indicator !== false;
+      };
+      _this.onLoad = function () {
+        if (_this.state.isLoading) {
+          _this.setState({
+            isLoading: false
+          });
+        }
+        if (typeof _this.props.onLoad === 'function') {
+          _this.props.onLoad();
+        }
+      };
+      _this.onLoadStart = function () {
+        if (_this.isFirstLoad) {
+          _this.setState({
+            isLoading: true
+          });
+          _this.isFirstLoad = false;
+        }
+      };
+      _this.onError = function () {
+        if (_this.state.isLoading) {
+          _this.setState({
+            isLoading: false
+          });
+        }
+      };
+      _this.getHeight = function () {
+        if (_this.style && _this.style.height) {
+          return Number(_this.style.height);
+        }
+        return Math.round(_this.getOriginalHeight() * _this.getRatio());
+      };
+      _this.getOriginalHeight = function () {
+        return _this.props.originalHeight || _this.state.originalHeight || 0;
+      };
+      _this.getOriginalWidth = function () {
+        return _this.props.originalWidth || _this.state.originalWidth || 0;
+      };
+      _this.getRatio = function () {
+        if (_this.getOriginalWidth() === 0) {
+          return 0;
+        }
+        return _this.state.layoutWidth / _this.getOriginalWidth();
+      };
+      _this.onLayout = function (event) {
+        var layoutWidth = event.nativeEvent.layout.width;
+        _this.setState({
+          layoutWidth: layoutWidth
+        });
+      };
+      _this.fetchOriginalSizeFromRemoteImage = function () {
+        var uri;
+        if (_this.props.source instanceof Array) {
+          uri = _this.props.source[0].uri;
+        } else {
+          uri = _this.props.source.uri;
+        }
+        if (!uri) {
+          return;
+        }
+        react_native_1.Image.getSize(uri, function (originalWidth, originalHeight) {
+          if (!_this.mounted) {
+            return;
+          }
+          _this.setOriginalSize(originalWidth, originalHeight);
+        }, function () {
+          return null;
+        });
+      };
+      _this.setOriginalSize = function (originalWidth, originalHeight) {
+        _this.setState({
+          originalHeight: originalHeight,
+          originalWidth: originalWidth
+        });
+      };
+      _this.renderActivityIndicator = function () {
+        return React.createElement(react_native_1.ActivityIndicator, {
+          color: _this.props.indicatorColor,
+          size: _this.props.indicatorSize
+        });
+      };
+      _this.style = react_native_1.StyleSheet.flatten(props.style);
+      if (_this.style) {
+        var size = [_this.style.width, _this.style.height];
+        if (size.filter(Boolean).length === 1) {
+          throw new Error('Props error: size props must be present ' + 'none or both of width and height.');
+        }
+        if (_this.style.width) {
+          _this.sizeStyle = {
+            width: _this.style.width
+          };
+        } else {
+          _this.sizeStyle = {
+            flexGrow: 1
+          };
+        }
+      }
+      var originalSize = [props.originalWidth, props.originalHeight];
+      if (originalSize.filter(Boolean).length === 1) {
+        throw new Error('Props error: originalSize props must be present ' + 'none or both of originalWidth and originalHeight.');
+      }
+      _this.isFirstLoad = true;
+      _this.state = {
+        isLoading: false,
+        layoutWidth: 0,
+        originalHeight: 0,
+        originalWidth: 0
+      };
+      return _this;
+    }
+    FitImage.prototype.componentDidMount = function () {
+      this.mounted = true;
+      if (this.props.originalWidth && this.props.originalHeight) {
+        return;
+      }
+      this.fetchOriginalSizeFromRemoteImage();
+    };
+    FitImage.prototype.componentWillUnmount = function () {
+      this.mounted = false;
+    };
+    FitImage.prototype.render = function () {
+      var ImageComponent = this.ImageComponent;
+      return React.createElement(ImageComponent, __assign({}, this.props, {
+        onLayout: this.onLayout,
+        onLoad: this.onLoad,
+        onLoadStart: this.onLoadStart,
+        onError: this.onError,
+        source: this.props.source,
+        style: [this.style, this.sizeStyle, {
+          height: this.getHeight()
+        }, styles.container]
+      }), this.shouldDisplayIndicator() ? this.renderActivityIndicator() : this.props.children);
+    };
+    FitImage.propTypes = propTypes;
+    return FitImage;
+  }(react_1.Component);
+  exports["default"] = FitImage;
+},1697,[42,3,300],"node_modules\\react-native-fit-image\\dist\\FitImage.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _default = exports.default = ['textShadowOffset', 'color', 'fontSize', 'fontStyle', 'fontWeight', 'lineHeight', 'textAlign', 'textDecorationLine', 'textShadowColor', 'fontFamily', 'textShadowRadius', 'includeFontPadding', 'textAlignVertical', 'fontVariant', 'letterSpacing', 'textDecorationColor', 'textDecorationStyle', 'textTransform', 'writingDirection'];
+},1698,[],"node_modules\\react-native-markdown-display\\src\\lib\\data\\textStyleProps.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _toConsumableArray2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/toConsumableArray"));
+  var _createClass2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/createClass"));
+  var _classCallCheck2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/classCallCheck"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[4], "react-native");
+  var _getUniqueID = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "./util/getUniqueID"));
+  var _convertAdditionalStyles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "./util/convertAdditionalStyles"));
+  var _textStyleProps = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[7], "./data/textStyleProps"));
+  var AstRenderer = exports.default = /*#__PURE__*/(0, _createClass2.default)(
+  /**
+   *
+   * @param {Object.<string, function>} renderRules
+   * @param {any} style
+   */
+  function AstRenderer(renderRules, style, onLinkPress, maxTopLevelChildren, topLevelMaxExceededItem, allowedImageHandlers, defaultImageHandler, debugPrintTree) {
+    var _this = this;
+    (0, _classCallCheck2.default)(this, AstRenderer);
+    /**
+     *
+     * @param {string} type
+     * @return {string}
+     */
+    this.getRenderFunction = function (type) {
+      var renderFunction = _this._renderRules[type];
+      if (!renderFunction) {
+        console.warn(`Warning, unknown render rule encountered: ${type}. 'unknown' render rule used (by default, returns null - nothing rendered)`);
+        return _this._renderRules.unknown;
+      }
+      return renderFunction;
+    };
+    /**
+     *
+     * @param node
+     * @param parentNodes
+     * @return {*}
+     */
+    this.renderNode = function (node, parentNodes) {
+      var isRoot = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+      var renderFunction = _this.getRenderFunction(node.type);
+      var parents = (0, _toConsumableArray2.default)(parentNodes);
+      if (_this._debugPrintTree === true) {
+        var str = '';
+        for (var a = 0; a < parents.length; a++) {
+          str = str + '-';
+        }
+        console.log(`${str}${node.type}`);
+      }
+      parents.unshift(node);
+
+      // calculate the children first
+      var children = node.children.map(function (value) {
+        return _this.renderNode(value, parents);
+      });
+
+      // render any special types of nodes that have different renderRule function signatures
+
+      if (node.type === 'link' || node.type === 'blocklink') {
+        return renderFunction(node, children, parentNodes, _this._style, _this._onLinkPress);
+      }
+      if (node.type === 'image') {
+        return renderFunction(node, children, parentNodes, _this._style, _this._allowedImageHandlers, _this._defaultImageHandler);
+      }
+
+      // We are at the bottom of some tree - grab all the parent styles
+      // this effectively grabs the styles from parents and
+      // applies them in order of priority parent (least) to child (most)
+      // to allow styling global, then lower down things individually
+
+      // we have to handle list_item seperately here because they have some child
+      // pseudo classes that need the additional style props from parents passed down to them
+      if (children.length === 0 || node.type === 'list_item') {
+        var styleObj = {};
+        for (var _a = parentNodes.length - 1; _a > -1; _a--) {
+          // grab and additional attributes specified by markdown-it
+          var refStyle = {};
+          if (parentNodes[_a].attributes && parentNodes[_a].attributes.style && typeof parentNodes[_a].attributes.style === 'string') {
+            refStyle = (0, _convertAdditionalStyles.default)(parentNodes[_a].attributes.style);
+          }
+
+          // combine in specific styles for the object
+          if (_this._style[parentNodes[_a].type]) {
+            refStyle = Object.assign({}, refStyle, _reactNative.StyleSheet.flatten(_this._style[parentNodes[_a].type]));
+
+            // workaround for list_items and their content cascading down the tree
+            if (parentNodes[_a].type === 'list_item') {
+              var contentStyle = {};
+              if (parentNodes[_a + 1].type === 'bullet_list') {
+                contentStyle = _this._style.bullet_list_content;
+              } else if (parentNodes[_a + 1].type === 'ordered_list') {
+                contentStyle = _this._style.ordered_list_content;
+              }
+              refStyle = Object.assign({}, refStyle, _reactNative.StyleSheet.flatten(contentStyle));
+            }
+          }
+
+          // then work out if any of them are text styles that should be used in the end.
+          var arr = Object.keys(refStyle);
+          for (var b = 0; b < arr.length; b++) {
+            if (_textStyleProps.default.includes(arr[b])) {
+              styleObj[arr[b]] = refStyle[arr[b]];
+            }
+          }
+        }
+        return renderFunction(node, children, parentNodes, _this._style, styleObj);
+      }
+
+      // cull top level children
+
+      if (isRoot === true && _this._maxTopLevelChildren && children.length > _this._maxTopLevelChildren) {
+        children = children.slice(0, _this._maxTopLevelChildren);
+        children.push(_this._topLevelMaxExceededItem);
+      }
+
+      // render anythign else that has a normal signature
+
+      return renderFunction(node, children, parentNodes, _this._style);
+    };
+    /**
+     *
+     * @param nodes
+     * @return {*}
+     */
+    this.render = function (nodes) {
+      var root = {
+        type: 'body',
+        key: (0, _getUniqueID.default)(),
+        children: nodes
+      };
+      return _this.renderNode(root, [], true);
+    };
+    this._renderRules = renderRules;
+    this._style = style;
+    this._onLinkPress = onLinkPress;
+    this._maxTopLevelChildren = maxTopLevelChildren;
+    this._topLevelMaxExceededItem = topLevelMaxExceededItem;
+    this._allowedImageHandlers = allowedImageHandlers;
+    this._defaultImageHandler = defaultImageHandler;
+    this._debugPrintTree = debugPrintTree;
+  });
+},1699,[1,7,14,13,3,1686,1700,1698],"node_modules\\react-native-markdown-display\\src\\lib\\AstRenderer.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = convertAdditionalStyles;
+  var _slicedToArray2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
+  var _cssToReactNative = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "css-to-react-native"));
+  function convertAdditionalStyles(style) {
+    var rules = style.split(';');
+    var tuples = rules.map(function (rule) {
+      var _rule$split = rule.split(':'),
+        _rule$split2 = (0, _slicedToArray2.default)(_rule$split, 2),
+        key = _rule$split2[0],
+        value = _rule$split2[1];
+      if (key && value) {
+        key = key.trim();
+        value = value.trim();
+        return [key, value];
+      } else {
+        return null;
+      }
+    }).filter(function (x) {
+      return x != null;
+    });
+    var conv = (0, _cssToReactNative.default)(tuples);
+    return conv;
+  }
+},1700,[1,25,1701],"node_modules\\react-native-markdown-display\\src\\lib\\util\\convertAdditionalStyles.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  function _interopDefault(ex) {
+    return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
+  }
+  var parse__default = _interopDefault(_$$_REQUIRE(_dependencyMap[0], "postcss-value-parser"));
+  var camelizeStyleName = _interopDefault(_$$_REQUIRE(_dependencyMap[1], "camelize"));
+  var cssColorKeywords = _interopDefault(_$$_REQUIRE(_dependencyMap[2], "css-color-keywords"));
+  var matchString = function matchString(node) {
+    if (node.type !== 'string') return null;
+    return node.value.replace(/\\([0-9a-f]{1,6})(?:\s|$)/gi, function (match, charCode) {
+      return String.fromCharCode(parseInt(charCode, 16));
+    }).replace(/\\/g, '');
+  };
+  var hexColorRe = /^(#(?:[0-9a-f]{3,4}){1,2})$/i;
+  var cssFunctionNameRe = /^(rgba?|hsla?|hwb|lab|lch|gray|color)$/;
+  var matchColor = function matchColor(node) {
+    if (node.type === 'word' && (hexColorRe.test(node.value) || node.value in cssColorKeywords || node.value === 'transparent')) {
+      return node.value;
+    } else if (node.type === 'function' && cssFunctionNameRe.test(node.value)) {
+      return _$$_REQUIRE(_dependencyMap[0], "postcss-value-parser").stringify(node);
+    }
+    return null;
+  };
+  var noneRe = /^(none)$/i;
+  var autoRe = /^(auto)$/i;
+  var identRe = /(^-?[_a-z][_a-z0-9-]*$)/i; // Note if these are wrong, you'll need to change index.js too
+
+  var numberRe = /^([+-]?(?:\d*\.)?\d+(?:e[+-]?\d+)?)$/i; // Note lengthRe is sneaky: you can omit units for 0
+
+  var lengthRe = /^(0$|(?:[+-]?(?:\d*\.)?\d+(?:e[+-]?\d+)?)(?=px$))/i;
+  var unsupportedUnitRe = /^([+-]?(?:\d*\.)?\d+(?:e[+-]?\d+)?(ch|em|ex|rem|vh|vw|vmin|vmax|cm|mm|in|pc|pt))$/i;
+  var angleRe = /^([+-]?(?:\d*\.)?\d+(?:e[+-]?\d+)?(?:deg|rad))$/i;
+  var percentRe = /^([+-]?(?:\d*\.)?\d+(?:e[+-]?\d+)?%)$/i;
+  var noopToken = function noopToken(predicate) {
+    return function (node) {
+      return predicate(node) ? '<token>' : null;
+    };
+  };
+  var valueForTypeToken = function valueForTypeToken(type) {
+    return function (node) {
+      return node.type === type ? node.value : null;
+    };
+  };
+  var regExpToken = function regExpToken(regExp, transform) {
+    if (transform === void 0) {
+      transform = String;
+    }
+    return function (node) {
+      if (node.type !== 'word') return null;
+      var match = node.value.match(regExp);
+      if (match === null) return null;
+      var value = transform(match[1]);
+      return value;
+    };
+  };
+  var SPACE = noopToken(function (node) {
+    return node.type === 'space';
+  });
+  var SLASH = noopToken(function (node) {
+    return node.type === 'div' && node.value === '/';
+  });
+  var COMMA = noopToken(function (node) {
+    return node.type === 'div' && node.value === ',';
+  });
+  var WORD = valueForTypeToken('word');
+  var NONE = regExpToken(noneRe);
+  var AUTO = regExpToken(autoRe);
+  var NUMBER = regExpToken(numberRe, Number);
+  var LENGTH = regExpToken(lengthRe, Number);
+  var UNSUPPORTED_LENGTH_UNIT = regExpToken(unsupportedUnitRe);
+  var ANGLE = regExpToken(angleRe, function (angle) {
+    return angle.toLowerCase();
+  });
+  var PERCENT = regExpToken(percentRe);
+  var IDENT = regExpToken(identRe);
+  var STRING = matchString;
+  var COLOR = matchColor;
+  var LINE = regExpToken(/^(none|underline|line-through)$/i);
+  var aspectRatio = function aspectRatio(tokenStream) {
+    var aspectRatio = tokenStream.expect(NUMBER);
+    if (tokenStream.hasTokens()) {
+      tokenStream.expect(SLASH);
+      aspectRatio /= tokenStream.expect(NUMBER);
+    }
+    return {
+      aspectRatio: aspectRatio
+    };
+  };
+  var BORDER_STYLE = regExpToken(/^(solid|dashed|dotted)$/);
+  var defaultBorderWidth = 1;
+  var defaultBorderColor = 'black';
+  var defaultBorderStyle = 'solid';
+  var border = function border(tokenStream) {
+    var borderWidth;
+    var borderColor;
+    var borderStyle;
+    if (tokenStream.matches(NONE)) {
+      tokenStream.expectEmpty();
+      return {
+        borderWidth: 0,
+        borderColor: 'black',
+        borderStyle: 'solid'
+      };
+    }
+    var partsParsed = 0;
+    while (partsParsed < 3 && tokenStream.hasTokens()) {
+      if (partsParsed !== 0) tokenStream.expect(SPACE);
+      if (borderWidth === undefined && tokenStream.matches(LENGTH, UNSUPPORTED_LENGTH_UNIT)) {
+        borderWidth = tokenStream.lastValue;
+      } else if (borderColor === undefined && tokenStream.matches(COLOR)) {
+        borderColor = tokenStream.lastValue;
+      } else if (borderStyle === undefined && tokenStream.matches(BORDER_STYLE)) {
+        borderStyle = tokenStream.lastValue;
+      } else {
+        tokenStream["throw"]();
+      }
+      partsParsed += 1;
+    }
+    tokenStream.expectEmpty();
+    if (borderWidth === undefined) borderWidth = defaultBorderWidth;
+    if (borderColor === undefined) borderColor = defaultBorderColor;
+    if (borderStyle === undefined) borderStyle = defaultBorderStyle;
+    return {
+      borderWidth: borderWidth,
+      borderColor: borderColor,
+      borderStyle: borderStyle
+    };
+  };
+  var directionFactory = function directionFactory(_ref) {
+    var _ref$types = _ref.types,
+      types = _ref$types === void 0 ? [LENGTH, UNSUPPORTED_LENGTH_UNIT, PERCENT] : _ref$types,
+      _ref$directions = _ref.directions,
+      directions = _ref$directions === void 0 ? ['Top', 'Right', 'Bottom', 'Left'] : _ref$directions,
+      _ref$prefix = _ref.prefix,
+      prefix = _ref$prefix === void 0 ? '' : _ref$prefix,
+      _ref$suffix = _ref.suffix,
+      suffix = _ref$suffix === void 0 ? '' : _ref$suffix;
+    return function (tokenStream) {
+      var _ref2;
+      var values = []; // borderWidth doesn't currently allow a percent value, but may do in the future
+
+      values.push(tokenStream.expect.apply(tokenStream, types));
+      while (values.length < 4 && tokenStream.hasTokens()) {
+        tokenStream.expect(SPACE);
+        values.push(tokenStream.expect.apply(tokenStream, types));
+      }
+      tokenStream.expectEmpty();
+      var top = values[0],
+        _values$ = values[1],
+        right = _values$ === void 0 ? top : _values$,
+        _values$2 = values[2],
+        bottom = _values$2 === void 0 ? top : _values$2,
+        _values$3 = values[3],
+        left = _values$3 === void 0 ? right : _values$3;
+      var keyFor = function keyFor(n) {
+        return "" + prefix + directions[n] + suffix;
+      };
+      return _ref2 = {}, _ref2[keyFor(0)] = top, _ref2[keyFor(1)] = right, _ref2[keyFor(2)] = bottom, _ref2[keyFor(3)] = left, _ref2;
+    };
+  };
+  var parseShadowOffset = function parseShadowOffset(tokenStream) {
+    var width = tokenStream.expect(LENGTH);
+    var height = tokenStream.matches(SPACE) ? tokenStream.expect(LENGTH) : width;
+    tokenStream.expectEmpty();
+    return {
+      width: width,
+      height: height
+    };
+  };
+  var parseShadow = function parseShadow(tokenStream) {
+    var offsetX;
+    var offsetY;
+    var radius;
+    var color;
+    if (tokenStream.matches(NONE)) {
+      tokenStream.expectEmpty();
+      return {
+        offset: {
+          width: 0,
+          height: 0
+        },
+        radius: 0,
+        color: 'black'
+      };
+    }
+    var didParseFirst = false;
+    while (tokenStream.hasTokens()) {
+      if (didParseFirst) tokenStream.expect(SPACE);
+      if (offsetX === undefined && tokenStream.matches(LENGTH, UNSUPPORTED_LENGTH_UNIT)) {
+        offsetX = tokenStream.lastValue;
+        tokenStream.expect(SPACE);
+        offsetY = tokenStream.expect(LENGTH, UNSUPPORTED_LENGTH_UNIT);
+        tokenStream.saveRewindPoint();
+        if (tokenStream.matches(SPACE) && tokenStream.matches(LENGTH, UNSUPPORTED_LENGTH_UNIT)) {
+          radius = tokenStream.lastValue;
+        } else {
+          tokenStream.rewind();
+        }
+      } else if (color === undefined && tokenStream.matches(COLOR)) {
+        color = tokenStream.lastValue;
+      } else {
+        tokenStream["throw"]();
+      }
+      didParseFirst = true;
+    }
+    if (offsetX === undefined) tokenStream["throw"]();
+    return {
+      offset: {
+        width: offsetX,
+        height: offsetY
+      },
+      radius: radius !== undefined ? radius : 0,
+      color: color !== undefined ? color : 'black'
+    };
+  };
+  var boxShadow = function boxShadow(tokenStream) {
+    var _parseShadow = parseShadow(tokenStream),
+      offset = _parseShadow.offset,
+      radius = _parseShadow.radius,
+      color = _parseShadow.color;
+    return {
+      shadowOffset: offset,
+      shadowRadius: radius,
+      shadowColor: color,
+      shadowOpacity: 1
+    };
+  };
+  var defaultFlexGrow = 1;
+  var defaultFlexShrink = 1;
+  var defaultFlexBasis = 0;
+  var flex = function flex(tokenStream) {
+    var flexGrow;
+    var flexShrink;
+    var flexBasis;
+    if (tokenStream.matches(NONE)) {
+      tokenStream.expectEmpty();
+      return {
+        flexGrow: 0,
+        flexShrink: 0,
+        flexBasis: 'auto'
+      };
+    }
+    tokenStream.saveRewindPoint();
+    if (tokenStream.matches(AUTO) && !tokenStream.hasTokens()) {
+      return {
+        flexGrow: 1,
+        flexShrink: 1,
+        flexBasis: 'auto'
+      };
+    }
+    tokenStream.rewind();
+    var partsParsed = 0;
+    while (partsParsed < 2 && tokenStream.hasTokens()) {
+      if (partsParsed !== 0) tokenStream.expect(SPACE);
+      if (flexGrow === undefined && tokenStream.matches(NUMBER)) {
+        flexGrow = tokenStream.lastValue;
+        tokenStream.saveRewindPoint();
+        if (tokenStream.matches(SPACE) && tokenStream.matches(NUMBER)) {
+          flexShrink = tokenStream.lastValue;
+        } else {
+          tokenStream.rewind();
+        }
+      } else if (flexBasis === undefined && tokenStream.matches(LENGTH, UNSUPPORTED_LENGTH_UNIT, PERCENT)) {
+        flexBasis = tokenStream.lastValue;
+      } else if (flexBasis === undefined && tokenStream.matches(AUTO)) {
+        flexBasis = 'auto';
+      } else {
+        tokenStream["throw"]();
+      }
+      partsParsed += 1;
+    }
+    tokenStream.expectEmpty();
+    if (flexGrow === undefined) flexGrow = defaultFlexGrow;
+    if (flexShrink === undefined) flexShrink = defaultFlexShrink;
+    if (flexBasis === undefined) flexBasis = defaultFlexBasis;
+    return {
+      flexGrow: flexGrow,
+      flexShrink: flexShrink,
+      flexBasis: flexBasis
+    };
+  };
+  var FLEX_WRAP = regExpToken(/(nowrap|wrap|wrap-reverse)/);
+  var FLEX_DIRECTION = regExpToken(/(row|row-reverse|column|column-reverse)/);
+  var defaultFlexWrap = 'nowrap';
+  var defaultFlexDirection = 'row';
+  var flexFlow = function flexFlow(tokenStream) {
+    var flexWrap;
+    var flexDirection;
+    var partsParsed = 0;
+    while (partsParsed < 2 && tokenStream.hasTokens()) {
+      if (partsParsed !== 0) tokenStream.expect(SPACE);
+      if (flexWrap === undefined && tokenStream.matches(FLEX_WRAP)) {
+        flexWrap = tokenStream.lastValue;
+      } else if (flexDirection === undefined && tokenStream.matches(FLEX_DIRECTION)) {
+        flexDirection = tokenStream.lastValue;
+      } else {
+        tokenStream["throw"]();
+      }
+      partsParsed += 1;
+    }
+    tokenStream.expectEmpty();
+    if (flexWrap === undefined) flexWrap = defaultFlexWrap;
+    if (flexDirection === undefined) flexDirection = defaultFlexDirection;
+    return {
+      flexWrap: flexWrap,
+      flexDirection: flexDirection
+    };
+  };
+  var fontFamily = function fontFamily(tokenStream) {
+    var fontFamily;
+    if (tokenStream.matches(STRING)) {
+      fontFamily = tokenStream.lastValue;
+    } else {
+      fontFamily = tokenStream.expect(IDENT);
+      while (tokenStream.hasTokens()) {
+        tokenStream.expect(SPACE);
+        var nextIdent = tokenStream.expect(IDENT);
+        fontFamily += " " + nextIdent;
+      }
+    }
+    tokenStream.expectEmpty();
+    return {
+      fontFamily: fontFamily
+    };
+  };
+  var NORMAL = regExpToken(/^(normal)$/);
+  var STYLE = regExpToken(/^(italic)$/);
+  var WEIGHT = regExpToken(/^([1-9]00|bold)$/);
+  var VARIANT = regExpToken(/^(small-caps)$/);
+  var defaultFontStyle = 'normal';
+  var defaultFontWeight = 'normal';
+  var defaultFontVariant = [];
+  var font = function font(tokenStream) {
+    var fontStyle;
+    var fontWeight;
+    var fontVariant; // let fontSize;
+
+    var lineHeight; // let fontFamily;
+
+    var numStyleWeightVariantMatched = 0;
+    while (numStyleWeightVariantMatched < 3 && tokenStream.hasTokens()) {
+      if (tokenStream.matches(NORMAL)) ;else if (fontStyle === undefined && tokenStream.matches(STYLE)) {
+        fontStyle = tokenStream.lastValue;
+      } else if (fontWeight === undefined && tokenStream.matches(WEIGHT)) {
+        fontWeight = tokenStream.lastValue;
+      } else if (fontVariant === undefined && tokenStream.matches(VARIANT)) {
+        fontVariant = [tokenStream.lastValue];
+      } else {
+        break;
+      }
+      tokenStream.expect(SPACE);
+      numStyleWeightVariantMatched += 1;
+    }
+    var fontSize = tokenStream.expect(LENGTH, UNSUPPORTED_LENGTH_UNIT);
+    if (tokenStream.matches(SLASH)) {
+      lineHeight = tokenStream.expect(LENGTH, UNSUPPORTED_LENGTH_UNIT);
+    }
+    tokenStream.expect(SPACE);
+    var _fontFamily = fontFamily(tokenStream),
+      fontFamily$1 = _fontFamily.fontFamily;
+    if (fontStyle === undefined) fontStyle = defaultFontStyle;
+    if (fontWeight === undefined) fontWeight = defaultFontWeight;
+    if (fontVariant === undefined) fontVariant = defaultFontVariant;
+    var out = {
+      fontStyle: fontStyle,
+      fontWeight: fontWeight,
+      fontVariant: fontVariant,
+      fontSize: fontSize,
+      fontFamily: fontFamily$1
+    };
+    if (lineHeight !== undefined) out.lineHeight = lineHeight;
+    return out;
+  };
+  var fontVariant = function fontVariant(tokenStream) {
+    var values = [tokenStream.expect(IDENT)];
+    while (tokenStream.hasTokens()) {
+      tokenStream.expect(SPACE);
+      values.push(tokenStream.expect(IDENT));
+    }
+    return {
+      fontVariant: values
+    };
+  };
+  var ALIGN_CONTENT = regExpToken(/(flex-(?:start|end)|center|stretch|space-(?:between|around))/);
+  var JUSTIFY_CONTENT = regExpToken(/(flex-(?:start|end)|center|space-(?:between|around|evenly))/);
+  var placeContent = function placeContent(tokenStream) {
+    var alignContent = tokenStream.expect(ALIGN_CONTENT);
+    var justifyContent;
+    if (tokenStream.hasTokens()) {
+      tokenStream.expect(SPACE);
+      justifyContent = tokenStream.expect(JUSTIFY_CONTENT);
+    } else {
+      justifyContent = 'stretch';
+    }
+    tokenStream.expectEmpty();
+    return {
+      alignContent: alignContent,
+      justifyContent: justifyContent
+    };
+  };
+  var STYLE$1 = regExpToken(/^(solid|double|dotted|dashed)$/);
+  var defaultTextDecorationLine = 'none';
+  var defaultTextDecorationStyle = 'solid';
+  var defaultTextDecorationColor = 'black';
+  var textDecoration = function textDecoration(tokenStream) {
+    var line;
+    var style;
+    var color;
+    var didParseFirst = false;
+    while (tokenStream.hasTokens()) {
+      if (didParseFirst) tokenStream.expect(SPACE);
+      if (line === undefined && tokenStream.matches(LINE)) {
+        var lines = [tokenStream.lastValue.toLowerCase()];
+        tokenStream.saveRewindPoint();
+        if (lines[0] !== 'none' && tokenStream.matches(SPACE) && tokenStream.matches(LINE)) {
+          lines.push(tokenStream.lastValue.toLowerCase()); // Underline comes before line-through
+
+          lines.sort().reverse();
+        } else {
+          tokenStream.rewind();
+        }
+        line = lines.join(' ');
+      } else if (style === undefined && tokenStream.matches(STYLE$1)) {
+        style = tokenStream.lastValue;
+      } else if (color === undefined && tokenStream.matches(COLOR)) {
+        color = tokenStream.lastValue;
+      } else {
+        tokenStream["throw"]();
+      }
+      didParseFirst = true;
+    }
+    return {
+      textDecorationLine: line !== undefined ? line : defaultTextDecorationLine,
+      textDecorationColor: color !== undefined ? color : defaultTextDecorationColor,
+      textDecorationStyle: style !== undefined ? style : defaultTextDecorationStyle
+    };
+  };
+  var textDecorationLine = function textDecorationLine(tokenStream) {
+    var lines = [];
+    var didParseFirst = false;
+    while (tokenStream.hasTokens()) {
+      if (didParseFirst) tokenStream.expect(SPACE);
+      lines.push(tokenStream.expect(LINE).toLowerCase());
+      didParseFirst = true;
+    }
+    lines.sort().reverse();
+    return {
+      textDecorationLine: lines.join(' ')
+    };
+  };
+  var textShadow = function textShadow(tokenStream) {
+    var _parseShadow2 = parseShadow(tokenStream),
+      offset = _parseShadow2.offset,
+      radius = _parseShadow2.radius,
+      color = _parseShadow2.color;
+    return {
+      textShadowOffset: offset,
+      textShadowRadius: radius,
+      textShadowColor: color
+    };
+  };
+  var oneOfType = function oneOfType(tokenType) {
+    return function (functionStream) {
+      var value = functionStream.expect(tokenType);
+      functionStream.expectEmpty();
+      return value;
+    };
+  };
+  var singleNumber = oneOfType(NUMBER);
+  var singleLength = oneOfType(LENGTH);
+  var singleAngle = oneOfType(ANGLE);
+  var xyTransformFactory = function xyTransformFactory(tokenType) {
+    return function (key, valueIfOmitted) {
+      return function (functionStream) {
+        var _ref3, _ref4;
+        var x = functionStream.expect(tokenType);
+        var y;
+        if (functionStream.hasTokens()) {
+          functionStream.expect(COMMA);
+          y = functionStream.expect(tokenType);
+        } else if (valueIfOmitted !== undefined) {
+          y = valueIfOmitted;
+        } else {
+          // Assumption, if x === y, then we can omit XY
+          // I.e. scale(5) => [{ scale: 5 }] rather than [{ scaleX: 5 }, { scaleY: 5 }]
+          return x;
+        }
+        functionStream.expectEmpty();
+        return [(_ref3 = {}, _ref3[key + "Y"] = y, _ref3), (_ref4 = {}, _ref4[key + "X"] = x, _ref4)];
+      };
+    };
+  };
+  var xyNumber = xyTransformFactory(NUMBER);
+  var xyLength = xyTransformFactory(LENGTH);
+  var xyAngle = xyTransformFactory(ANGLE);
+  var partTransforms = {
+    perspective: singleNumber,
+    scale: xyNumber('scale'),
+    scaleX: singleNumber,
+    scaleY: singleNumber,
+    translate: xyLength('translate', 0),
+    translateX: singleLength,
+    translateY: singleLength,
+    rotate: singleAngle,
+    rotateX: singleAngle,
+    rotateY: singleAngle,
+    rotateZ: singleAngle,
+    skewX: singleAngle,
+    skewY: singleAngle,
+    skew: xyAngle('skew', '0deg')
+  };
+  var transform = function transform(tokenStream) {
+    var transforms = [];
+    var didParseFirst = false;
+    while (tokenStream.hasTokens()) {
+      if (didParseFirst) tokenStream.expect(SPACE);
+      var functionStream = tokenStream.expectFunction();
+      var functionName = functionStream.functionName;
+      var transformedValues = partTransforms[functionName](functionStream);
+      if (!Array.isArray(transformedValues)) {
+        var _ref5;
+        transformedValues = [(_ref5 = {}, _ref5[functionName] = transformedValues, _ref5)];
+      }
+      transforms = transformedValues.concat(transforms);
+      didParseFirst = true;
+    }
+    return {
+      transform: transforms
+    };
+  };
+  var background = function background(tokenStream) {
+    return {
+      backgroundColor: tokenStream.expect(COLOR)
+    };
+  };
+  var borderColor = directionFactory({
+    types: [COLOR],
+    prefix: 'border',
+    suffix: 'Color'
+  });
+  var borderRadius = directionFactory({
+    directions: ['TopLeft', 'TopRight', 'BottomRight', 'BottomLeft'],
+    prefix: 'border',
+    suffix: 'Radius'
+  });
+  var borderWidth = directionFactory({
+    prefix: 'border',
+    suffix: 'Width'
+  });
+  var margin = directionFactory({
+    types: [LENGTH, UNSUPPORTED_LENGTH_UNIT, PERCENT, AUTO],
+    prefix: 'margin'
+  });
+  var padding = directionFactory({
+    prefix: 'padding'
+  });
+  var fontWeight = function fontWeight(tokenStream) {
+    return {
+      fontWeight: tokenStream.expect(WORD) // Also match numbers as strings
+    };
+  };
+  var shadowOffset = function shadowOffset(tokenStream) {
+    return {
+      shadowOffset: parseShadowOffset(tokenStream)
+    };
+  };
+  var textShadowOffset = function textShadowOffset(tokenStream) {
+    return {
+      textShadowOffset: parseShadowOffset(tokenStream)
+    };
+  };
+  var transforms = {
+    aspectRatio: aspectRatio,
+    background: background,
+    border: border,
+    borderColor: borderColor,
+    borderRadius: borderRadius,
+    borderWidth: borderWidth,
+    boxShadow: boxShadow,
+    flex: flex,
+    flexFlow: flexFlow,
+    font: font,
+    fontFamily: fontFamily,
+    fontVariant: fontVariant,
+    fontWeight: fontWeight,
+    margin: margin,
+    padding: padding,
+    placeContent: placeContent,
+    shadowOffset: shadowOffset,
+    textShadow: textShadow,
+    textShadowOffset: textShadowOffset,
+    textDecoration: textDecoration,
+    textDecorationLine: textDecorationLine,
+    transform: transform
+  };
+  var propertiesWithoutUnits;
+  if (process.env.NODE_ENV !== 'production') {
+    propertiesWithoutUnits = ['aspectRatio', 'elevation', 'flexGrow', 'flexShrink', 'opacity', 'shadowOpacity', 'zIndex'];
+  }
+  var devPropertiesWithUnitsRegExp = propertiesWithoutUnits != null ? new RegExp(propertiesWithoutUnits.join('|')) : null;
+  var SYMBOL_MATCH = 'SYMBOL_MATCH';
+  var TokenStream = /*#__PURE__*/
+  function () {
+    function TokenStream(nodes, parent) {
+      this.index = 0;
+      this.nodes = nodes;
+      this.functionName = parent != null ? parent.value : null;
+      this.lastValue = null;
+      this.rewindIndex = -1;
+    }
+    var _proto = TokenStream.prototype;
+    _proto.hasTokens = function hasTokens() {
+      return this.index <= this.nodes.length - 1;
+    };
+    _proto[SYMBOL_MATCH] = function () {
+      if (!this.hasTokens()) return null;
+      var node = this.nodes[this.index];
+      for (var i = 0; i < arguments.length; i += 1) {
+        var tokenDescriptor = i < 0 || arguments.length <= i ? undefined : arguments[i];
+        var value = tokenDescriptor(node);
+        if (value !== null) {
+          this.index += 1;
+          this.lastValue = value;
+          return value;
+        }
+      }
+      return null;
+    };
+    _proto.matches = function matches() {
+      return this[SYMBOL_MATCH].apply(this, arguments) !== null;
+    };
+    _proto.expect = function expect() {
+      var value = this[SYMBOL_MATCH].apply(this, arguments);
+      return value !== null ? value : this["throw"]();
+    };
+    _proto.matchesFunction = function matchesFunction() {
+      var node = this.nodes[this.index];
+      if (node.type !== 'function') return null;
+      var value = new TokenStream(node.nodes, node);
+      this.index += 1;
+      this.lastValue = null;
+      return value;
+    };
+    _proto.expectFunction = function expectFunction() {
+      var value = this.matchesFunction();
+      return value !== null ? value : this["throw"]();
+    };
+    _proto.expectEmpty = function expectEmpty() {
+      if (this.hasTokens()) this["throw"]();
+    };
+    _proto["throw"] = function _throw() {
+      throw new Error("Unexpected token type: " + this.nodes[this.index].type);
+    };
+    _proto.saveRewindPoint = function saveRewindPoint() {
+      this.rewindIndex = this.index;
+    };
+    _proto.rewind = function rewind() {
+      if (this.rewindIndex === -1) throw new Error('Internal error');
+      this.index = this.rewindIndex;
+      this.lastValue = null;
+    };
+    return TokenStream;
+  }();
+  /* eslint-disable no-param-reassign */
+  // Note if this is wrong, you'll need to change tokenTypes.js too
+
+  var numberOrLengthRe = /^([+-]?(?:\d*\.)?\d+(?:e[+-]?\d+)?)(?:px)?$/i;
+  var numberOnlyRe = /^[+-]?(?:\d*\.\d*|[1-9]\d*)(?:e[+-]?\d+)?$/i;
+  var boolRe = /^true|false$/i;
+  var nullRe = /^null$/i;
+  var undefinedRe = /^undefined$/i; // Undocumented export
+
+  var transformRawValue = function transformRawValue(propName, value) {
+    if (process.env.NODE_ENV !== 'production') {
+      var needsUnit = !devPropertiesWithUnitsRegExp.test(propName);
+      var isNumberWithoutUnit = numberOnlyRe.test(value);
+      if (needsUnit && isNumberWithoutUnit) {
+        // eslint-disable-next-line no-console
+        console.warn("Expected style \"" + propName + ": " + value + "\" to contain units");
+      }
+      if (!needsUnit && value !== '0' && !isNumberWithoutUnit) {
+        // eslint-disable-next-line no-console
+        console.warn("Expected style \"" + propName + ": " + value + "\" to be unitless");
+      }
+    }
+    var numberMatch = value.match(numberOrLengthRe);
+    if (numberMatch !== null) return Number(numberMatch[1]);
+    var boolMatch = value.match(boolRe);
+    if (boolMatch !== null) return boolMatch[0].toLowerCase() === 'true';
+    var nullMatch = value.match(nullRe);
+    if (nullMatch !== null) return null;
+    var undefinedMatch = value.match(undefinedRe);
+    if (undefinedMatch !== null) return undefined;
+    return value;
+  };
+  var baseTransformShorthandValue = function baseTransformShorthandValue(propName, value) {
+    var ast = parse__default(value);
+    var tokenStream = new TokenStream(ast.nodes);
+    return transforms[propName](tokenStream);
+  };
+  var transformShorthandValue = process.env.NODE_ENV === 'production' ? baseTransformShorthandValue : function (propName, value) {
+    try {
+      return baseTransformShorthandValue(propName, value);
+    } catch (e) {
+      throw new Error("Failed to parse declaration \"" + propName + ": " + value + "\"");
+    }
+  };
+  var getStylesForProperty = function getStylesForProperty(propName, inputValue, allowShorthand) {
+    var _ref6;
+    var isRawValue = allowShorthand === false || !(propName in transforms);
+    var value = inputValue.trim();
+    var propValues = isRawValue ? (_ref6 = {}, _ref6[propName] = transformRawValue(propName, value), _ref6) : transformShorthandValue(propName, value);
+    return propValues;
+  };
+  var getPropertyName = function getPropertyName(propName) {
+    var isCustomProp = /^--\w+/.test(propName);
+    if (isCustomProp) {
+      return propName;
+    }
+    return camelizeStyleName(propName);
+  };
+  var index = function index(rules, shorthandBlacklist) {
+    if (shorthandBlacklist === void 0) {
+      shorthandBlacklist = [];
+    }
+    return rules.reduce(function (accum, rule) {
+      var propertyName = getPropertyName(rule[0]);
+      var value = rule[1];
+      var allowShorthand = shorthandBlacklist.indexOf(propertyName) === -1;
+      return Object.assign(accum, getStylesForProperty(propertyName, value, allowShorthand));
+    }, {});
+  };
+  exports["default"] = index;
+  exports.getPropertyName = getPropertyName;
+  exports.getStylesForProperty = getStylesForProperty;
+  exports.transformRawValue = transformRawValue;
+},1701,[1702,1707,1708],"node_modules\\css-to-react-native\\index.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  function ValueParser(value) {
+    if (this instanceof ValueParser) {
+      this.nodes = _$$_REQUIRE(_dependencyMap[0], "./parse")(value);
+      return this;
+    }
+    return new ValueParser(value);
+  }
+  ValueParser.prototype.toString = function () {
+    return Array.isArray(this.nodes) ? _$$_REQUIRE(_dependencyMap[1], "./stringify")(this.nodes) : "";
+  };
+  ValueParser.prototype.walk = function (cb, bubble) {
+    _$$_REQUIRE(_dependencyMap[2], "./walk")(this.nodes, cb, bubble);
+    return this;
+  };
+  ValueParser.unit = _$$_REQUIRE(_dependencyMap[3], "./unit");
+  ValueParser.walk = _$$_REQUIRE(_dependencyMap[2], "./walk");
+  ValueParser.stringify = _$$_REQUIRE(_dependencyMap[1], "./stringify");
+  module.exports = ValueParser;
+},1702,[1703,1704,1705,1706],"node_modules\\postcss-value-parser\\lib\\index.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var openParentheses = "(".charCodeAt(0);
+  var closeParentheses = ")".charCodeAt(0);
+  var singleQuote = "'".charCodeAt(0);
+  var doubleQuote = '"'.charCodeAt(0);
+  var backslash = "\\".charCodeAt(0);
+  var slash = "/".charCodeAt(0);
+  var comma = ",".charCodeAt(0);
+  var colon = ":".charCodeAt(0);
+  var star = "*".charCodeAt(0);
+  var uLower = "u".charCodeAt(0);
+  var uUpper = "U".charCodeAt(0);
+  var plus = "+".charCodeAt(0);
+  var isUnicodeRange = /^[a-f0-9?-]+$/i;
+  module.exports = function (input) {
+    var tokens = [];
+    var value = input;
+    var next, quote, prev, token, escape, escapePos, whitespacePos, parenthesesOpenPos;
+    var pos = 0;
+    var code = value.charCodeAt(pos);
+    var max = value.length;
+    var stack = [{
+      nodes: tokens
+    }];
+    var balanced = 0;
+    var parent;
+    var name = "";
+    var before = "";
+    var after = "";
+    while (pos < max) {
+      // Whitespaces
+      if (code <= 32) {
+        next = pos;
+        do {
+          next += 1;
+          code = value.charCodeAt(next);
+        } while (code <= 32);
+        token = value.slice(pos, next);
+        prev = tokens[tokens.length - 1];
+        if (code === closeParentheses && balanced) {
+          after = token;
+        } else if (prev && prev.type === "div") {
+          prev.after = token;
+          prev.sourceEndIndex += token.length;
+        } else if (code === comma || code === colon || code === slash && value.charCodeAt(next + 1) !== star && (!parent || parent && parent.type === "function" && parent.value !== "calc")) {
+          before = token;
+        } else {
+          tokens.push({
+            type: "space",
+            sourceIndex: pos,
+            sourceEndIndex: next,
+            value: token
+          });
+        }
+        pos = next;
+
+        // Quotes
+      } else if (code === singleQuote || code === doubleQuote) {
+        next = pos;
+        quote = code === singleQuote ? "'" : '"';
+        token = {
+          type: "string",
+          sourceIndex: pos,
+          quote: quote
+        };
+        do {
+          escape = false;
+          next = value.indexOf(quote, next + 1);
+          if (~next) {
+            escapePos = next;
+            while (value.charCodeAt(escapePos - 1) === backslash) {
+              escapePos -= 1;
+              escape = !escape;
+            }
+          } else {
+            value += quote;
+            next = value.length - 1;
+            token.unclosed = true;
+          }
+        } while (escape);
+        token.value = value.slice(pos + 1, next);
+        token.sourceEndIndex = token.unclosed ? next : next + 1;
+        tokens.push(token);
+        pos = next + 1;
+        code = value.charCodeAt(pos);
+
+        // Comments
+      } else if (code === slash && value.charCodeAt(pos + 1) === star) {
+        next = value.indexOf("*/", pos);
+        token = {
+          type: "comment",
+          sourceIndex: pos,
+          sourceEndIndex: next + 2
+        };
+        if (next === -1) {
+          token.unclosed = true;
+          next = value.length;
+          token.sourceEndIndex = next;
+        }
+        token.value = value.slice(pos + 2, next);
+        tokens.push(token);
+        pos = next + 2;
+        code = value.charCodeAt(pos);
+
+        // Operation within calc
+      } else if ((code === slash || code === star) && parent && parent.type === "function" && parent.value === "calc") {
+        token = value[pos];
+        tokens.push({
+          type: "word",
+          sourceIndex: pos - before.length,
+          sourceEndIndex: pos + token.length,
+          value: token
+        });
+        pos += 1;
+        code = value.charCodeAt(pos);
+
+        // Dividers
+      } else if (code === slash || code === comma || code === colon) {
+        token = value[pos];
+        tokens.push({
+          type: "div",
+          sourceIndex: pos - before.length,
+          sourceEndIndex: pos + token.length,
+          value: token,
+          before: before,
+          after: ""
+        });
+        before = "";
+        pos += 1;
+        code = value.charCodeAt(pos);
+
+        // Open parentheses
+      } else if (openParentheses === code) {
+        // Whitespaces after open parentheses
+        next = pos;
+        do {
+          next += 1;
+          code = value.charCodeAt(next);
+        } while (code <= 32);
+        parenthesesOpenPos = pos;
+        token = {
+          type: "function",
+          sourceIndex: pos - name.length,
+          value: name,
+          before: value.slice(parenthesesOpenPos + 1, next)
+        };
+        pos = next;
+        if (name === "url" && code !== singleQuote && code !== doubleQuote) {
+          next -= 1;
+          do {
+            escape = false;
+            next = value.indexOf(")", next + 1);
+            if (~next) {
+              escapePos = next;
+              while (value.charCodeAt(escapePos - 1) === backslash) {
+                escapePos -= 1;
+                escape = !escape;
+              }
+            } else {
+              value += ")";
+              next = value.length - 1;
+              token.unclosed = true;
+            }
+          } while (escape);
+          // Whitespaces before closed
+          whitespacePos = next;
+          do {
+            whitespacePos -= 1;
+            code = value.charCodeAt(whitespacePos);
+          } while (code <= 32);
+          if (parenthesesOpenPos < whitespacePos) {
+            if (pos !== whitespacePos + 1) {
+              token.nodes = [{
+                type: "word",
+                sourceIndex: pos,
+                sourceEndIndex: whitespacePos + 1,
+                value: value.slice(pos, whitespacePos + 1)
+              }];
+            } else {
+              token.nodes = [];
+            }
+            if (token.unclosed && whitespacePos + 1 !== next) {
+              token.after = "";
+              token.nodes.push({
+                type: "space",
+                sourceIndex: whitespacePos + 1,
+                sourceEndIndex: next,
+                value: value.slice(whitespacePos + 1, next)
+              });
+            } else {
+              token.after = value.slice(whitespacePos + 1, next);
+              token.sourceEndIndex = next;
+            }
+          } else {
+            token.after = "";
+            token.nodes = [];
+          }
+          pos = next + 1;
+          token.sourceEndIndex = token.unclosed ? next : pos;
+          code = value.charCodeAt(pos);
+          tokens.push(token);
+        } else {
+          balanced += 1;
+          token.after = "";
+          token.sourceEndIndex = pos + 1;
+          tokens.push(token);
+          stack.push(token);
+          tokens = token.nodes = [];
+          parent = token;
+        }
+        name = "";
+
+        // Close parentheses
+      } else if (closeParentheses === code && balanced) {
+        pos += 1;
+        code = value.charCodeAt(pos);
+        parent.after = after;
+        parent.sourceEndIndex += after.length;
+        after = "";
+        balanced -= 1;
+        stack[stack.length - 1].sourceEndIndex = pos;
+        stack.pop();
+        parent = stack[balanced];
+        tokens = parent.nodes;
+
+        // Words
+      } else {
+        next = pos;
+        do {
+          if (code === backslash) {
+            next += 1;
+          }
+          next += 1;
+          code = value.charCodeAt(next);
+        } while (next < max && !(code <= 32 || code === singleQuote || code === doubleQuote || code === comma || code === colon || code === slash || code === openParentheses || code === star && parent && parent.type === "function" && parent.value === "calc" || code === slash && parent.type === "function" && parent.value === "calc" || code === closeParentheses && balanced));
+        token = value.slice(pos, next);
+        if (openParentheses === code) {
+          name = token;
+        } else if ((uLower === token.charCodeAt(0) || uUpper === token.charCodeAt(0)) && plus === token.charCodeAt(1) && isUnicodeRange.test(token.slice(2))) {
+          tokens.push({
+            type: "unicode-range",
+            sourceIndex: pos,
+            sourceEndIndex: next,
+            value: token
+          });
+        } else {
+          tokens.push({
+            type: "word",
+            sourceIndex: pos,
+            sourceEndIndex: next,
+            value: token
+          });
+        }
+        pos = next;
+      }
+    }
+    for (pos = stack.length - 1; pos; pos -= 1) {
+      stack[pos].unclosed = true;
+      stack[pos].sourceEndIndex = value.length;
+    }
+    return stack[0].nodes;
+  };
+},1703,[],"node_modules\\postcss-value-parser\\lib\\parse.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  function stringifyNode(node, custom) {
+    var type = node.type;
+    var value = node.value;
+    var buf;
+    var customResult;
+    if (custom && (customResult = custom(node)) !== undefined) {
+      return customResult;
+    } else if (type === "word" || type === "space") {
+      return value;
+    } else if (type === "string") {
+      buf = node.quote || "";
+      return buf + value + (node.unclosed ? "" : buf);
+    } else if (type === "comment") {
+      return "/*" + value + (node.unclosed ? "" : "*/");
+    } else if (type === "div") {
+      return (node.before || "") + value + (node.after || "");
+    } else if (Array.isArray(node.nodes)) {
+      buf = stringify(node.nodes, custom);
+      if (type !== "function") {
+        return buf;
+      }
+      return value + "(" + (node.before || "") + buf + (node.after || "") + (node.unclosed ? "" : ")");
+    }
+    return value;
+  }
+  function stringify(nodes, custom) {
+    var result, i;
+    if (Array.isArray(nodes)) {
+      result = "";
+      for (i = nodes.length - 1; ~i; i -= 1) {
+        result = stringifyNode(nodes[i], custom) + result;
+      }
+      return result;
+    }
+    return stringifyNode(nodes, custom);
+  }
+  module.exports = stringify;
+},1704,[],"node_modules\\postcss-value-parser\\lib\\stringify.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = function walk(nodes, cb, bubble) {
+    var i, max, node, result;
+    for (i = 0, max = nodes.length; i < max; i += 1) {
+      node = nodes[i];
+      if (!bubble) {
+        result = cb(node, i, nodes);
+      }
+      if (result !== false && node.type === "function" && Array.isArray(node.nodes)) {
+        walk(node.nodes, cb, bubble);
+      }
+      if (bubble) {
+        cb(node, i, nodes);
+      }
+    }
+  };
+},1705,[],"node_modules\\postcss-value-parser\\lib\\walk.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var minus = "-".charCodeAt(0);
+  var plus = "+".charCodeAt(0);
+  var dot = ".".charCodeAt(0);
+  var exp = "e".charCodeAt(0);
+  var EXP = "E".charCodeAt(0);
+
+  // Check if three code points would start a number
+  // https://www.w3.org/TR/css-syntax-3/#starts-with-a-number
+  function likeNumber(value) {
+    var code = value.charCodeAt(0);
+    var nextCode;
+    if (code === plus || code === minus) {
+      nextCode = value.charCodeAt(1);
+      if (nextCode >= 48 && nextCode <= 57) {
+        return true;
+      }
+      var nextNextCode = value.charCodeAt(2);
+      if (nextCode === dot && nextNextCode >= 48 && nextNextCode <= 57) {
+        return true;
+      }
+      return false;
+    }
+    if (code === dot) {
+      nextCode = value.charCodeAt(1);
+      if (nextCode >= 48 && nextCode <= 57) {
+        return true;
+      }
+      return false;
+    }
+    if (code >= 48 && code <= 57) {
+      return true;
+    }
+    return false;
+  }
+
+  // Consume a number
+  // https://www.w3.org/TR/css-syntax-3/#consume-number
+  module.exports = function (value) {
+    var pos = 0;
+    var length = value.length;
+    var code;
+    var nextCode;
+    var nextNextCode;
+    if (length === 0 || !likeNumber(value)) {
+      return false;
+    }
+    code = value.charCodeAt(pos);
+    if (code === plus || code === minus) {
+      pos++;
+    }
+    while (pos < length) {
+      code = value.charCodeAt(pos);
+      if (code < 48 || code > 57) {
+        break;
+      }
+      pos += 1;
+    }
+    code = value.charCodeAt(pos);
+    nextCode = value.charCodeAt(pos + 1);
+    if (code === dot && nextCode >= 48 && nextCode <= 57) {
+      pos += 2;
+      while (pos < length) {
+        code = value.charCodeAt(pos);
+        if (code < 48 || code > 57) {
+          break;
+        }
+        pos += 1;
+      }
+    }
+    code = value.charCodeAt(pos);
+    nextCode = value.charCodeAt(pos + 1);
+    nextNextCode = value.charCodeAt(pos + 2);
+    if ((code === exp || code === EXP) && (nextCode >= 48 && nextCode <= 57 || (nextCode === plus || nextCode === minus) && nextNextCode >= 48 && nextNextCode <= 57)) {
+      pos += nextCode === plus || nextCode === minus ? 3 : 2;
+      while (pos < length) {
+        code = value.charCodeAt(pos);
+        if (code < 48 || code > 57) {
+          break;
+        }
+        pos += 1;
+      }
+    }
+    return {
+      number: value.slice(0, pos),
+      unit: value.slice(pos)
+    };
+  };
+},1706,[],"node_modules\\postcss-value-parser\\lib\\unit.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  module.exports = function (obj) {
+    if (typeof obj === 'string') {
+      return camelCase(obj);
+    }
+    return walk(obj);
+  };
+  function walk(obj) {
+    if (!obj || typeof obj !== 'object') {
+      return obj;
+    }
+    if (isDate(obj) || isRegex(obj)) {
+      return obj;
+    }
+    if (isArray(obj)) {
+      return map(obj, walk);
+    }
+    return reduce(objectKeys(obj), function (acc, key) {
+      var camel = camelCase(key);
+      acc[camel] = walk(obj[key]);
+      return acc;
+    }, {});
+  }
+  function camelCase(str) {
+    return str.replace(/[_.-](\w|$)/g, function (_, x) {
+      return x.toUpperCase();
+    });
+  }
+  var isArray = Array.isArray || function (obj) {
+    return Object.prototype.toString.call(obj) === '[object Array]';
+  };
+  var isDate = function isDate(obj) {
+    return Object.prototype.toString.call(obj) === '[object Date]';
+  };
+  var isRegex = function isRegex(obj) {
+    return Object.prototype.toString.call(obj) === '[object RegExp]';
+  };
+  var has = Object.prototype.hasOwnProperty;
+  var objectKeys = Object.keys || function (obj) {
+    var keys = [];
+    for (var key in obj) {
+      if (has.call(obj, key)) {
+        keys.push(key);
+      }
+    }
+    return keys;
+  };
+  function map(xs, f) {
+    if (xs.map) {
+      return xs.map(f);
+    }
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+      res.push(f(xs[i], i));
+    }
+    return res;
+  }
+  function reduce(xs, f, acc) {
+    if (xs.reduce) {
+      return xs.reduce(f, acc);
+    }
+    for (var i = 0; i < xs.length; i++) {
+      acc = f(acc, xs[i], i);
+    }
+    return acc;
+  }
+},1707,[],"node_modules\\camelize\\index.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "./colors.json");
+},1708,[1709],"node_modules\\css-color-keywords\\index.js");
+__d(function(global, require, _importDefaultUnused, _importAllUnused, module, exports, _dependencyMapUnused) {
+  module.exports = {
+  "black": "#000000",
+  "silver": "#c0c0c0",
+  "gray": "#808080",
+  "white": "#ffffff",
+  "maroon": "#800000",
+  "red": "#ff0000",
+  "purple": "#800080",
+  "fuchsia": "#ff00ff",
+  "green": "#008000",
+  "lime": "#00ff00",
+  "olive": "#808000",
+  "yellow": "#ffff00",
+  "navy": "#000080",
+  "blue": "#0000ff",
+  "teal": "#008080",
+  "aqua": "#00ffff",
+  "orange": "#ffa500",
+  "aliceblue": "#f0f8ff",
+  "antiquewhite": "#faebd7",
+  "aquamarine": "#7fffd4",
+  "azure": "#f0ffff",
+  "beige": "#f5f5dc",
+  "bisque": "#ffe4c4",
+  "blanchedalmond": "#ffebcd",
+  "blueviolet": "#8a2be2",
+  "brown": "#a52a2a",
+  "burlywood": "#deb887",
+  "cadetblue": "#5f9ea0",
+  "chartreuse": "#7fff00",
+  "chocolate": "#d2691e",
+  "coral": "#ff7f50",
+  "cornflowerblue": "#6495ed",
+  "cornsilk": "#fff8dc",
+  "crimson": "#dc143c",
+  "darkblue": "#00008b",
+  "darkcyan": "#008b8b",
+  "darkgoldenrod": "#b8860b",
+  "darkgray": "#a9a9a9",
+  "darkgreen": "#006400",
+  "darkgrey": "#a9a9a9",
+  "darkkhaki": "#bdb76b",
+  "darkmagenta": "#8b008b",
+  "darkolivegreen": "#556b2f",
+  "darkorange": "#ff8c00",
+  "darkorchid": "#9932cc",
+  "darkred": "#8b0000",
+  "darksalmon": "#e9967a",
+  "darkseagreen": "#8fbc8f",
+  "darkslateblue": "#483d8b",
+  "darkslategray": "#2f4f4f",
+  "darkslategrey": "#2f4f4f",
+  "darkturquoise": "#00ced1",
+  "darkviolet": "#9400d3",
+  "deeppink": "#ff1493",
+  "deepskyblue": "#00bfff",
+  "dimgray": "#696969",
+  "dimgrey": "#696969",
+  "dodgerblue": "#1e90ff",
+  "firebrick": "#b22222",
+  "floralwhite": "#fffaf0",
+  "forestgreen": "#228b22",
+  "gainsboro": "#dcdcdc",
+  "ghostwhite": "#f8f8ff",
+  "gold": "#ffd700",
+  "goldenrod": "#daa520",
+  "greenyellow": "#adff2f",
+  "grey": "#808080",
+  "honeydew": "#f0fff0",
+  "hotpink": "#ff69b4",
+  "indianred": "#cd5c5c",
+  "indigo": "#4b0082",
+  "ivory": "#fffff0",
+  "khaki": "#f0e68c",
+  "lavender": "#e6e6fa",
+  "lavenderblush": "#fff0f5",
+  "lawngreen": "#7cfc00",
+  "lemonchiffon": "#fffacd",
+  "lightblue": "#add8e6",
+  "lightcoral": "#f08080",
+  "lightcyan": "#e0ffff",
+  "lightgoldenrodyellow": "#fafad2",
+  "lightgray": "#d3d3d3",
+  "lightgreen": "#90ee90",
+  "lightgrey": "#d3d3d3",
+  "lightpink": "#ffb6c1",
+  "lightsalmon": "#ffa07a",
+  "lightseagreen": "#20b2aa",
+  "lightskyblue": "#87cefa",
+  "lightslategray": "#778899",
+  "lightslategrey": "#778899",
+  "lightsteelblue": "#b0c4de",
+  "lightyellow": "#ffffe0",
+  "limegreen": "#32cd32",
+  "linen": "#faf0e6",
+  "mediumaquamarine": "#66cdaa",
+  "mediumblue": "#0000cd",
+  "mediumorchid": "#ba55d3",
+  "mediumpurple": "#9370db",
+  "mediumseagreen": "#3cb371",
+  "mediumslateblue": "#7b68ee",
+  "mediumspringgreen": "#00fa9a",
+  "mediumturquoise": "#48d1cc",
+  "mediumvioletred": "#c71585",
+  "midnightblue": "#191970",
+  "mintcream": "#f5fffa",
+  "mistyrose": "#ffe4e1",
+  "moccasin": "#ffe4b5",
+  "navajowhite": "#ffdead",
+  "oldlace": "#fdf5e6",
+  "olivedrab": "#6b8e23",
+  "orangered": "#ff4500",
+  "orchid": "#da70d6",
+  "palegoldenrod": "#eee8aa",
+  "palegreen": "#98fb98",
+  "paleturquoise": "#afeeee",
+  "palevioletred": "#db7093",
+  "papayawhip": "#ffefd5",
+  "peachpuff": "#ffdab9",
+  "peru": "#cd853f",
+  "pink": "#ffc0cb",
+  "plum": "#dda0dd",
+  "powderblue": "#b0e0e6",
+  "rosybrown": "#bc8f8f",
+  "royalblue": "#4169e1",
+  "saddlebrown": "#8b4513",
+  "salmon": "#fa8072",
+  "sandybrown": "#f4a460",
+  "seagreen": "#2e8b57",
+  "seashell": "#fff5ee",
+  "sienna": "#a0522d",
+  "skyblue": "#87ceeb",
+  "slateblue": "#6a5acd",
+  "slategray": "#708090",
+  "slategrey": "#708090",
+  "snow": "#fffafa",
+  "springgreen": "#00ff7f",
+  "steelblue": "#4682b4",
+  "tan": "#d2b48c",
+  "thistle": "#d8bfd8",
+  "tomato": "#ff6347",
+  "turquoise": "#40e0d0",
+  "violet": "#ee82ee",
+  "wheat": "#f5deb3",
+  "whitesmoke": "#f5f5f5",
+  "yellowgreen": "#9acd32",
+  "rebeccapurple": "#663399"
+}
+;
+},1709,[],"node_modules\\css-color-keywords\\colors.json");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "./lib/");
+},1710,[1711],"node_modules\\markdown-it\\index.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Main parser class
+
+  'use strict';
+
+  var config = {
+    'default': _$$_REQUIRE(_dependencyMap[0], "./presets/default"),
+    zero: _$$_REQUIRE(_dependencyMap[1], "./presets/zero"),
+    commonmark: _$$_REQUIRE(_dependencyMap[2], "./presets/commonmark")
+  };
+
+  ////////////////////////////////////////////////////////////////////////////////
+  //
+  // This validator can prohibit more than really needed to prevent XSS. It's a
+  // tradeoff to keep code simple and to be secure by default.
+  //
+  // If you need different setup - override validator method as you wish. Or
+  // replace it with dummy function and use external sanitizer.
+  //
+
+  var BAD_PROTO_RE = /^(vbscript|javascript|file|data):/;
+  var GOOD_DATA_RE = /^data:image\/(gif|png|jpeg|webp);/;
+  function validateLink(url) {
+    // url should be normalized at this point, and existing entities are decoded
+    var str = url.trim().toLowerCase();
+    return BAD_PROTO_RE.test(str) ? GOOD_DATA_RE.test(str) ? true : false : true;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  var RECODE_HOSTNAME_FOR = ['http:', 'https:', 'mailto:'];
+  function normalizeLink(url) {
+    var parsed = _$$_REQUIRE(_dependencyMap[3], "mdurl").parse(url, true);
+    if (parsed.hostname) {
+      // Encode hostnames in urls like:
+      // `http://host/`, `https://host/`, `mailto:user@host`, `//host/`
+      //
+      // We don't encode unknown schemas, because it's likely that we encode
+      // something we shouldn't (e.g. `skype:name` treated as `skype:host`)
+      //
+      if (!parsed.protocol || RECODE_HOSTNAME_FOR.indexOf(parsed.protocol) >= 0) {
+        try {
+          parsed.hostname = _$$_REQUIRE(_dependencyMap[4], "punycode").toASCII(parsed.hostname);
+        } catch (er) {/**/}
+      }
+    }
+    return _$$_REQUIRE(_dependencyMap[3], "mdurl").encode(_$$_REQUIRE(_dependencyMap[3], "mdurl").format(parsed));
+  }
+  function normalizeLinkText(url) {
+    var parsed = _$$_REQUIRE(_dependencyMap[3], "mdurl").parse(url, true);
+    if (parsed.hostname) {
+      // Encode hostnames in urls like:
+      // `http://host/`, `https://host/`, `mailto:user@host`, `//host/`
+      //
+      // We don't encode unknown schemas, because it's likely that we encode
+      // something we shouldn't (e.g. `skype:name` treated as `skype:host`)
+      //
+      if (!parsed.protocol || RECODE_HOSTNAME_FOR.indexOf(parsed.protocol) >= 0) {
+        try {
+          parsed.hostname = _$$_REQUIRE(_dependencyMap[4], "punycode").toUnicode(parsed.hostname);
+        } catch (er) {/**/}
+      }
+    }
+    return _$$_REQUIRE(_dependencyMap[3], "mdurl").decode(_$$_REQUIRE(_dependencyMap[3], "mdurl").format(parsed));
+  }
+
+  /**
+   * class MarkdownIt
+   *
+   * Main parser/renderer class.
+   *
+   * ##### Usage
+   *
+   * ```javascript
+   * // node.js, "classic" way:
+   * var MarkdownIt = require('markdown-it'),
+   *     md = new MarkdownIt();
+   * var result = md.render('# markdown-it rulezz!');
+   *
+   * // node.js, the same, but with sugar:
+   * var md = require('markdown-it')();
+   * var result = md.render('# markdown-it rulezz!');
+   *
+   * // browser without AMD, added to "window" on script load
+   * // Note, there are no dash.
+   * var md = window.markdownit();
+   * var result = md.render('# markdown-it rulezz!');
+   * ```
+   *
+   * Single line rendering, without paragraph wrap:
+   *
+   * ```javascript
+   * var md = require('markdown-it')();
+   * var result = md.renderInline('__markdown-it__ rulezz!');
+   * ```
+   **/
+
+  /**
+   * new MarkdownIt([presetName, options])
+   * - presetName (String): optional, `commonmark` / `zero`
+   * - options (Object)
+   *
+   * Creates parser instanse with given config. Can be called without `new`.
+   *
+   * ##### presetName
+   *
+   * MarkdownIt provides named presets as a convenience to quickly
+   * enable/disable active syntax rules and options for common use cases.
+   *
+   * - ["commonmark"](https://github.com/markdown-it/markdown-it/blob/master/lib/presets/commonmark.js) -
+   *   configures parser to strict [CommonMark](http://commonmark.org/) mode.
+   * - [default](https://github.com/markdown-it/markdown-it/blob/master/lib/presets/default.js) -
+   *   similar to GFM, used when no preset name given. Enables all available rules,
+   *   but still without html, typographer & autolinker.
+   * - ["zero"](https://github.com/markdown-it/markdown-it/blob/master/lib/presets/zero.js) -
+   *   all rules disabled. Useful to quickly setup your config via `.enable()`.
+   *   For example, when you need only `bold` and `italic` markup and nothing else.
+   *
+   * ##### options:
+   *
+   * - __html__ - `false`. Set `true` to enable HTML tags in source. Be careful!
+   *   That's not safe! You may need external sanitizer to protect output from XSS.
+   *   It's better to extend features via plugins, instead of enabling HTML.
+   * - __xhtmlOut__ - `false`. Set `true` to add '/' when closing single tags
+   *   (`<br />`). This is needed only for full CommonMark compatibility. In real
+   *   world you will need HTML output.
+   * - __breaks__ - `false`. Set `true` to convert `\n` in paragraphs into `<br>`.
+   * - __langPrefix__ - `language-`. CSS language class prefix for fenced blocks.
+   *   Can be useful for external highlighters.
+   * - __linkify__ - `false`. Set `true` to autoconvert URL-like text to links.
+   * - __typographer__  - `false`. Set `true` to enable [some language-neutral
+   *   replacement](https://github.com/markdown-it/markdown-it/blob/master/lib/rules_core/replacements.js) +
+   *   quotes beautification (smartquotes).
+   * - __quotes__ - `“”‘’`, String or Array. Double + single quotes replacement
+   *   pairs, when typographer enabled and smartquotes on. For example, you can
+   *   use `'«»„“'` for Russian, `'„“‚‘'` for German, and
+   *   `['«\xA0', '\xA0»', '‹\xA0', '\xA0›']` for French (including nbsp).
+   * - __highlight__ - `null`. Highlighter function for fenced code blocks.
+   *   Highlighter `function (str, lang)` should return escaped HTML. It can also
+   *   return empty string if the source was not changed and should be escaped
+   *   externaly. If result starts with <pre... internal wrapper is skipped.
+   *
+   * ##### Example
+   *
+   * ```javascript
+   * // commonmark mode
+   * var md = require('markdown-it')('commonmark');
+   *
+   * // default mode
+   * var md = require('markdown-it')();
+   *
+   * // enable everything
+   * var md = require('markdown-it')({
+   *   html: true,
+   *   linkify: true,
+   *   typographer: true
+   * });
+   * ```
+   *
+   * ##### Syntax highlighting
+   *
+   * ```js
+   * var hljs = require('highlight.js') // https://highlightjs.org/
+   *
+   * var md = require('markdown-it')({
+   *   highlight: function (str, lang) {
+   *     if (lang && hljs.getLanguage(lang)) {
+   *       try {
+   *         return hljs.highlight(lang, str, true).value;
+   *       } catch (__) {}
+   *     }
+   *
+   *     return ''; // use external default escaping
+   *   }
+   * });
+   * ```
+   *
+   * Or with full wrapper override (if you need assign class to `<pre>`):
+   *
+   * ```javascript
+   * var hljs = require('highlight.js') // https://highlightjs.org/
+   *
+   * // Actual default values
+   * var md = require('markdown-it')({
+   *   highlight: function (str, lang) {
+   *     if (lang && hljs.getLanguage(lang)) {
+   *       try {
+   *         return '<pre class="hljs"><code>' +
+   *                hljs.highlight(lang, str, true).value +
+   *                '</code></pre>';
+   *       } catch (__) {}
+   *     }
+   *
+   *     return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+   *   }
+   * });
+   * ```
+   *
+   **/
+  function MarkdownIt(presetName, options) {
+    if (!(this instanceof MarkdownIt)) {
+      return new MarkdownIt(presetName, options);
+    }
+    if (!options) {
+      if (!_$$_REQUIRE(_dependencyMap[5], "./common/utils").isString(presetName)) {
+        options = presetName || {};
+        presetName = 'default';
+      }
+    }
+
+    /**
+     * MarkdownIt#inline -> ParserInline
+     *
+     * Instance of [[ParserInline]]. You may need it to add new rules when
+     * writing plugins. For simple rules control use [[MarkdownIt.disable]] and
+     * [[MarkdownIt.enable]].
+     **/
+    this.inline = new (_$$_REQUIRE(_dependencyMap[6], "./parser_inline"))();
+
+    /**
+     * MarkdownIt#block -> ParserBlock
+     *
+     * Instance of [[ParserBlock]]. You may need it to add new rules when
+     * writing plugins. For simple rules control use [[MarkdownIt.disable]] and
+     * [[MarkdownIt.enable]].
+     **/
+    this.block = new (_$$_REQUIRE(_dependencyMap[7], "./parser_block"))();
+
+    /**
+     * MarkdownIt#core -> Core
+     *
+     * Instance of [[Core]] chain executor. You may need it to add new rules when
+     * writing plugins. For simple rules control use [[MarkdownIt.disable]] and
+     * [[MarkdownIt.enable]].
+     **/
+    this.core = new (_$$_REQUIRE(_dependencyMap[8], "./parser_core"))();
+
+    /**
+     * MarkdownIt#renderer -> Renderer
+     *
+     * Instance of [[Renderer]]. Use it to modify output look. Or to add rendering
+     * rules for new token types, generated by plugins.
+     *
+     * ##### Example
+     *
+     * ```javascript
+     * var md = require('markdown-it')();
+     *
+     * function myToken(tokens, idx, options, env, self) {
+     *   //...
+     *   return result;
+     * };
+     *
+     * md.renderer.rules['my_token'] = myToken
+     * ```
+     *
+     * See [[Renderer]] docs and [source code](https://github.com/markdown-it/markdown-it/blob/master/lib/renderer.js).
+     **/
+    this.renderer = new (_$$_REQUIRE(_dependencyMap[9], "./renderer"))();
+
+    /**
+     * MarkdownIt#linkify -> LinkifyIt
+     *
+     * [linkify-it](https://github.com/markdown-it/linkify-it) instance.
+     * Used by [linkify](https://github.com/markdown-it/markdown-it/blob/master/lib/rules_core/linkify.js)
+     * rule.
+     **/
+    this.linkify = new (_$$_REQUIRE(_dependencyMap[10], "linkify-it"))();
+
+    /**
+     * MarkdownIt#validateLink(url) -> Boolean
+     *
+     * Link validation function. CommonMark allows too much in links. By default
+     * we disable `javascript:`, `vbscript:`, `file:` schemas, and almost all `data:...` schemas
+     * except some embedded image types.
+     *
+     * You can change this behaviour:
+     *
+     * ```javascript
+     * var md = require('markdown-it')();
+     * // enable everything
+     * md.validateLink = function () { return true; }
+     * ```
+     **/
+    this.validateLink = validateLink;
+
+    /**
+     * MarkdownIt#normalizeLink(url) -> String
+     *
+     * Function used to encode link url to a machine-readable format,
+     * which includes url-encoding, punycode, etc.
+     **/
+    this.normalizeLink = normalizeLink;
+
+    /**
+     * MarkdownIt#normalizeLinkText(url) -> String
+     *
+     * Function used to decode link url to a human-readable format`
+     **/
+    this.normalizeLinkText = normalizeLinkText;
+
+    // Expose utils & helpers for easy acces from plugins
+
+    /**
+     * MarkdownIt#utils -> utils
+     *
+     * Assorted utility functions, useful to write plugins. See details
+     * [here](https://github.com/markdown-it/markdown-it/blob/master/lib/common/utils.js).
+     **/
+    this.utils = _$$_REQUIRE(_dependencyMap[5], "./common/utils");
+
+    /**
+     * MarkdownIt#helpers -> helpers
+     *
+     * Link components parser functions, useful to write plugins. See details
+     * [here](https://github.com/markdown-it/markdown-it/blob/master/lib/helpers).
+     **/
+    this.helpers = _$$_REQUIRE(_dependencyMap[5], "./common/utils").assign({}, _$$_REQUIRE(_dependencyMap[11], "./helpers"));
+    this.options = {};
+    this.configure(presetName);
+    if (options) {
+      this.set(options);
+    }
+  }
+
+  /** chainable
+   * MarkdownIt.set(options)
+   *
+   * Set parser options (in the same format as in constructor). Probably, you
+   * will never need it, but you can change options after constructor call.
+   *
+   * ##### Example
+   *
+   * ```javascript
+   * var md = require('markdown-it')()
+   *             .set({ html: true, breaks: true })
+   *             .set({ typographer, true });
+   * ```
+   *
+   * __Note:__ To achieve the best possible performance, don't modify a
+   * `markdown-it` instance options on the fly. If you need multiple configurations
+   * it's best to create multiple instances and initialize each with separate
+   * config.
+   **/
+  MarkdownIt.prototype.set = function (options) {
+    _$$_REQUIRE(_dependencyMap[5], "./common/utils").assign(this.options, options);
+    return this;
+  };
+
+  /** chainable, internal
+   * MarkdownIt.configure(presets)
+   *
+   * Batch load of all options and compenent settings. This is internal method,
+   * and you probably will not need it. But if you with - see available presets
+   * and data structure [here](https://github.com/markdown-it/markdown-it/tree/master/lib/presets)
+   *
+   * We strongly recommend to use presets instead of direct config loads. That
+   * will give better compatibility with next versions.
+   **/
+  MarkdownIt.prototype.configure = function (presets) {
+    var self = this,
+      presetName;
+    if (_$$_REQUIRE(_dependencyMap[5], "./common/utils").isString(presets)) {
+      presetName = presets;
+      presets = config[presetName];
+      if (!presets) {
+        throw new Error('Wrong `markdown-it` preset "' + presetName + '", check name');
+      }
+    }
+    if (!presets) {
+      throw new Error('Wrong `markdown-it` preset, can\'t be empty');
+    }
+    if (presets.options) {
+      self.set(presets.options);
+    }
+    if (presets.components) {
+      Object.keys(presets.components).forEach(function (name) {
+        if (presets.components[name].rules) {
+          self[name].ruler.enableOnly(presets.components[name].rules);
+        }
+        if (presets.components[name].rules2) {
+          self[name].ruler2.enableOnly(presets.components[name].rules2);
+        }
+      });
+    }
+    return this;
+  };
+
+  /** chainable
+   * MarkdownIt.enable(list, ignoreInvalid)
+   * - list (String|Array): rule name or list of rule names to enable
+   * - ignoreInvalid (Boolean): set `true` to ignore errors when rule not found.
+   *
+   * Enable list or rules. It will automatically find appropriate components,
+   * containing rules with given names. If rule not found, and `ignoreInvalid`
+   * not set - throws exception.
+   *
+   * ##### Example
+   *
+   * ```javascript
+   * var md = require('markdown-it')()
+   *             .enable(['sub', 'sup'])
+   *             .disable('smartquotes');
+   * ```
+   **/
+  MarkdownIt.prototype.enable = function (list, ignoreInvalid) {
+    var result = [];
+    if (!Array.isArray(list)) {
+      list = [list];
+    }
+    ['core', 'block', 'inline'].forEach(function (chain) {
+      result = result.concat(this[chain].ruler.enable(list, true));
+    }, this);
+    result = result.concat(this.inline.ruler2.enable(list, true));
+    var missed = list.filter(function (name) {
+      return result.indexOf(name) < 0;
+    });
+    if (missed.length && !ignoreInvalid) {
+      throw new Error('MarkdownIt. Failed to enable unknown rule(s): ' + missed);
+    }
+    return this;
+  };
+
+  /** chainable
+   * MarkdownIt.disable(list, ignoreInvalid)
+   * - list (String|Array): rule name or list of rule names to disable.
+   * - ignoreInvalid (Boolean): set `true` to ignore errors when rule not found.
+   *
+   * The same as [[MarkdownIt.enable]], but turn specified rules off.
+   **/
+  MarkdownIt.prototype.disable = function (list, ignoreInvalid) {
+    var result = [];
+    if (!Array.isArray(list)) {
+      list = [list];
+    }
+    ['core', 'block', 'inline'].forEach(function (chain) {
+      result = result.concat(this[chain].ruler.disable(list, true));
+    }, this);
+    result = result.concat(this.inline.ruler2.disable(list, true));
+    var missed = list.filter(function (name) {
+      return result.indexOf(name) < 0;
+    });
+    if (missed.length && !ignoreInvalid) {
+      throw new Error('MarkdownIt. Failed to disable unknown rule(s): ' + missed);
+    }
+    return this;
+  };
+
+  /** chainable
+   * MarkdownIt.use(plugin, params)
+   *
+   * Load specified plugin with given params into current parser instance.
+   * It's just a sugar to call `plugin(md, params)` with curring.
+   *
+   * ##### Example
+   *
+   * ```javascript
+   * var iterator = require('markdown-it-for-inline');
+   * var md = require('markdown-it')()
+   *             .use(iterator, 'foo_replace', 'text', function (tokens, idx) {
+   *               tokens[idx].content = tokens[idx].content.replace(/foo/g, 'bar');
+   *             });
+   * ```
+   **/
+  MarkdownIt.prototype.use = function (plugin /*, params, ... */) {
+    var args = [this].concat(Array.prototype.slice.call(arguments, 1));
+    plugin.apply(plugin, args);
+    return this;
+  };
+
+  /** internal
+   * MarkdownIt.parse(src, env) -> Array
+   * - src (String): source string
+   * - env (Object): environment sandbox
+   *
+   * Parse input string and returns list of block tokens (special token type
+   * "inline" will contain list of inline tokens). You should not call this
+   * method directly, until you write custom renderer (for example, to produce
+   * AST).
+   *
+   * `env` is used to pass data between "distributed" rules and return additional
+   * metadata like reference info, needed for the renderer. It also can be used to
+   * inject data in specific cases. Usually, you will be ok to pass `{}`,
+   * and then pass updated object to renderer.
+   **/
+  MarkdownIt.prototype.parse = function (src, env) {
+    if (typeof src !== 'string') {
+      throw new Error('Input data should be a String');
+    }
+    var state = new this.core.State(src, this, env);
+    this.core.process(state);
+    return state.tokens;
+  };
+
+  /**
+   * MarkdownIt.render(src [, env]) -> String
+   * - src (String): source string
+   * - env (Object): environment sandbox
+   *
+   * Render markdown string into html. It does all magic for you :).
+   *
+   * `env` can be used to inject additional metadata (`{}` by default).
+   * But you will not need it with high probability. See also comment
+   * in [[MarkdownIt.parse]].
+   **/
+  MarkdownIt.prototype.render = function (src, env) {
+    env = env || {};
+    return this.renderer.render(this.parse(src, env), this.options, env);
+  };
+
+  /** internal
+   * MarkdownIt.parseInline(src, env) -> Array
+   * - src (String): source string
+   * - env (Object): environment sandbox
+   *
+   * The same as [[MarkdownIt.parse]] but skip all block rules. It returns the
+   * block tokens list with the single `inline` element, containing parsed inline
+   * tokens in `children` property. Also updates `env` object.
+   **/
+  MarkdownIt.prototype.parseInline = function (src, env) {
+    var state = new this.core.State(src, this, env);
+    state.inlineMode = true;
+    this.core.process(state);
+    return state.tokens;
+  };
+
+  /**
+   * MarkdownIt.renderInline(src [, env]) -> String
+   * - src (String): source string
+   * - env (Object): environment sandbox
+   *
+   * Similar to [[MarkdownIt.render]] but for single paragraph content. Result
+   * will NOT be wrapped into `<p>` tags.
+   **/
+  MarkdownIt.prototype.renderInline = function (src, env) {
+    env = env || {};
+    return this.renderer.render(this.parseInline(src, env), this.options, env);
+  };
+  module.exports = MarkdownIt;
+},1711,[1712,1713,1714,1715,1720,1721,1730,1748,1762,1770,1771,1773],"node_modules\\markdown-it\\lib\\index.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // markdown-it default options
+
+  'use strict';
+
+  module.exports = {
+    options: {
+      html: false,
+      // Enable HTML tags in source
+      xhtmlOut: false,
+      // Use '/' to close single tags (<br />)
+      breaks: false,
+      // Convert '\n' in paragraphs into <br>
+      langPrefix: 'language-',
+      // CSS language prefix for fenced blocks
+      linkify: false,
+      // autoconvert URL-like texts to links
+
+      // Enable some language-neutral replacements + quotes beautification
+      typographer: false,
+      // Double + single quotes replacement pairs, when typographer enabled,
+      // and smartquotes on. Could be either a String or an Array.
+      //
+      // For example, you can use '«»„“' for Russian, '„“‚‘' for German,
+      // and ['«\xA0', '\xA0»', '‹\xA0', '\xA0›'] for French (including nbsp).
+      quotes: "\u201C\u201D\u2018\u2019",
+      /* “”‘’ */
+
+      // Highlighter function. Should return escaped HTML,
+      // or '' if the source string is not changed and should be escaped externaly.
+      // If result starts with <pre... internal wrapper is skipped.
+      //
+      // function (/*str, lang*/) { return ''; }
+      //
+      highlight: null,
+      maxNesting: 100 // Internal protection, recursion limit
+    },
+    components: {
+      core: {},
+      block: {},
+      inline: {}
+    }
+  };
+},1712,[],"node_modules\\markdown-it\\lib\\presets\\default.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // "Zero" preset, with nothing enabled. Useful for manual configuring of simple
+  // modes. For example, to parse bold/italic only.
+
+  'use strict';
+
+  module.exports = {
+    options: {
+      html: false,
+      // Enable HTML tags in source
+      xhtmlOut: false,
+      // Use '/' to close single tags (<br />)
+      breaks: false,
+      // Convert '\n' in paragraphs into <br>
+      langPrefix: 'language-',
+      // CSS language prefix for fenced blocks
+      linkify: false,
+      // autoconvert URL-like texts to links
+
+      // Enable some language-neutral replacements + quotes beautification
+      typographer: false,
+      // Double + single quotes replacement pairs, when typographer enabled,
+      // and smartquotes on. Could be either a String or an Array.
+      //
+      // For example, you can use '«»„“' for Russian, '„“‚‘' for German,
+      // and ['«\xA0', '\xA0»', '‹\xA0', '\xA0›'] for French (including nbsp).
+      quotes: "\u201C\u201D\u2018\u2019",
+      /* “”‘’ */
+
+      // Highlighter function. Should return escaped HTML,
+      // or '' if the source string is not changed and should be escaped externaly.
+      // If result starts with <pre... internal wrapper is skipped.
+      //
+      // function (/*str, lang*/) { return ''; }
+      //
+      highlight: null,
+      maxNesting: 20 // Internal protection, recursion limit
+    },
+    components: {
+      core: {
+        rules: ['normalize', 'block', 'inline']
+      },
+      block: {
+        rules: ['paragraph']
+      },
+      inline: {
+        rules: ['text'],
+        rules2: ['balance_pairs', 'text_collapse']
+      }
+    }
+  };
+},1713,[],"node_modules\\markdown-it\\lib\\presets\\zero.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Commonmark default options
+
+  'use strict';
+
+  module.exports = {
+    options: {
+      html: true,
+      // Enable HTML tags in source
+      xhtmlOut: true,
+      // Use '/' to close single tags (<br />)
+      breaks: false,
+      // Convert '\n' in paragraphs into <br>
+      langPrefix: 'language-',
+      // CSS language prefix for fenced blocks
+      linkify: false,
+      // autoconvert URL-like texts to links
+
+      // Enable some language-neutral replacements + quotes beautification
+      typographer: false,
+      // Double + single quotes replacement pairs, when typographer enabled,
+      // and smartquotes on. Could be either a String or an Array.
+      //
+      // For example, you can use '«»„“' for Russian, '„“‚‘' for German,
+      // and ['«\xA0', '\xA0»', '‹\xA0', '\xA0›'] for French (including nbsp).
+      quotes: "\u201C\u201D\u2018\u2019",
+      /* “”‘’ */
+
+      // Highlighter function. Should return escaped HTML,
+      // or '' if the source string is not changed and should be escaped externaly.
+      // If result starts with <pre... internal wrapper is skipped.
+      //
+      // function (/*str, lang*/) { return ''; }
+      //
+      highlight: null,
+      maxNesting: 20 // Internal protection, recursion limit
+    },
+    components: {
+      core: {
+        rules: ['normalize', 'block', 'inline']
+      },
+      block: {
+        rules: ['blockquote', 'code', 'fence', 'heading', 'hr', 'html_block', 'lheading', 'list', 'reference', 'paragraph']
+      },
+      inline: {
+        rules: ['autolink', 'backticks', 'emphasis', 'entity', 'escape', 'html_inline', 'image', 'link', 'newline', 'text'],
+        rules2: ['balance_pairs', 'emphasis', 'text_collapse']
+      }
+    }
+  };
+},1714,[],"node_modules\\markdown-it\\lib\\presets\\commonmark.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  module.exports.encode = _$$_REQUIRE(_dependencyMap[0], "./encode");
+  module.exports.decode = _$$_REQUIRE(_dependencyMap[1], "./decode");
+  module.exports.format = _$$_REQUIRE(_dependencyMap[2], "./format");
+  module.exports.parse = _$$_REQUIRE(_dependencyMap[3], "./parse");
+},1715,[1716,1717,1718,1719],"node_modules\\mdurl\\index.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  var encodeCache = {};
+
+  // Create a lookup array where anything but characters in `chars` string
+  // and alphanumeric chars is percent-encoded.
+  //
+  function getEncodeCache(exclude) {
+    var i,
+      ch,
+      cache = encodeCache[exclude];
+    if (cache) {
+      return cache;
+    }
+    cache = encodeCache[exclude] = [];
+    for (i = 0; i < 128; i++) {
+      ch = String.fromCharCode(i);
+      if (/^[0-9a-z]$/i.test(ch)) {
+        // always allow unencoded alphanumeric characters
+        cache.push(ch);
+      } else {
+        cache.push('%' + ('0' + i.toString(16).toUpperCase()).slice(-2));
+      }
+    }
+    for (i = 0; i < exclude.length; i++) {
+      cache[exclude.charCodeAt(i)] = exclude[i];
+    }
+    return cache;
+  }
+
+  // Encode unsafe characters with percent-encoding, skipping already
+  // encoded sequences.
+  //
+  //  - string       - string to encode
+  //  - exclude      - list of characters to ignore (in addition to a-zA-Z0-9)
+  //  - keepEscaped  - don't encode '%' in a correct escape sequence (default: true)
+  //
+  function encode(string, exclude, keepEscaped) {
+    var i,
+      l,
+      code,
+      nextCode,
+      cache,
+      result = '';
+    if (typeof exclude !== 'string') {
+      // encode(string, keepEscaped)
+      keepEscaped = exclude;
+      exclude = encode.defaultChars;
+    }
+    if (typeof keepEscaped === 'undefined') {
+      keepEscaped = true;
+    }
+    cache = getEncodeCache(exclude);
+    for (i = 0, l = string.length; i < l; i++) {
+      code = string.charCodeAt(i);
+      if (keepEscaped && code === 0x25 /* % */ && i + 2 < l) {
+        if (/^[0-9a-f]{2}$/i.test(string.slice(i + 1, i + 3))) {
+          result += string.slice(i, i + 3);
+          i += 2;
+          continue;
+        }
+      }
+      if (code < 128) {
+        result += cache[code];
+        continue;
+      }
+      if (code >= 0xD800 && code <= 0xDFFF) {
+        if (code >= 0xD800 && code <= 0xDBFF && i + 1 < l) {
+          nextCode = string.charCodeAt(i + 1);
+          if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
+            result += encodeURIComponent(string[i] + string[i + 1]);
+            i++;
+            continue;
+          }
+        }
+        result += '%EF%BF%BD';
+        continue;
+      }
+      result += encodeURIComponent(string[i]);
+    }
+    return result;
+  }
+  encode.defaultChars = ";/?:@&=+$,-_.!~*'()#";
+  encode.componentChars = "-_.!~*'()";
+  module.exports = encode;
+},1716,[],"node_modules\\mdurl\\encode.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  /* eslint-disable no-bitwise */
+  var decodeCache = {};
+  function getDecodeCache(exclude) {
+    var i,
+      ch,
+      cache = decodeCache[exclude];
+    if (cache) {
+      return cache;
+    }
+    cache = decodeCache[exclude] = [];
+    for (i = 0; i < 128; i++) {
+      ch = String.fromCharCode(i);
+      cache.push(ch);
+    }
+    for (i = 0; i < exclude.length; i++) {
+      ch = exclude.charCodeAt(i);
+      cache[ch] = '%' + ('0' + ch.toString(16).toUpperCase()).slice(-2);
+    }
+    return cache;
+  }
+
+  // Decode percent-encoded string.
+  //
+  function decode(string, exclude) {
+    var cache;
+    if (typeof exclude !== 'string') {
+      exclude = decode.defaultChars;
+    }
+    cache = getDecodeCache(exclude);
+    return string.replace(/(%[a-f0-9]{2})+/gi, function (seq) {
+      var i,
+        l,
+        b1,
+        b2,
+        b3,
+        b4,
+        chr,
+        result = '';
+      for (i = 0, l = seq.length; i < l; i += 3) {
+        b1 = parseInt(seq.slice(i + 1, i + 3), 16);
+        if (b1 < 0x80) {
+          result += cache[b1];
+          continue;
+        }
+        if ((b1 & 0xE0) === 0xC0 && i + 3 < l) {
+          // 110xxxxx 10xxxxxx
+          b2 = parseInt(seq.slice(i + 4, i + 6), 16);
+          if ((b2 & 0xC0) === 0x80) {
+            chr = b1 << 6 & 0x7C0 | b2 & 0x3F;
+            if (chr < 0x80) {
+              result += "\uFFFD\uFFFD";
+            } else {
+              result += String.fromCharCode(chr);
+            }
+            i += 3;
+            continue;
+          }
+        }
+        if ((b1 & 0xF0) === 0xE0 && i + 6 < l) {
+          // 1110xxxx 10xxxxxx 10xxxxxx
+          b2 = parseInt(seq.slice(i + 4, i + 6), 16);
+          b3 = parseInt(seq.slice(i + 7, i + 9), 16);
+          if ((b2 & 0xC0) === 0x80 && (b3 & 0xC0) === 0x80) {
+            chr = b1 << 12 & 0xF000 | b2 << 6 & 0xFC0 | b3 & 0x3F;
+            if (chr < 0x800 || chr >= 0xD800 && chr <= 0xDFFF) {
+              result += "\uFFFD\uFFFD\uFFFD";
+            } else {
+              result += String.fromCharCode(chr);
+            }
+            i += 6;
+            continue;
+          }
+        }
+        if ((b1 & 0xF8) === 0xF0 && i + 9 < l) {
+          // 111110xx 10xxxxxx 10xxxxxx 10xxxxxx
+          b2 = parseInt(seq.slice(i + 4, i + 6), 16);
+          b3 = parseInt(seq.slice(i + 7, i + 9), 16);
+          b4 = parseInt(seq.slice(i + 10, i + 12), 16);
+          if ((b2 & 0xC0) === 0x80 && (b3 & 0xC0) === 0x80 && (b4 & 0xC0) === 0x80) {
+            chr = b1 << 18 & 0x1C0000 | b2 << 12 & 0x3F000 | b3 << 6 & 0xFC0 | b4 & 0x3F;
+            if (chr < 0x10000 || chr > 0x10FFFF) {
+              result += "\uFFFD\uFFFD\uFFFD\uFFFD";
+            } else {
+              chr -= 0x10000;
+              result += String.fromCharCode(0xD800 + (chr >> 10), 0xDC00 + (chr & 0x3FF));
+            }
+            i += 9;
+            continue;
+          }
+        }
+        result += "\uFFFD";
+      }
+      return result;
+    });
+  }
+  decode.defaultChars = ';/?:@&=+$,#';
+  decode.componentChars = '';
+  module.exports = decode;
+},1717,[],"node_modules\\mdurl\\decode.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  module.exports = function format(url) {
+    var result = '';
+    result += url.protocol || '';
+    result += url.slashes ? '//' : '';
+    result += url.auth ? url.auth + '@' : '';
+    if (url.hostname && url.hostname.indexOf(':') !== -1) {
+      // ipv6 address
+      result += '[' + url.hostname + ']';
+    } else {
+      result += url.hostname || '';
+    }
+    result += url.port ? ':' + url.port : '';
+    result += url.pathname || '';
+    result += url.search || '';
+    result += url.hash || '';
+    return result;
+  };
+},1718,[],"node_modules\\mdurl\\format.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Copyright Joyent, Inc. and other Node contributors.
+  //
+  // Permission is hereby granted, free of charge, to any person obtaining a
+  // copy of this software and associated documentation files (the
+  // "Software"), to deal in the Software without restriction, including
+  // without limitation the rights to use, copy, modify, merge, publish,
+  // distribute, sublicense, and/or sell copies of the Software, and to permit
+  // persons to whom the Software is furnished to do so, subject to the
+  // following conditions:
+  //
+  // The above copyright notice and this permission notice shall be included
+  // in all copies or substantial portions of the Software.
+  //
+  // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+  // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+  // NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+  // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+  // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+  // USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+  'use strict';
+
+  //
+  // Changes from joyent/node:
+  //
+  // 1. No leading slash in paths,
+  //    e.g. in `url.parse('http://foo?bar')` pathname is ``, not `/`
+  //
+  // 2. Backslashes are not replaced with slashes,
+  //    so `http:\\example.org\` is treated like a relative path
+  //
+  // 3. Trailing colon is treated like a part of the path,
+  //    i.e. in `http://example.org:foo` pathname is `:foo`
+  //
+  // 4. Nothing is URL-encoded in the resulting object,
+  //    (in joyent/node some chars in auth and paths are encoded)
+  //
+  // 5. `url.parse()` does not have `parseQueryString` argument
+  //
+  // 6. Removed extraneous result properties: `host`, `path`, `query`, etc.,
+  //    which can be constructed using other parts of the url.
+  //
+  function Url() {
+    this.protocol = null;
+    this.slashes = null;
+    this.auth = null;
+    this.port = null;
+    this.hostname = null;
+    this.hash = null;
+    this.search = null;
+    this.pathname = null;
+  }
+
+  // Reference: RFC 3986, RFC 1808, RFC 2396
+
+  // define these here so at least they only have to be
+  // compiled once on the first module load.
+  var protocolPattern = /^([a-z0-9.+-]+:)/i,
+    portPattern = /:[0-9]*$/,
+    // Special case for a simple path URL
+    simplePathPattern = /^(\/\/?(?!\/)[^\?\s]*)(\?[^\s]*)?$/,
+    // RFC 2396: characters reserved for delimiting URLs.
+    // We actually just auto-escape these.
+    delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
+    // RFC 2396: characters not allowed for various reasons.
+    unwise = ['{', '}', '|', '\\', '^', '`'].concat(delims),
+    // Allowed by RFCs, but cause of XSS attacks.  Always escape these.
+    autoEscape = ['\''].concat(unwise),
+    // Characters that are never ever allowed in a hostname.
+    // Note that any invalid chars are also handled, but these
+    // are the ones that are *expected* to be seen, so we fast-path
+    // them.
+    nonHostChars = ['%', '/', '?', ';', '#'].concat(autoEscape),
+    hostEndingChars = ['/', '?', '#'],
+    hostnameMaxLen = 255,
+    hostnamePartPattern = /^[+a-z0-9A-Z_-]{0,63}$/,
+    hostnamePartStart = /^([+a-z0-9A-Z_-]{0,63})(.*)$/,
+    // protocols that can allow "unsafe" and "unwise" chars.
+    /* eslint-disable no-script-url */
+    // protocols that never have a hostname.
+    hostlessProtocol = {
+      'javascript': true,
+      'javascript:': true
+    },
+    // protocols that always contain a // bit.
+    slashedProtocol = {
+      'http': true,
+      'https': true,
+      'ftp': true,
+      'gopher': true,
+      'file': true,
+      'http:': true,
+      'https:': true,
+      'ftp:': true,
+      'gopher:': true,
+      'file:': true
+    };
+  /* eslint-enable no-script-url */
+
+  function urlParse(url, slashesDenoteHost) {
+    if (url && url instanceof Url) {
+      return url;
+    }
+    var u = new Url();
+    u.parse(url, slashesDenoteHost);
+    return u;
+  }
+  Url.prototype.parse = function (url, slashesDenoteHost) {
+    var i,
+      l,
+      lowerProto,
+      hec,
+      slashes,
+      rest = url;
+
+    // trim before proceeding.
+    // This is to support parse stuff like "  http://foo.com  \n"
+    rest = rest.trim();
+    if (!slashesDenoteHost && url.split('#').length === 1) {
+      // Try fast path regexp
+      var simplePath = simplePathPattern.exec(rest);
+      if (simplePath) {
+        this.pathname = simplePath[1];
+        if (simplePath[2]) {
+          this.search = simplePath[2];
+        }
+        return this;
+      }
+    }
+    var proto = protocolPattern.exec(rest);
+    if (proto) {
+      proto = proto[0];
+      lowerProto = proto.toLowerCase();
+      this.protocol = proto;
+      rest = rest.substr(proto.length);
+    }
+
+    // figure out if it's got a host
+    // user@server is *always* interpreted as a hostname, and url
+    // resolution will treat //foo/bar as host=foo,path=bar because that's
+    // how the browser resolves relative URLs.
+    if (slashesDenoteHost || proto || rest.match(/^\/\/[^@\/]+@[^@\/]+/)) {
+      slashes = rest.substr(0, 2) === '//';
+      if (slashes && !(proto && hostlessProtocol[proto])) {
+        rest = rest.substr(2);
+        this.slashes = true;
+      }
+    }
+    if (!hostlessProtocol[proto] && (slashes || proto && !slashedProtocol[proto])) {
+      // there's a hostname.
+      // the first instance of /, ?, ;, or # ends the host.
+      //
+      // If there is an @ in the hostname, then non-host chars *are* allowed
+      // to the left of the last @ sign, unless some host-ending character
+      // comes *before* the @-sign.
+      // URLs are obnoxious.
+      //
+      // ex:
+      // http://a@b@c/ => user:a@b host:c
+      // http://a@b?@c => user:a host:c path:/?@c
+
+      // v0.12 TODO(isaacs): This is not quite how Chrome does things.
+      // Review our test case against browsers more comprehensively.
+
+      // find the first instance of any hostEndingChars
+      var hostEnd = -1;
+      for (i = 0; i < hostEndingChars.length; i++) {
+        hec = rest.indexOf(hostEndingChars[i]);
+        if (hec !== -1 && (hostEnd === -1 || hec < hostEnd)) {
+          hostEnd = hec;
+        }
+      }
+
+      // at this point, either we have an explicit point where the
+      // auth portion cannot go past, or the last @ char is the decider.
+      var auth, atSign;
+      if (hostEnd === -1) {
+        // atSign can be anywhere.
+        atSign = rest.lastIndexOf('@');
+      } else {
+        // atSign must be in auth portion.
+        // http://a@b/c@d => host:b auth:a path:/c@d
+        atSign = rest.lastIndexOf('@', hostEnd);
+      }
+
+      // Now we have a portion which is definitely the auth.
+      // Pull that off.
+      if (atSign !== -1) {
+        auth = rest.slice(0, atSign);
+        rest = rest.slice(atSign + 1);
+        this.auth = auth;
+      }
+
+      // the host is the remaining to the left of the first non-host char
+      hostEnd = -1;
+      for (i = 0; i < nonHostChars.length; i++) {
+        hec = rest.indexOf(nonHostChars[i]);
+        if (hec !== -1 && (hostEnd === -1 || hec < hostEnd)) {
+          hostEnd = hec;
+        }
+      }
+      // if we still have not hit it, then the entire thing is a host.
+      if (hostEnd === -1) {
+        hostEnd = rest.length;
+      }
+      if (rest[hostEnd - 1] === ':') {
+        hostEnd--;
+      }
+      var host = rest.slice(0, hostEnd);
+      rest = rest.slice(hostEnd);
+
+      // pull out port.
+      this.parseHost(host);
+
+      // we've indicated that there is a hostname,
+      // so even if it's empty, it has to be present.
+      this.hostname = this.hostname || '';
+
+      // if hostname begins with [ and ends with ]
+      // assume that it's an IPv6 address.
+      var ipv6Hostname = this.hostname[0] === '[' && this.hostname[this.hostname.length - 1] === ']';
+
+      // validate a little.
+      if (!ipv6Hostname) {
+        var hostparts = this.hostname.split(/\./);
+        for (i = 0, l = hostparts.length; i < l; i++) {
+          var part = hostparts[i];
+          if (!part) {
+            continue;
+          }
+          if (!part.match(hostnamePartPattern)) {
+            var newpart = '';
+            for (var j = 0, k = part.length; j < k; j++) {
+              if (part.charCodeAt(j) > 127) {
+                // we replace non-ASCII char with a temporary placeholder
+                // we need this to make sure size of hostname is not
+                // broken by replacing non-ASCII by nothing
+                newpart += 'x';
+              } else {
+                newpart += part[j];
+              }
+            }
+            // we test again with ASCII char only
+            if (!newpart.match(hostnamePartPattern)) {
+              var validParts = hostparts.slice(0, i);
+              var notHost = hostparts.slice(i + 1);
+              var bit = part.match(hostnamePartStart);
+              if (bit) {
+                validParts.push(bit[1]);
+                notHost.unshift(bit[2]);
+              }
+              if (notHost.length) {
+                rest = notHost.join('.') + rest;
+              }
+              this.hostname = validParts.join('.');
+              break;
+            }
+          }
+        }
+      }
+      if (this.hostname.length > hostnameMaxLen) {
+        this.hostname = '';
+      }
+
+      // strip [ and ] from the hostname
+      // the host field still retains them, though
+      if (ipv6Hostname) {
+        this.hostname = this.hostname.substr(1, this.hostname.length - 2);
+      }
+    }
+
+    // chop off from the tail first.
+    var hash = rest.indexOf('#');
+    if (hash !== -1) {
+      // got a fragment string.
+      this.hash = rest.substr(hash);
+      rest = rest.slice(0, hash);
+    }
+    var qm = rest.indexOf('?');
+    if (qm !== -1) {
+      this.search = rest.substr(qm);
+      rest = rest.slice(0, qm);
+    }
+    if (rest) {
+      this.pathname = rest;
+    }
+    if (slashedProtocol[lowerProto] && this.hostname && !this.pathname) {
+      this.pathname = '';
+    }
+    return this;
+  };
+  Url.prototype.parseHost = function (host) {
+    var port = portPattern.exec(host);
+    if (port) {
+      port = port[0];
+      if (port !== ':') {
+        this.port = port.substr(1);
+      }
+      host = host.substr(0, host.length - port.length);
+    }
+    if (host) {
+      this.hostname = host;
+    }
+  };
+  module.exports = urlParse;
+},1719,[],"node_modules\\mdurl\\parse.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  /** Highest positive signed 32-bit float value */
+  var _toConsumableArray = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/toConsumableArray");
+  var maxInt = 2147483647; // aka. 0x7FFFFFFF or 2^31-1
+
+  /** Bootstring parameters */
+  var base = 36;
+  var tMin = 1;
+  var tMax = 26;
+  var skew = 38;
+  var damp = 700;
+  var initialBias = 72;
+  var initialN = 128; // 0x80
+  var delimiter = '-'; // '\x2D'
+
+  /** Regular expressions */
+  var regexPunycode = /^xn--/;
+  var regexNonASCII = /[^\0-\x7F]/; // Note: U+007F DEL is excluded too.
+  var regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g; // RFC 3490 separators
+
+  /** Error messages */
+  var errors = {
+    'overflow': 'Overflow: input needs wider integers to process',
+    'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
+    'invalid-input': 'Invalid input'
+  };
+
+  /** Convenience shortcuts */
+  var baseMinusTMin = base - tMin;
+  var floor = Math.floor;
+  var stringFromCharCode = String.fromCharCode;
+
+  /*--------------------------------------------------------------------------*/
+
+  /**
+   * A generic error utility function.
+   * @private
+   * @param {String} type The error type.
+   * @returns {Error} Throws a `RangeError` with the applicable error message.
+   */
+  function error(type) {
+    throw new RangeError(errors[type]);
+  }
+
+  /**
+   * A generic `Array#map` utility function.
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} callback The function that gets called for every array
+   * item.
+   * @returns {Array} A new array of values returned by the callback function.
+   */
+  function map(array, callback) {
+    var result = [];
+    var length = array.length;
+    while (length--) {
+      result[length] = callback(array[length]);
+    }
+    return result;
+  }
+
+  /**
+   * A simple `Array#map`-like wrapper to work with domain name strings or email
+   * addresses.
+   * @private
+   * @param {String} domain The domain name or email address.
+   * @param {Function} callback The function that gets called for every
+   * character.
+   * @returns {String} A new string of characters returned by the callback
+   * function.
+   */
+  function mapDomain(domain, callback) {
+    var parts = domain.split('@');
+    var result = '';
+    if (parts.length > 1) {
+      // In email addresses, only the domain name should be punycoded. Leave
+      // the local part (i.e. everything up to `@`) intact.
+      result = parts[0] + '@';
+      domain = parts[1];
+    }
+    // Avoid `split(regex)` for IE8 compatibility. See #17.
+    domain = domain.replace(regexSeparators, '\x2E');
+    var labels = domain.split('.');
+    var encoded = map(labels, callback).join('.');
+    return result + encoded;
+  }
+
+  /**
+   * Creates an array containing the numeric code points of each Unicode
+   * character in the string. While JavaScript uses UCS-2 internally,
+   * this function will convert a pair of surrogate halves (each of which
+   * UCS-2 exposes as separate characters) into a single code point,
+   * matching UTF-16.
+   * @see `punycode.ucs2.encode`
+   * @see <https://mathiasbynens.be/notes/javascript-encoding>
+   * @memberOf punycode.ucs2
+   * @name decode
+   * @param {String} string The Unicode input string (UCS-2).
+   * @returns {Array} The new array of code points.
+   */
+  function ucs2decode(string) {
+    var output = [];
+    var counter = 0;
+    var length = string.length;
+    while (counter < length) {
+      var value = string.charCodeAt(counter++);
+      if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+        // It's a high surrogate, and there is a next character.
+        var extra = string.charCodeAt(counter++);
+        if ((extra & 0xFC00) == 0xDC00) {
+          // Low surrogate.
+          output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+        } else {
+          // It's an unmatched surrogate; only append this code unit, in case the
+          // next code unit is the high surrogate of a surrogate pair.
+          output.push(value);
+          counter--;
+        }
+      } else {
+        output.push(value);
+      }
+    }
+    return output;
+  }
+
+  /**
+   * Creates a string based on an array of numeric code points.
+   * @see `punycode.ucs2.decode`
+   * @memberOf punycode.ucs2
+   * @name encode
+   * @param {Array} codePoints The array of numeric code points.
+   * @returns {String} The new Unicode string (UCS-2).
+   */
+  var ucs2encode = function ucs2encode(codePoints) {
+    return String.fromCodePoint.apply(String, _toConsumableArray(codePoints));
+  };
+
+  /**
+   * Converts a basic code point into a digit/integer.
+   * @see `digitToBasic()`
+   * @private
+   * @param {Number} codePoint The basic numeric code point value.
+   * @returns {Number} The numeric value of a basic code point (for use in
+   * representing integers) in the range `0` to `base - 1`, or `base` if
+   * the code point does not represent a value.
+   */
+  var basicToDigit = function basicToDigit(codePoint) {
+    if (codePoint >= 0x30 && codePoint < 0x3A) {
+      return 26 + (codePoint - 0x30);
+    }
+    if (codePoint >= 0x41 && codePoint < 0x5B) {
+      return codePoint - 0x41;
+    }
+    if (codePoint >= 0x61 && codePoint < 0x7B) {
+      return codePoint - 0x61;
+    }
+    return base;
+  };
+
+  /**
+   * Converts a digit/integer into a basic code point.
+   * @see `basicToDigit()`
+   * @private
+   * @param {Number} digit The numeric value of a basic code point.
+   * @returns {Number} The basic code point whose value (when used for
+   * representing integers) is `digit`, which needs to be in the range
+   * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
+   * used; else, the lowercase form is used. The behavior is undefined
+   * if `flag` is non-zero and `digit` has no uppercase form.
+   */
+  var digitToBasic = function digitToBasic(digit, flag) {
+    //  0..25 map to ASCII a..z or A..Z
+    // 26..35 map to ASCII 0..9
+    return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
+  };
+
+  /**
+   * Bias adaptation function as per section 3.4 of RFC 3492.
+   * https://tools.ietf.org/html/rfc3492#section-3.4
+   * @private
+   */
+  var adapt = function adapt(delta, numPoints, firstTime) {
+    var k = 0;
+    delta = firstTime ? floor(delta / damp) : delta >> 1;
+    delta += floor(delta / numPoints);
+    for /* no initialization */
+    (; delta > baseMinusTMin * tMax >> 1; k += base) {
+      delta = floor(delta / baseMinusTMin);
+    }
+    return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
+  };
+
+  /**
+   * Converts a Punycode string of ASCII-only symbols to a string of Unicode
+   * symbols.
+   * @memberOf punycode
+   * @param {String} input The Punycode string of ASCII-only symbols.
+   * @returns {String} The resulting string of Unicode symbols.
+   */
+  var decode = function decode(input) {
+    // Don't use UCS-2.
+    var output = [];
+    var inputLength = input.length;
+    var i = 0;
+    var n = initialN;
+    var bias = initialBias;
+
+    // Handle the basic code points: let `basic` be the number of input code
+    // points before the last delimiter, or `0` if there is none, then copy
+    // the first basic code points to the output.
+
+    var basic = input.lastIndexOf(delimiter);
+    if (basic < 0) {
+      basic = 0;
+    }
+    for (var j = 0; j < basic; ++j) {
+      // if it's not a basic code point
+      if (input.charCodeAt(j) >= 0x80) {
+        error('not-basic');
+      }
+      output.push(input.charCodeAt(j));
+    }
+
+    // Main decoding loop: start just after the last delimiter if any basic code
+    // points were copied; start at the beginning otherwise.
+
+    for /* no final expression */
+    (var index = basic > 0 ? basic + 1 : 0; index < inputLength;) {
+      // `index` is the index of the next character to be consumed.
+      // Decode a generalized variable-length integer into `delta`,
+      // which gets added to `i`. The overflow checking is easier
+      // if we increase `i` as we go, then subtract off its starting
+      // value at the end to obtain `delta`.
+      var oldi = i;
+      for /* no condition */
+      (var w = 1, k = base;; k += base) {
+        if (index >= inputLength) {
+          error('invalid-input');
+        }
+        var digit = basicToDigit(input.charCodeAt(index++));
+        if (digit >= base) {
+          error('invalid-input');
+        }
+        if (digit > floor((maxInt - i) / w)) {
+          error('overflow');
+        }
+        i += digit * w;
+        var t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
+        if (digit < t) {
+          break;
+        }
+        var baseMinusT = base - t;
+        if (w > floor(maxInt / baseMinusT)) {
+          error('overflow');
+        }
+        w *= baseMinusT;
+      }
+      var out = output.length + 1;
+      bias = adapt(i - oldi, out, oldi == 0);
+
+      // `i` was supposed to wrap around from `out` to `0`,
+      // incrementing `n` each time, so we'll fix that now:
+      if (floor(i / out) > maxInt - n) {
+        error('overflow');
+      }
+      n += floor(i / out);
+      i %= out;
+
+      // Insert `n` at position `i` of the output.
+      output.splice(i++, 0, n);
+    }
+    return String.fromCodePoint.apply(String, output);
+  };
+
+  /**
+   * Converts a string of Unicode symbols (e.g. a domain name label) to a
+   * Punycode string of ASCII-only symbols.
+   * @memberOf punycode
+   * @param {String} input The string of Unicode symbols.
+   * @returns {String} The resulting Punycode string of ASCII-only symbols.
+   */
+  var encode = function encode(input) {
+    var output = [];
+
+    // Convert the input in UCS-2 to an array of Unicode code points.
+    input = ucs2decode(input);
+
+    // Cache the length.
+    var inputLength = input.length;
+
+    // Initialize the state.
+    var n = initialN;
+    var delta = 0;
+    var bias = initialBias;
+
+    // Handle the basic code points.
+    for (var currentValue of input) {
+      if (currentValue < 0x80) {
+        output.push(stringFromCharCode(currentValue));
+      }
+    }
+    var basicLength = output.length;
+    var handledCPCount = basicLength;
+
+    // `handledCPCount` is the number of code points that have been handled;
+    // `basicLength` is the number of basic code points.
+
+    // Finish the basic string with a delimiter unless it's empty.
+    if (basicLength) {
+      output.push(delimiter);
+    }
+
+    // Main encoding loop:
+    while (handledCPCount < inputLength) {
+      // All non-basic code points < n have been handled already. Find the next
+      // larger one:
+      var m = maxInt;
+      for (var _currentValue of input) {
+        if (_currentValue >= n && _currentValue < m) {
+          m = _currentValue;
+        }
+      }
+
+      // Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
+      // but guard against overflow.
+      var handledCPCountPlusOne = handledCPCount + 1;
+      if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
+        error('overflow');
+      }
+      delta += (m - n) * handledCPCountPlusOne;
+      n = m;
+      for (var _currentValue2 of input) {
+        if (_currentValue2 < n && ++delta > maxInt) {
+          error('overflow');
+        }
+        if (_currentValue2 === n) {
+          // Represent delta as a generalized variable-length integer.
+          var q = delta;
+          for /* no condition */
+          (var k = base;; k += base) {
+            var t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
+            if (q < t) {
+              break;
+            }
+            var qMinusT = q - t;
+            var baseMinusT = base - t;
+            output.push(stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0)));
+            q = floor(qMinusT / baseMinusT);
+          }
+          output.push(stringFromCharCode(digitToBasic(q, 0)));
+          bias = adapt(delta, handledCPCountPlusOne, handledCPCount === basicLength);
+          delta = 0;
+          ++handledCPCount;
+        }
+      }
+      ++delta;
+      ++n;
+    }
+    return output.join('');
+  };
+
+  /**
+   * Converts a Punycode string representing a domain name or an email address
+   * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
+   * it doesn't matter if you call it on a string that has already been
+   * converted to Unicode.
+   * @memberOf punycode
+   * @param {String} input The Punycoded domain name or email address to
+   * convert to Unicode.
+   * @returns {String} The Unicode representation of the given Punycode
+   * string.
+   */
+  var toUnicode = function toUnicode(input) {
+    return mapDomain(input, function (string) {
+      return regexPunycode.test(string) ? decode(string.slice(4).toLowerCase()) : string;
+    });
+  };
+
+  /**
+   * Converts a Unicode string representing a domain name or an email address to
+   * Punycode. Only the non-ASCII parts of the domain name will be converted,
+   * i.e. it doesn't matter if you call it with a domain that's already in
+   * ASCII.
+   * @memberOf punycode
+   * @param {String} input The domain name or email address to convert, as a
+   * Unicode string.
+   * @returns {String} The Punycode representation of the given domain name or
+   * email address.
+   */
+  var toASCII = function toASCII(input) {
+    return mapDomain(input, function (string) {
+      return regexNonASCII.test(string) ? 'xn--' + encode(string) : string;
+    });
+  };
+
+  /*--------------------------------------------------------------------------*/
+
+  /** Define the public API */
+  var punycode = {
+    /**
+     * A string representing the current Punycode.js version number.
+     * @memberOf punycode
+     * @type String
+     */
+    'version': '2.3.1',
+    /**
+     * An object of methods to convert from JavaScript's internal character
+     * representation (UCS-2) to Unicode code points, and back.
+     * @see <https://mathiasbynens.be/notes/javascript-encoding>
+     * @memberOf punycode
+     * @type Object
+     */
+    'ucs2': {
+      'decode': ucs2decode,
+      'encode': ucs2encode
+    },
+    'decode': decode,
+    'encode': encode,
+    'toASCII': toASCII,
+    'toUnicode': toUnicode
+  };
+  module.exports = punycode;
+},1720,[7],"node_modules\\punycode\\punycode.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Utilities
+  //
+  'use strict';
+
+  function _class(obj) {
+    return Object.prototype.toString.call(obj);
+  }
+  function isString(obj) {
+    return _class(obj) === '[object String]';
+  }
+  var _hasOwnProperty = Object.prototype.hasOwnProperty;
+  function has(object, key) {
+    return _hasOwnProperty.call(object, key);
+  }
+
+  // Merge objects
+  //
+  function assign(obj /*from1, from2, from3, ...*/) {
+    var sources = Array.prototype.slice.call(arguments, 1);
+    sources.forEach(function (source) {
+      if (!source) {
+        return;
+      }
+      if (typeof source !== 'object') {
+        throw new TypeError(source + 'must be object');
+      }
+      Object.keys(source).forEach(function (key) {
+        obj[key] = source[key];
+      });
+    });
+    return obj;
+  }
+
+  // Remove element from array and put another array at those position.
+  // Useful for some operations with tokens
+  function arrayReplaceAt(src, pos, newElements) {
+    return [].concat(src.slice(0, pos), newElements, src.slice(pos + 1));
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  function isValidEntityCode(c) {
+    /*eslint no-bitwise:0*/
+    // broken sequence
+    if (c >= 0xD800 && c <= 0xDFFF) {
+      return false;
+    }
+    // never used
+    if (c >= 0xFDD0 && c <= 0xFDEF) {
+      return false;
+    }
+    if ((c & 0xFFFF) === 0xFFFF || (c & 0xFFFF) === 0xFFFE) {
+      return false;
+    }
+    // control codes
+    if (c >= 0x00 && c <= 0x08) {
+      return false;
+    }
+    if (c === 0x0B) {
+      return false;
+    }
+    if (c >= 0x0E && c <= 0x1F) {
+      return false;
+    }
+    if (c >= 0x7F && c <= 0x9F) {
+      return false;
+    }
+    // out of range
+    if (c > 0x10FFFF) {
+      return false;
+    }
+    return true;
+  }
+  function fromCodePoint(c) {
+    /*eslint no-bitwise:0*/
+    if (c > 0xffff) {
+      c -= 0x10000;
+      var surrogate1 = 0xd800 + (c >> 10),
+        surrogate2 = 0xdc00 + (c & 0x3ff);
+      return String.fromCharCode(surrogate1, surrogate2);
+    }
+    return String.fromCharCode(c);
+  }
+  var UNESCAPE_MD_RE = /\\([!"#$%&'()*+,\-.\/:;<=>?@[\\\]^_`{|}~])/g;
+  var ENTITY_RE = /&([a-z#][a-z0-9]{1,31});/gi;
+  var UNESCAPE_ALL_RE = new RegExp(UNESCAPE_MD_RE.source + '|' + ENTITY_RE.source, 'gi');
+  var DIGITAL_ENTITY_TEST_RE = /^#((?:x[a-f0-9]{1,8}|[0-9]{1,8}))/i;
+  function replaceEntityPattern(match, name) {
+    var code = 0;
+    if (has(_$$_REQUIRE(_dependencyMap[0], "./entities"), name)) {
+      return _$$_REQUIRE(_dependencyMap[0], "./entities")[name];
+    }
+    if (name.charCodeAt(0) === 0x23 /* # */ && DIGITAL_ENTITY_TEST_RE.test(name)) {
+      code = name[1].toLowerCase() === 'x' ? parseInt(name.slice(2), 16) : parseInt(name.slice(1), 10);
+      if (isValidEntityCode(code)) {
+        return fromCodePoint(code);
+      }
+    }
+    return match;
+  }
+
+  /*function replaceEntities(str) {
+    if (str.indexOf('&') < 0) { return str; }
+  
+    return str.replace(ENTITY_RE, replaceEntityPattern);
+  }*/
+
+  function unescapeMd(str) {
+    if (str.indexOf('\\') < 0) {
+      return str;
+    }
+    return str.replace(UNESCAPE_MD_RE, '$1');
+  }
+  function unescapeAll(str) {
+    if (str.indexOf('\\') < 0 && str.indexOf('&') < 0) {
+      return str;
+    }
+    return str.replace(UNESCAPE_ALL_RE, function (match, escaped, entity) {
+      if (escaped) {
+        return escaped;
+      }
+      return replaceEntityPattern(match, entity);
+    });
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  var HTML_ESCAPE_TEST_RE = /[&<>"]/;
+  var HTML_ESCAPE_REPLACE_RE = /[&<>"]/g;
+  var HTML_REPLACEMENTS = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;'
+  };
+  function replaceUnsafeChar(ch) {
+    return HTML_REPLACEMENTS[ch];
+  }
+  function escapeHtml(str) {
+    if (HTML_ESCAPE_TEST_RE.test(str)) {
+      return str.replace(HTML_ESCAPE_REPLACE_RE, replaceUnsafeChar);
+    }
+    return str;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  var REGEXP_ESCAPE_RE = /[.?*+^$[\]\\(){}|-]/g;
+  function escapeRE(str) {
+    return str.replace(REGEXP_ESCAPE_RE, '\\$&');
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  function isSpace(code) {
+    switch (code) {
+      case 0x09:
+      case 0x20:
+        return true;
+    }
+    return false;
+  }
+
+  // Zs (unicode class) || [\t\f\v\r\n]
+  function isWhiteSpace(code) {
+    if (code >= 0x2000 && code <= 0x200A) {
+      return true;
+    }
+    switch (code) {
+      case 0x09: // \t
+      case 0x0A: // \n
+      case 0x0B: // \v
+      case 0x0C: // \f
+      case 0x0D: // \r
+      case 0x20:
+      case 0xA0:
+      case 0x1680:
+      case 0x202F:
+      case 0x205F:
+      case 0x3000:
+        return true;
+    }
+    return false;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  /*eslint-disable max-len*/
+
+  // Currently without astral characters support.
+  function isPunctChar(ch) {
+    return _$$_REQUIRE(_dependencyMap[1], "uc.micro/categories/P/regex").test(ch);
+  }
+
+  // Markdown ASCII punctuation characters.
+  //
+  // !, ", #, $, %, &, ', (, ), *, +, ,, -, ., /, :, ;, <, =, >, ?, @, [, \, ], ^, _, `, {, |, }, or ~
+  // http://spec.commonmark.org/0.15/#ascii-punctuation-character
+  //
+  // Don't confuse with unicode punctuation !!! It lacks some chars in ascii range.
+  //
+  function isMdAsciiPunct(ch) {
+    switch (ch) {
+      case 0x21 /* ! */:
+      case 0x22 /* " */:
+      case 0x23 /* # */:
+      case 0x24 /* $ */:
+      case 0x25 /* % */:
+      case 0x26 /* & */:
+      case 0x27 /* ' */:
+      case 0x28 /* ( */:
+      case 0x29 /* ) */:
+      case 0x2A /* * */:
+      case 0x2B /* + */:
+      case 0x2C /* , */:
+      case 0x2D /* - */:
+      case 0x2E /* . */:
+      case 0x2F /* / */:
+      case 0x3A /* : */:
+      case 0x3B /* ; */:
+      case 0x3C /* < */:
+      case 0x3D /* = */:
+      case 0x3E /* > */:
+      case 0x3F /* ? */:
+      case 0x40 /* @ */:
+      case 0x5B /* [ */:
+      case 0x5C /* \ */:
+      case 0x5D /* ] */:
+      case 0x5E /* ^ */:
+      case 0x5F /* _ */:
+      case 0x60 /* ` */:
+      case 0x7B /* { */:
+      case 0x7C /* | */:
+      case 0x7D /* } */:
+      case 0x7E /* ~ */:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  // Hepler to unify [reference labels].
+  //
+  function normalizeReference(str) {
+    // Trim and collapse whitespace
+    //
+    str = str.trim().replace(/\s+/g, ' ');
+
+    // In node v10 'ẞ'.toLowerCase() === 'Ṿ', which is presumed to be a bug
+    // fixed in v12 (couldn't find any details).
+    //
+    // So treat this one as a special case
+    // (remove this when node v10 is no longer supported).
+    //
+    if ('ẞ'.toLowerCase() === 'Ṿ') {
+      str = str.replace(/ẞ/g, 'ß');
+    }
+
+    // .toLowerCase().toUpperCase() should get rid of all differences
+    // between letter variants.
+    //
+    // Simple .toLowerCase() doesn't normalize 125 code points correctly,
+    // and .toUpperCase doesn't normalize 6 of them (list of exceptions:
+    // İ, ϴ, ẞ, Ω, K, Å - those are already uppercased, but have differently
+    // uppercased versions).
+    //
+    // Here's an example showing how it happens. Lets take greek letter omega:
+    // uppercase U+0398 (Θ), U+03f4 (ϴ) and lowercase U+03b8 (θ), U+03d1 (ϑ)
+    //
+    // Unicode entries:
+    // 0398;GREEK CAPITAL LETTER THETA;Lu;0;L;;;;;N;;;;03B8;
+    // 03B8;GREEK SMALL LETTER THETA;Ll;0;L;;;;;N;;;0398;;0398
+    // 03D1;GREEK THETA SYMBOL;Ll;0;L;<compat> 03B8;;;;N;GREEK SMALL LETTER SCRIPT THETA;;0398;;0398
+    // 03F4;GREEK CAPITAL THETA SYMBOL;Lu;0;L;<compat> 0398;;;;N;;;;03B8;
+    //
+    // Case-insensitive comparison should treat all of them as equivalent.
+    //
+    // But .toLowerCase() doesn't change ϑ (it's already lowercase),
+    // and .toUpperCase() doesn't change ϴ (already uppercase).
+    //
+    // Applying first lower then upper case normalizes any character:
+    // '\u0398\u03f4\u03b8\u03d1'.toLowerCase().toUpperCase() === '\u0398\u0398\u0398\u0398'
+    //
+    // Note: this is equivalent to unicode case folding; unicode normalization
+    // is a different step that is not required here.
+    //
+    // Final result should be uppercased, because it's later stored in an object
+    // (this avoid a conflict with Object.prototype members,
+    // most notably, `__proto__`)
+    //
+    return str.toLowerCase().toUpperCase();
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  // Re-export libraries commonly used in both markdown-it and its plugins,
+  // so plugins won't have to depend on them explicitly, which reduces their
+  // bundled size (e.g. a browser build).
+  //
+  exports.lib = {};
+  exports.lib.mdurl = _$$_REQUIRE(_dependencyMap[2], "mdurl");
+  exports.lib.ucmicro = _$$_REQUIRE(_dependencyMap[3], "uc.micro");
+  exports.assign = assign;
+  exports.isString = isString;
+  exports.has = has;
+  exports.unescapeMd = unescapeMd;
+  exports.unescapeAll = unescapeAll;
+  exports.isValidEntityCode = isValidEntityCode;
+  exports.fromCodePoint = fromCodePoint;
+  // exports.replaceEntities     = replaceEntities;
+  exports.escapeHtml = escapeHtml;
+  exports.arrayReplaceAt = arrayReplaceAt;
+  exports.isSpace = isSpace;
+  exports.isWhiteSpace = isWhiteSpace;
+  exports.isMdAsciiPunct = isMdAsciiPunct;
+  exports.isPunctChar = isPunctChar;
+  exports.escapeRE = escapeRE;
+  exports.normalizeReference = normalizeReference;
+},1721,[1722,1724,1715,1725],"node_modules\\markdown-it\\lib\\common\\utils.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // HTML5 entities map: { name -> utf16string }
+  //
+  'use strict';
+
+  /*eslint quotes:0*/
+  module.exports = _$$_REQUIRE(_dependencyMap[0], "entities/lib/maps/entities.json");
+},1722,[1723],"node_modules\\markdown-it\\lib\\common\\entities.js");
+__d(function(global, require, _importDefaultUnused, _importAllUnused, module, exports, _dependencyMapUnused) {
+  module.exports = { "Aacute": "\u00C1", "aacute": "\u00E1", "Abreve": "\u0102", "abreve": "\u0103", "ac": "\u223E", "acd": "\u223F", "acE": "\u223E\u0333", "Acirc": "\u00C2", "acirc": "\u00E2", "acute": "\u00B4", "Acy": "\u0410", "acy": "\u0430", "AElig": "\u00C6", "aelig": "\u00E6", "af": "\u2061", "Afr": "\uD835\uDD04", "afr": "\uD835\uDD1E", "Agrave": "\u00C0", "agrave": "\u00E0", "alefsym": "\u2135", "aleph": "\u2135", "Alpha": "\u0391", "alpha": "\u03B1", "Amacr": "\u0100", "amacr": "\u0101", "amalg": "\u2A3F", "amp": "&", "AMP": "&", "andand": "\u2A55", "And": "\u2A53", "and": "\u2227", "andd": "\u2A5C", "andslope": "\u2A58", "andv": "\u2A5A", "ang": "\u2220", "ange": "\u29A4", "angle": "\u2220", "angmsdaa": "\u29A8", "angmsdab": "\u29A9", "angmsdac": "\u29AA", "angmsdad": "\u29AB", "angmsdae": "\u29AC", "angmsdaf": "\u29AD", "angmsdag": "\u29AE", "angmsdah": "\u29AF", "angmsd": "\u2221", "angrt": "\u221F", "angrtvb": "\u22BE", "angrtvbd": "\u299D", "angsph": "\u2222", "angst": "\u00C5", "angzarr": "\u237C", "Aogon": "\u0104", "aogon": "\u0105", "Aopf": "\uD835\uDD38", "aopf": "\uD835\uDD52", "apacir": "\u2A6F", "ap": "\u2248", "apE": "\u2A70", "ape": "\u224A", "apid": "\u224B", "apos": "'", "ApplyFunction": "\u2061", "approx": "\u2248", "approxeq": "\u224A", "Aring": "\u00C5", "aring": "\u00E5", "Ascr": "\uD835\uDC9C", "ascr": "\uD835\uDCB6", "Assign": "\u2254", "ast": "*", "asymp": "\u2248", "asympeq": "\u224D", "Atilde": "\u00C3", "atilde": "\u00E3", "Auml": "\u00C4", "auml": "\u00E4", "awconint": "\u2233", "awint": "\u2A11", "backcong": "\u224C", "backepsilon": "\u03F6", "backprime": "\u2035", "backsim": "\u223D", "backsimeq": "\u22CD", "Backslash": "\u2216", "Barv": "\u2AE7", "barvee": "\u22BD", "barwed": "\u2305", "Barwed": "\u2306", "barwedge": "\u2305", "bbrk": "\u23B5", "bbrktbrk": "\u23B6", "bcong": "\u224C", "Bcy": "\u0411", "bcy": "\u0431", "bdquo": "\u201E", "becaus": "\u2235", "because": "\u2235", "Because": "\u2235", "bemptyv": "\u29B0", "bepsi": "\u03F6", "bernou": "\u212C", "Bernoullis": "\u212C", "Beta": "\u0392", "beta": "\u03B2", "beth": "\u2136", "between": "\u226C", "Bfr": "\uD835\uDD05", "bfr": "\uD835\uDD1F", "bigcap": "\u22C2", "bigcirc": "\u25EF", "bigcup": "\u22C3", "bigodot": "\u2A00", "bigoplus": "\u2A01", "bigotimes": "\u2A02", "bigsqcup": "\u2A06", "bigstar": "\u2605", "bigtriangledown": "\u25BD", "bigtriangleup": "\u25B3", "biguplus": "\u2A04", "bigvee": "\u22C1", "bigwedge": "\u22C0", "bkarow": "\u290D", "blacklozenge": "\u29EB", "blacksquare": "\u25AA", "blacktriangle": "\u25B4", "blacktriangledown": "\u25BE", "blacktriangleleft": "\u25C2", "blacktriangleright": "\u25B8", "blank": "\u2423", "blk12": "\u2592", "blk14": "\u2591", "blk34": "\u2593", "block": "\u2588", "bne": "=\u20E5", "bnequiv": "\u2261\u20E5", "bNot": "\u2AED", "bnot": "\u2310", "Bopf": "\uD835\uDD39", "bopf": "\uD835\uDD53", "bot": "\u22A5", "bottom": "\u22A5", "bowtie": "\u22C8", "boxbox": "\u29C9", "boxdl": "\u2510", "boxdL": "\u2555", "boxDl": "\u2556", "boxDL": "\u2557", "boxdr": "\u250C", "boxdR": "\u2552", "boxDr": "\u2553", "boxDR": "\u2554", "boxh": "\u2500", "boxH": "\u2550", "boxhd": "\u252C", "boxHd": "\u2564", "boxhD": "\u2565", "boxHD": "\u2566", "boxhu": "\u2534", "boxHu": "\u2567", "boxhU": "\u2568", "boxHU": "\u2569", "boxminus": "\u229F", "boxplus": "\u229E", "boxtimes": "\u22A0", "boxul": "\u2518", "boxuL": "\u255B", "boxUl": "\u255C", "boxUL": "\u255D", "boxur": "\u2514", "boxuR": "\u2558", "boxUr": "\u2559", "boxUR": "\u255A", "boxv": "\u2502", "boxV": "\u2551", "boxvh": "\u253C", "boxvH": "\u256A", "boxVh": "\u256B", "boxVH": "\u256C", "boxvl": "\u2524", "boxvL": "\u2561", "boxVl": "\u2562", "boxVL": "\u2563", "boxvr": "\u251C", "boxvR": "\u255E", "boxVr": "\u255F", "boxVR": "\u2560", "bprime": "\u2035", "breve": "\u02D8", "Breve": "\u02D8", "brvbar": "\u00A6", "bscr": "\uD835\uDCB7", "Bscr": "\u212C", "bsemi": "\u204F", "bsim": "\u223D", "bsime": "\u22CD", "bsolb": "\u29C5", "bsol": "\\", "bsolhsub": "\u27C8", "bull": "\u2022", "bullet": "\u2022", "bump": "\u224E", "bumpE": "\u2AAE", "bumpe": "\u224F", "Bumpeq": "\u224E", "bumpeq": "\u224F", "Cacute": "\u0106", "cacute": "\u0107", "capand": "\u2A44", "capbrcup": "\u2A49", "capcap": "\u2A4B", "cap": "\u2229", "Cap": "\u22D2", "capcup": "\u2A47", "capdot": "\u2A40", "CapitalDifferentialD": "\u2145", "caps": "\u2229\uFE00", "caret": "\u2041", "caron": "\u02C7", "Cayleys": "\u212D", "ccaps": "\u2A4D", "Ccaron": "\u010C", "ccaron": "\u010D", "Ccedil": "\u00C7", "ccedil": "\u00E7", "Ccirc": "\u0108", "ccirc": "\u0109", "Cconint": "\u2230", "ccups": "\u2A4C", "ccupssm": "\u2A50", "Cdot": "\u010A", "cdot": "\u010B", "cedil": "\u00B8", "Cedilla": "\u00B8", "cemptyv": "\u29B2", "cent": "\u00A2", "centerdot": "\u00B7", "CenterDot": "\u00B7", "cfr": "\uD835\uDD20", "Cfr": "\u212D", "CHcy": "\u0427", "chcy": "\u0447", "check": "\u2713", "checkmark": "\u2713", "Chi": "\u03A7", "chi": "\u03C7", "circ": "\u02C6", "circeq": "\u2257", "circlearrowleft": "\u21BA", "circlearrowright": "\u21BB", "circledast": "\u229B", "circledcirc": "\u229A", "circleddash": "\u229D", "CircleDot": "\u2299", "circledR": "\u00AE", "circledS": "\u24C8", "CircleMinus": "\u2296", "CirclePlus": "\u2295", "CircleTimes": "\u2297", "cir": "\u25CB", "cirE": "\u29C3", "cire": "\u2257", "cirfnint": "\u2A10", "cirmid": "\u2AEF", "cirscir": "\u29C2", "ClockwiseContourIntegral": "\u2232", "CloseCurlyDoubleQuote": "\u201D", "CloseCurlyQuote": "\u2019", "clubs": "\u2663", "clubsuit": "\u2663", "colon": ":", "Colon": "\u2237", "Colone": "\u2A74", "colone": "\u2254", "coloneq": "\u2254", "comma": ",", "commat": "@", "comp": "\u2201", "compfn": "\u2218", "complement": "\u2201", "complexes": "\u2102", "cong": "\u2245", "congdot": "\u2A6D", "Congruent": "\u2261", "conint": "\u222E", "Conint": "\u222F", "ContourIntegral": "\u222E", "copf": "\uD835\uDD54", "Copf": "\u2102", "coprod": "\u2210", "Coproduct": "\u2210", "copy": "\u00A9", "COPY": "\u00A9", "copysr": "\u2117", "CounterClockwiseContourIntegral": "\u2233", "crarr": "\u21B5", "cross": "\u2717", "Cross": "\u2A2F", "Cscr": "\uD835\uDC9E", "cscr": "\uD835\uDCB8", "csub": "\u2ACF", "csube": "\u2AD1", "csup": "\u2AD0", "csupe": "\u2AD2", "ctdot": "\u22EF", "cudarrl": "\u2938", "cudarrr": "\u2935", "cuepr": "\u22DE", "cuesc": "\u22DF", "cularr": "\u21B6", "cularrp": "\u293D", "cupbrcap": "\u2A48", "cupcap": "\u2A46", "CupCap": "\u224D", "cup": "\u222A", "Cup": "\u22D3", "cupcup": "\u2A4A", "cupdot": "\u228D", "cupor": "\u2A45", "cups": "\u222A\uFE00", "curarr": "\u21B7", "curarrm": "\u293C", "curlyeqprec": "\u22DE", "curlyeqsucc": "\u22DF", "curlyvee": "\u22CE", "curlywedge": "\u22CF", "curren": "\u00A4", "curvearrowleft": "\u21B6", "curvearrowright": "\u21B7", "cuvee": "\u22CE", "cuwed": "\u22CF", "cwconint": "\u2232", "cwint": "\u2231", "cylcty": "\u232D", "dagger": "\u2020", "Dagger": "\u2021", "daleth": "\u2138", "darr": "\u2193", "Darr": "\u21A1", "dArr": "\u21D3", "dash": "\u2010", "Dashv": "\u2AE4", "dashv": "\u22A3", "dbkarow": "\u290F", "dblac": "\u02DD", "Dcaron": "\u010E", "dcaron": "\u010F", "Dcy": "\u0414", "dcy": "\u0434", "ddagger": "\u2021", "ddarr": "\u21CA", "DD": "\u2145", "dd": "\u2146", "DDotrahd": "\u2911", "ddotseq": "\u2A77", "deg": "\u00B0", "Del": "\u2207", "Delta": "\u0394", "delta": "\u03B4", "demptyv": "\u29B1", "dfisht": "\u297F", "Dfr": "\uD835\uDD07", "dfr": "\uD835\uDD21", "dHar": "\u2965", "dharl": "\u21C3", "dharr": "\u21C2", "DiacriticalAcute": "\u00B4", "DiacriticalDot": "\u02D9", "DiacriticalDoubleAcute": "\u02DD", "DiacriticalGrave": "`", "DiacriticalTilde": "\u02DC", "diam": "\u22C4", "diamond": "\u22C4", "Diamond": "\u22C4", "diamondsuit": "\u2666", "diams": "\u2666", "die": "\u00A8", "DifferentialD": "\u2146", "digamma": "\u03DD", "disin": "\u22F2", "div": "\u00F7", "divide": "\u00F7", "divideontimes": "\u22C7", "divonx": "\u22C7", "DJcy": "\u0402", "djcy": "\u0452", "dlcorn": "\u231E", "dlcrop": "\u230D", "dollar": "$", "Dopf": "\uD835\uDD3B", "dopf": "\uD835\uDD55", "Dot": "\u00A8", "dot": "\u02D9", "DotDot": "\u20DC", "doteq": "\u2250", "doteqdot": "\u2251", "DotEqual": "\u2250", "dotminus": "\u2238", "dotplus": "\u2214", "dotsquare": "\u22A1", "doublebarwedge": "\u2306", "DoubleContourIntegral": "\u222F", "DoubleDot": "\u00A8", "DoubleDownArrow": "\u21D3", "DoubleLeftArrow": "\u21D0", "DoubleLeftRightArrow": "\u21D4", "DoubleLeftTee": "\u2AE4", "DoubleLongLeftArrow": "\u27F8", "DoubleLongLeftRightArrow": "\u27FA", "DoubleLongRightArrow": "\u27F9", "DoubleRightArrow": "\u21D2", "DoubleRightTee": "\u22A8", "DoubleUpArrow": "\u21D1", "DoubleUpDownArrow": "\u21D5", "DoubleVerticalBar": "\u2225", "DownArrowBar": "\u2913", "downarrow": "\u2193", "DownArrow": "\u2193", "Downarrow": "\u21D3", "DownArrowUpArrow": "\u21F5", "DownBreve": "\u0311", "downdownarrows": "\u21CA", "downharpoonleft": "\u21C3", "downharpoonright": "\u21C2", "DownLeftRightVector": "\u2950", "DownLeftTeeVector": "\u295E", "DownLeftVectorBar": "\u2956", "DownLeftVector": "\u21BD", "DownRightTeeVector": "\u295F", "DownRightVectorBar": "\u2957", "DownRightVector": "\u21C1", "DownTeeArrow": "\u21A7", "DownTee": "\u22A4", "drbkarow": "\u2910", "drcorn": "\u231F", "drcrop": "\u230C", "Dscr": "\uD835\uDC9F", "dscr": "\uD835\uDCB9", "DScy": "\u0405", "dscy": "\u0455", "dsol": "\u29F6", "Dstrok": "\u0110", "dstrok": "\u0111", "dtdot": "\u22F1", "dtri": "\u25BF", "dtrif": "\u25BE", "duarr": "\u21F5", "duhar": "\u296F", "dwangle": "\u29A6", "DZcy": "\u040F", "dzcy": "\u045F", "dzigrarr": "\u27FF", "Eacute": "\u00C9", "eacute": "\u00E9", "easter": "\u2A6E", "Ecaron": "\u011A", "ecaron": "\u011B", "Ecirc": "\u00CA", "ecirc": "\u00EA", "ecir": "\u2256", "ecolon": "\u2255", "Ecy": "\u042D", "ecy": "\u044D", "eDDot": "\u2A77", "Edot": "\u0116", "edot": "\u0117", "eDot": "\u2251", "ee": "\u2147", "efDot": "\u2252", "Efr": "\uD835\uDD08", "efr": "\uD835\uDD22", "eg": "\u2A9A", "Egrave": "\u00C8", "egrave": "\u00E8", "egs": "\u2A96", "egsdot": "\u2A98", "el": "\u2A99", "Element": "\u2208", "elinters": "\u23E7", "ell": "\u2113", "els": "\u2A95", "elsdot": "\u2A97", "Emacr": "\u0112", "emacr": "\u0113", "empty": "\u2205", "emptyset": "\u2205", "EmptySmallSquare": "\u25FB", "emptyv": "\u2205", "EmptyVerySmallSquare": "\u25AB", "emsp13": "\u2004", "emsp14": "\u2005", "emsp": "\u2003", "ENG": "\u014A", "eng": "\u014B", "ensp": "\u2002", "Eogon": "\u0118", "eogon": "\u0119", "Eopf": "\uD835\uDD3C", "eopf": "\uD835\uDD56", "epar": "\u22D5", "eparsl": "\u29E3", "eplus": "\u2A71", "epsi": "\u03B5", "Epsilon": "\u0395", "epsilon": "\u03B5", "epsiv": "\u03F5", "eqcirc": "\u2256", "eqcolon": "\u2255", "eqsim": "\u2242", "eqslantgtr": "\u2A96", "eqslantless": "\u2A95", "Equal": "\u2A75", "equals": "=", "EqualTilde": "\u2242", "equest": "\u225F", "Equilibrium": "\u21CC", "equiv": "\u2261", "equivDD": "\u2A78", "eqvparsl": "\u29E5", "erarr": "\u2971", "erDot": "\u2253", "escr": "\u212F", "Escr": "\u2130", "esdot": "\u2250", "Esim": "\u2A73", "esim": "\u2242", "Eta": "\u0397", "eta": "\u03B7", "ETH": "\u00D0", "eth": "\u00F0", "Euml": "\u00CB", "euml": "\u00EB", "euro": "\u20AC", "excl": "!", "exist": "\u2203", "Exists": "\u2203", "expectation": "\u2130", "exponentiale": "\u2147", "ExponentialE": "\u2147", "fallingdotseq": "\u2252", "Fcy": "\u0424", "fcy": "\u0444", "female": "\u2640", "ffilig": "\uFB03", "fflig": "\uFB00", "ffllig": "\uFB04", "Ffr": "\uD835\uDD09", "ffr": "\uD835\uDD23", "filig": "\uFB01", "FilledSmallSquare": "\u25FC", "FilledVerySmallSquare": "\u25AA", "fjlig": "fj", "flat": "\u266D", "fllig": "\uFB02", "fltns": "\u25B1", "fnof": "\u0192", "Fopf": "\uD835\uDD3D", "fopf": "\uD835\uDD57", "forall": "\u2200", "ForAll": "\u2200", "fork": "\u22D4", "forkv": "\u2AD9", "Fouriertrf": "\u2131", "fpartint": "\u2A0D", "frac12": "\u00BD", "frac13": "\u2153", "frac14": "\u00BC", "frac15": "\u2155", "frac16": "\u2159", "frac18": "\u215B", "frac23": "\u2154", "frac25": "\u2156", "frac34": "\u00BE", "frac35": "\u2157", "frac38": "\u215C", "frac45": "\u2158", "frac56": "\u215A", "frac58": "\u215D", "frac78": "\u215E", "frasl": "\u2044", "frown": "\u2322", "fscr": "\uD835\uDCBB", "Fscr": "\u2131", "gacute": "\u01F5", "Gamma": "\u0393", "gamma": "\u03B3", "Gammad": "\u03DC", "gammad": "\u03DD", "gap": "\u2A86", "Gbreve": "\u011E", "gbreve": "\u011F", "Gcedil": "\u0122", "Gcirc": "\u011C", "gcirc": "\u011D", "Gcy": "\u0413", "gcy": "\u0433", "Gdot": "\u0120", "gdot": "\u0121", "ge": "\u2265", "gE": "\u2267", "gEl": "\u2A8C", "gel": "\u22DB", "geq": "\u2265", "geqq": "\u2267", "geqslant": "\u2A7E", "gescc": "\u2AA9", "ges": "\u2A7E", "gesdot": "\u2A80", "gesdoto": "\u2A82", "gesdotol": "\u2A84", "gesl": "\u22DB\uFE00", "gesles": "\u2A94", "Gfr": "\uD835\uDD0A", "gfr": "\uD835\uDD24", "gg": "\u226B", "Gg": "\u22D9", "ggg": "\u22D9", "gimel": "\u2137", "GJcy": "\u0403", "gjcy": "\u0453", "gla": "\u2AA5", "gl": "\u2277", "glE": "\u2A92", "glj": "\u2AA4", "gnap": "\u2A8A", "gnapprox": "\u2A8A", "gne": "\u2A88", "gnE": "\u2269", "gneq": "\u2A88", "gneqq": "\u2269", "gnsim": "\u22E7", "Gopf": "\uD835\uDD3E", "gopf": "\uD835\uDD58", "grave": "`", "GreaterEqual": "\u2265", "GreaterEqualLess": "\u22DB", "GreaterFullEqual": "\u2267", "GreaterGreater": "\u2AA2", "GreaterLess": "\u2277", "GreaterSlantEqual": "\u2A7E", "GreaterTilde": "\u2273", "Gscr": "\uD835\uDCA2", "gscr": "\u210A", "gsim": "\u2273", "gsime": "\u2A8E", "gsiml": "\u2A90", "gtcc": "\u2AA7", "gtcir": "\u2A7A", "gt": ">", "GT": ">", "Gt": "\u226B", "gtdot": "\u22D7", "gtlPar": "\u2995", "gtquest": "\u2A7C", "gtrapprox": "\u2A86", "gtrarr": "\u2978", "gtrdot": "\u22D7", "gtreqless": "\u22DB", "gtreqqless": "\u2A8C", "gtrless": "\u2277", "gtrsim": "\u2273", "gvertneqq": "\u2269\uFE00", "gvnE": "\u2269\uFE00", "Hacek": "\u02C7", "hairsp": "\u200A", "half": "\u00BD", "hamilt": "\u210B", "HARDcy": "\u042A", "hardcy": "\u044A", "harrcir": "\u2948", "harr": "\u2194", "hArr": "\u21D4", "harrw": "\u21AD", "Hat": "^", "hbar": "\u210F", "Hcirc": "\u0124", "hcirc": "\u0125", "hearts": "\u2665", "heartsuit": "\u2665", "hellip": "\u2026", "hercon": "\u22B9", "hfr": "\uD835\uDD25", "Hfr": "\u210C", "HilbertSpace": "\u210B", "hksearow": "\u2925", "hkswarow": "\u2926", "hoarr": "\u21FF", "homtht": "\u223B", "hookleftarrow": "\u21A9", "hookrightarrow": "\u21AA", "hopf": "\uD835\uDD59", "Hopf": "\u210D", "horbar": "\u2015", "HorizontalLine": "\u2500", "hscr": "\uD835\uDCBD", "Hscr": "\u210B", "hslash": "\u210F", "Hstrok": "\u0126", "hstrok": "\u0127", "HumpDownHump": "\u224E", "HumpEqual": "\u224F", "hybull": "\u2043", "hyphen": "\u2010", "Iacute": "\u00CD", "iacute": "\u00ED", "ic": "\u2063", "Icirc": "\u00CE", "icirc": "\u00EE", "Icy": "\u0418", "icy": "\u0438", "Idot": "\u0130", "IEcy": "\u0415", "iecy": "\u0435", "iexcl": "\u00A1", "iff": "\u21D4", "ifr": "\uD835\uDD26", "Ifr": "\u2111", "Igrave": "\u00CC", "igrave": "\u00EC", "ii": "\u2148", "iiiint": "\u2A0C", "iiint": "\u222D", "iinfin": "\u29DC", "iiota": "\u2129", "IJlig": "\u0132", "ijlig": "\u0133", "Imacr": "\u012A", "imacr": "\u012B", "image": "\u2111", "ImaginaryI": "\u2148", "imagline": "\u2110", "imagpart": "\u2111", "imath": "\u0131", "Im": "\u2111", "imof": "\u22B7", "imped": "\u01B5", "Implies": "\u21D2", "incare": "\u2105", "in": "\u2208", "infin": "\u221E", "infintie": "\u29DD", "inodot": "\u0131", "intcal": "\u22BA", "int": "\u222B", "Int": "\u222C", "integers": "\u2124", "Integral": "\u222B", "intercal": "\u22BA", "Intersection": "\u22C2", "intlarhk": "\u2A17", "intprod": "\u2A3C", "InvisibleComma": "\u2063", "InvisibleTimes": "\u2062", "IOcy": "\u0401", "iocy": "\u0451", "Iogon": "\u012E", "iogon": "\u012F", "Iopf": "\uD835\uDD40", "iopf": "\uD835\uDD5A", "Iota": "\u0399", "iota": "\u03B9", "iprod": "\u2A3C", "iquest": "\u00BF", "iscr": "\uD835\uDCBE", "Iscr": "\u2110", "isin": "\u2208", "isindot": "\u22F5", "isinE": "\u22F9", "isins": "\u22F4", "isinsv": "\u22F3", "isinv": "\u2208", "it": "\u2062", "Itilde": "\u0128", "itilde": "\u0129", "Iukcy": "\u0406", "iukcy": "\u0456", "Iuml": "\u00CF", "iuml": "\u00EF", "Jcirc": "\u0134", "jcirc": "\u0135", "Jcy": "\u0419", "jcy": "\u0439", "Jfr": "\uD835\uDD0D", "jfr": "\uD835\uDD27", "jmath": "\u0237", "Jopf": "\uD835\uDD41", "jopf": "\uD835\uDD5B", "Jscr": "\uD835\uDCA5", "jscr": "\uD835\uDCBF", "Jsercy": "\u0408", "jsercy": "\u0458", "Jukcy": "\u0404", "jukcy": "\u0454", "Kappa": "\u039A", "kappa": "\u03BA", "kappav": "\u03F0", "Kcedil": "\u0136", "kcedil": "\u0137", "Kcy": "\u041A", "kcy": "\u043A", "Kfr": "\uD835\uDD0E", "kfr": "\uD835\uDD28", "kgreen": "\u0138", "KHcy": "\u0425", "khcy": "\u0445", "KJcy": "\u040C", "kjcy": "\u045C", "Kopf": "\uD835\uDD42", "kopf": "\uD835\uDD5C", "Kscr": "\uD835\uDCA6", "kscr": "\uD835\uDCC0", "lAarr": "\u21DA", "Lacute": "\u0139", "lacute": "\u013A", "laemptyv": "\u29B4", "lagran": "\u2112", "Lambda": "\u039B", "lambda": "\u03BB", "lang": "\u27E8", "Lang": "\u27EA", "langd": "\u2991", "langle": "\u27E8", "lap": "\u2A85", "Laplacetrf": "\u2112", "laquo": "\u00AB", "larrb": "\u21E4", "larrbfs": "\u291F", "larr": "\u2190", "Larr": "\u219E", "lArr": "\u21D0", "larrfs": "\u291D", "larrhk": "\u21A9", "larrlp": "\u21AB", "larrpl": "\u2939", "larrsim": "\u2973", "larrtl": "\u21A2", "latail": "\u2919", "lAtail": "\u291B", "lat": "\u2AAB", "late": "\u2AAD", "lates": "\u2AAD\uFE00", "lbarr": "\u290C", "lBarr": "\u290E", "lbbrk": "\u2772", "lbrace": "{", "lbrack": "[", "lbrke": "\u298B", "lbrksld": "\u298F", "lbrkslu": "\u298D", "Lcaron": "\u013D", "lcaron": "\u013E", "Lcedil": "\u013B", "lcedil": "\u013C", "lceil": "\u2308", "lcub": "{", "Lcy": "\u041B", "lcy": "\u043B", "ldca": "\u2936", "ldquo": "\u201C", "ldquor": "\u201E", "ldrdhar": "\u2967", "ldrushar": "\u294B", "ldsh": "\u21B2", "le": "\u2264", "lE": "\u2266", "LeftAngleBracket": "\u27E8", "LeftArrowBar": "\u21E4", "leftarrow": "\u2190", "LeftArrow": "\u2190", "Leftarrow": "\u21D0", "LeftArrowRightArrow": "\u21C6", "leftarrowtail": "\u21A2", "LeftCeiling": "\u2308", "LeftDoubleBracket": "\u27E6", "LeftDownTeeVector": "\u2961", "LeftDownVectorBar": "\u2959", "LeftDownVector": "\u21C3", "LeftFloor": "\u230A", "leftharpoondown": "\u21BD", "leftharpoonup": "\u21BC", "leftleftarrows": "\u21C7", "leftrightarrow": "\u2194", "LeftRightArrow": "\u2194", "Leftrightarrow": "\u21D4", "leftrightarrows": "\u21C6", "leftrightharpoons": "\u21CB", "leftrightsquigarrow": "\u21AD", "LeftRightVector": "\u294E", "LeftTeeArrow": "\u21A4", "LeftTee": "\u22A3", "LeftTeeVector": "\u295A", "leftthreetimes": "\u22CB", "LeftTriangleBar": "\u29CF", "LeftTriangle": "\u22B2", "LeftTriangleEqual": "\u22B4", "LeftUpDownVector": "\u2951", "LeftUpTeeVector": "\u2960", "LeftUpVectorBar": "\u2958", "LeftUpVector": "\u21BF", "LeftVectorBar": "\u2952", "LeftVector": "\u21BC", "lEg": "\u2A8B", "leg": "\u22DA", "leq": "\u2264", "leqq": "\u2266", "leqslant": "\u2A7D", "lescc": "\u2AA8", "les": "\u2A7D", "lesdot": "\u2A7F", "lesdoto": "\u2A81", "lesdotor": "\u2A83", "lesg": "\u22DA\uFE00", "lesges": "\u2A93", "lessapprox": "\u2A85", "lessdot": "\u22D6", "lesseqgtr": "\u22DA", "lesseqqgtr": "\u2A8B", "LessEqualGreater": "\u22DA", "LessFullEqual": "\u2266", "LessGreater": "\u2276", "lessgtr": "\u2276", "LessLess": "\u2AA1", "lesssim": "\u2272", "LessSlantEqual": "\u2A7D", "LessTilde": "\u2272", "lfisht": "\u297C", "lfloor": "\u230A", "Lfr": "\uD835\uDD0F", "lfr": "\uD835\uDD29", "lg": "\u2276", "lgE": "\u2A91", "lHar": "\u2962", "lhard": "\u21BD", "lharu": "\u21BC", "lharul": "\u296A", "lhblk": "\u2584", "LJcy": "\u0409", "ljcy": "\u0459", "llarr": "\u21C7", "ll": "\u226A", "Ll": "\u22D8", "llcorner": "\u231E", "Lleftarrow": "\u21DA", "llhard": "\u296B", "lltri": "\u25FA", "Lmidot": "\u013F", "lmidot": "\u0140", "lmoustache": "\u23B0", "lmoust": "\u23B0", "lnap": "\u2A89", "lnapprox": "\u2A89", "lne": "\u2A87", "lnE": "\u2268", "lneq": "\u2A87", "lneqq": "\u2268", "lnsim": "\u22E6", "loang": "\u27EC", "loarr": "\u21FD", "lobrk": "\u27E6", "longleftarrow": "\u27F5", "LongLeftArrow": "\u27F5", "Longleftarrow": "\u27F8", "longleftrightarrow": "\u27F7", "LongLeftRightArrow": "\u27F7", "Longleftrightarrow": "\u27FA", "longmapsto": "\u27FC", "longrightarrow": "\u27F6", "LongRightArrow": "\u27F6", "Longrightarrow": "\u27F9", "looparrowleft": "\u21AB", "looparrowright": "\u21AC", "lopar": "\u2985", "Lopf": "\uD835\uDD43", "lopf": "\uD835\uDD5D", "loplus": "\u2A2D", "lotimes": "\u2A34", "lowast": "\u2217", "lowbar": "_", "LowerLeftArrow": "\u2199", "LowerRightArrow": "\u2198", "loz": "\u25CA", "lozenge": "\u25CA", "lozf": "\u29EB", "lpar": "(", "lparlt": "\u2993", "lrarr": "\u21C6", "lrcorner": "\u231F", "lrhar": "\u21CB", "lrhard": "\u296D", "lrm": "\u200E", "lrtri": "\u22BF", "lsaquo": "\u2039", "lscr": "\uD835\uDCC1", "Lscr": "\u2112", "lsh": "\u21B0", "Lsh": "\u21B0", "lsim": "\u2272", "lsime": "\u2A8D", "lsimg": "\u2A8F", "lsqb": "[", "lsquo": "\u2018", "lsquor": "\u201A", "Lstrok": "\u0141", "lstrok": "\u0142", "ltcc": "\u2AA6", "ltcir": "\u2A79", "lt": "<", "LT": "<", "Lt": "\u226A", "ltdot": "\u22D6", "lthree": "\u22CB", "ltimes": "\u22C9", "ltlarr": "\u2976", "ltquest": "\u2A7B", "ltri": "\u25C3", "ltrie": "\u22B4", "ltrif": "\u25C2", "ltrPar": "\u2996", "lurdshar": "\u294A", "luruhar": "\u2966", "lvertneqq": "\u2268\uFE00", "lvnE": "\u2268\uFE00", "macr": "\u00AF", "male": "\u2642", "malt": "\u2720", "maltese": "\u2720", "Map": "\u2905", "map": "\u21A6", "mapsto": "\u21A6", "mapstodown": "\u21A7", "mapstoleft": "\u21A4", "mapstoup": "\u21A5", "marker": "\u25AE", "mcomma": "\u2A29", "Mcy": "\u041C", "mcy": "\u043C", "mdash": "\u2014", "mDDot": "\u223A", "measuredangle": "\u2221", "MediumSpace": "\u205F", "Mellintrf": "\u2133", "Mfr": "\uD835\uDD10", "mfr": "\uD835\uDD2A", "mho": "\u2127", "micro": "\u00B5", "midast": "*", "midcir": "\u2AF0", "mid": "\u2223", "middot": "\u00B7", "minusb": "\u229F", "minus": "\u2212", "minusd": "\u2238", "minusdu": "\u2A2A", "MinusPlus": "\u2213", "mlcp": "\u2ADB", "mldr": "\u2026", "mnplus": "\u2213", "models": "\u22A7", "Mopf": "\uD835\uDD44", "mopf": "\uD835\uDD5E", "mp": "\u2213", "mscr": "\uD835\uDCC2", "Mscr": "\u2133", "mstpos": "\u223E", "Mu": "\u039C", "mu": "\u03BC", "multimap": "\u22B8", "mumap": "\u22B8", "nabla": "\u2207", "Nacute": "\u0143", "nacute": "\u0144", "nang": "\u2220\u20D2", "nap": "\u2249", "napE": "\u2A70\u0338", "napid": "\u224B\u0338", "napos": "\u0149", "napprox": "\u2249", "natural": "\u266E", "naturals": "\u2115", "natur": "\u266E", "nbsp": "\u00A0", "nbump": "\u224E\u0338", "nbumpe": "\u224F\u0338", "ncap": "\u2A43", "Ncaron": "\u0147", "ncaron": "\u0148", "Ncedil": "\u0145", "ncedil": "\u0146", "ncong": "\u2247", "ncongdot": "\u2A6D\u0338", "ncup": "\u2A42", "Ncy": "\u041D", "ncy": "\u043D", "ndash": "\u2013", "nearhk": "\u2924", "nearr": "\u2197", "neArr": "\u21D7", "nearrow": "\u2197", "ne": "\u2260", "nedot": "\u2250\u0338", "NegativeMediumSpace": "\u200B", "NegativeThickSpace": "\u200B", "NegativeThinSpace": "\u200B", "NegativeVeryThinSpace": "\u200B", "nequiv": "\u2262", "nesear": "\u2928", "nesim": "\u2242\u0338", "NestedGreaterGreater": "\u226B", "NestedLessLess": "\u226A", "NewLine": "\n", "nexist": "\u2204", "nexists": "\u2204", "Nfr": "\uD835\uDD11", "nfr": "\uD835\uDD2B", "ngE": "\u2267\u0338", "nge": "\u2271", "ngeq": "\u2271", "ngeqq": "\u2267\u0338", "ngeqslant": "\u2A7E\u0338", "nges": "\u2A7E\u0338", "nGg": "\u22D9\u0338", "ngsim": "\u2275", "nGt": "\u226B\u20D2", "ngt": "\u226F", "ngtr": "\u226F", "nGtv": "\u226B\u0338", "nharr": "\u21AE", "nhArr": "\u21CE", "nhpar": "\u2AF2", "ni": "\u220B", "nis": "\u22FC", "nisd": "\u22FA", "niv": "\u220B", "NJcy": "\u040A", "njcy": "\u045A", "nlarr": "\u219A", "nlArr": "\u21CD", "nldr": "\u2025", "nlE": "\u2266\u0338", "nle": "\u2270", "nleftarrow": "\u219A", "nLeftarrow": "\u21CD", "nleftrightarrow": "\u21AE", "nLeftrightarrow": "\u21CE", "nleq": "\u2270", "nleqq": "\u2266\u0338", "nleqslant": "\u2A7D\u0338", "nles": "\u2A7D\u0338", "nless": "\u226E", "nLl": "\u22D8\u0338", "nlsim": "\u2274", "nLt": "\u226A\u20D2", "nlt": "\u226E", "nltri": "\u22EA", "nltrie": "\u22EC", "nLtv": "\u226A\u0338", "nmid": "\u2224", "NoBreak": "\u2060", "NonBreakingSpace": "\u00A0", "nopf": "\uD835\uDD5F", "Nopf": "\u2115", "Not": "\u2AEC", "not": "\u00AC", "NotCongruent": "\u2262", "NotCupCap": "\u226D", "NotDoubleVerticalBar": "\u2226", "NotElement": "\u2209", "NotEqual": "\u2260", "NotEqualTilde": "\u2242\u0338", "NotExists": "\u2204", "NotGreater": "\u226F", "NotGreaterEqual": "\u2271", "NotGreaterFullEqual": "\u2267\u0338", "NotGreaterGreater": "\u226B\u0338", "NotGreaterLess": "\u2279", "NotGreaterSlantEqual": "\u2A7E\u0338", "NotGreaterTilde": "\u2275", "NotHumpDownHump": "\u224E\u0338", "NotHumpEqual": "\u224F\u0338", "notin": "\u2209", "notindot": "\u22F5\u0338", "notinE": "\u22F9\u0338", "notinva": "\u2209", "notinvb": "\u22F7", "notinvc": "\u22F6", "NotLeftTriangleBar": "\u29CF\u0338", "NotLeftTriangle": "\u22EA", "NotLeftTriangleEqual": "\u22EC", "NotLess": "\u226E", "NotLessEqual": "\u2270", "NotLessGreater": "\u2278", "NotLessLess": "\u226A\u0338", "NotLessSlantEqual": "\u2A7D\u0338", "NotLessTilde": "\u2274", "NotNestedGreaterGreater": "\u2AA2\u0338", "NotNestedLessLess": "\u2AA1\u0338", "notni": "\u220C", "notniva": "\u220C", "notnivb": "\u22FE", "notnivc": "\u22FD", "NotPrecedes": "\u2280", "NotPrecedesEqual": "\u2AAF\u0338", "NotPrecedesSlantEqual": "\u22E0", "NotReverseElement": "\u220C", "NotRightTriangleBar": "\u29D0\u0338", "NotRightTriangle": "\u22EB", "NotRightTriangleEqual": "\u22ED", "NotSquareSubset": "\u228F\u0338", "NotSquareSubsetEqual": "\u22E2", "NotSquareSuperset": "\u2290\u0338", "NotSquareSupersetEqual": "\u22E3", "NotSubset": "\u2282\u20D2", "NotSubsetEqual": "\u2288", "NotSucceeds": "\u2281", "NotSucceedsEqual": "\u2AB0\u0338", "NotSucceedsSlantEqual": "\u22E1", "NotSucceedsTilde": "\u227F\u0338", "NotSuperset": "\u2283\u20D2", "NotSupersetEqual": "\u2289", "NotTilde": "\u2241", "NotTildeEqual": "\u2244", "NotTildeFullEqual": "\u2247", "NotTildeTilde": "\u2249", "NotVerticalBar": "\u2224", "nparallel": "\u2226", "npar": "\u2226", "nparsl": "\u2AFD\u20E5", "npart": "\u2202\u0338", "npolint": "\u2A14", "npr": "\u2280", "nprcue": "\u22E0", "nprec": "\u2280", "npreceq": "\u2AAF\u0338", "npre": "\u2AAF\u0338", "nrarrc": "\u2933\u0338", "nrarr": "\u219B", "nrArr": "\u21CF", "nrarrw": "\u219D\u0338", "nrightarrow": "\u219B", "nRightarrow": "\u21CF", "nrtri": "\u22EB", "nrtrie": "\u22ED", "nsc": "\u2281", "nsccue": "\u22E1", "nsce": "\u2AB0\u0338", "Nscr": "\uD835\uDCA9", "nscr": "\uD835\uDCC3", "nshortmid": "\u2224", "nshortparallel": "\u2226", "nsim": "\u2241", "nsime": "\u2244", "nsimeq": "\u2244", "nsmid": "\u2224", "nspar": "\u2226", "nsqsube": "\u22E2", "nsqsupe": "\u22E3", "nsub": "\u2284", "nsubE": "\u2AC5\u0338", "nsube": "\u2288", "nsubset": "\u2282\u20D2", "nsubseteq": "\u2288", "nsubseteqq": "\u2AC5\u0338", "nsucc": "\u2281", "nsucceq": "\u2AB0\u0338", "nsup": "\u2285", "nsupE": "\u2AC6\u0338", "nsupe": "\u2289", "nsupset": "\u2283\u20D2", "nsupseteq": "\u2289", "nsupseteqq": "\u2AC6\u0338", "ntgl": "\u2279", "Ntilde": "\u00D1", "ntilde": "\u00F1", "ntlg": "\u2278", "ntriangleleft": "\u22EA", "ntrianglelefteq": "\u22EC", "ntriangleright": "\u22EB", "ntrianglerighteq": "\u22ED", "Nu": "\u039D", "nu": "\u03BD", "num": "#", "numero": "\u2116", "numsp": "\u2007", "nvap": "\u224D\u20D2", "nvdash": "\u22AC", "nvDash": "\u22AD", "nVdash": "\u22AE", "nVDash": "\u22AF", "nvge": "\u2265\u20D2", "nvgt": ">\u20D2", "nvHarr": "\u2904", "nvinfin": "\u29DE", "nvlArr": "\u2902", "nvle": "\u2264\u20D2", "nvlt": "<\u20D2", "nvltrie": "\u22B4\u20D2", "nvrArr": "\u2903", "nvrtrie": "\u22B5\u20D2", "nvsim": "\u223C\u20D2", "nwarhk": "\u2923", "nwarr": "\u2196", "nwArr": "\u21D6", "nwarrow": "\u2196", "nwnear": "\u2927", "Oacute": "\u00D3", "oacute": "\u00F3", "oast": "\u229B", "Ocirc": "\u00D4", "ocirc": "\u00F4", "ocir": "\u229A", "Ocy": "\u041E", "ocy": "\u043E", "odash": "\u229D", "Odblac": "\u0150", "odblac": "\u0151", "odiv": "\u2A38", "odot": "\u2299", "odsold": "\u29BC", "OElig": "\u0152", "oelig": "\u0153", "ofcir": "\u29BF", "Ofr": "\uD835\uDD12", "ofr": "\uD835\uDD2C", "ogon": "\u02DB", "Ograve": "\u00D2", "ograve": "\u00F2", "ogt": "\u29C1", "ohbar": "\u29B5", "ohm": "\u03A9", "oint": "\u222E", "olarr": "\u21BA", "olcir": "\u29BE", "olcross": "\u29BB", "oline": "\u203E", "olt": "\u29C0", "Omacr": "\u014C", "omacr": "\u014D", "Omega": "\u03A9", "omega": "\u03C9", "Omicron": "\u039F", "omicron": "\u03BF", "omid": "\u29B6", "ominus": "\u2296", "Oopf": "\uD835\uDD46", "oopf": "\uD835\uDD60", "opar": "\u29B7", "OpenCurlyDoubleQuote": "\u201C", "OpenCurlyQuote": "\u2018", "operp": "\u29B9", "oplus": "\u2295", "orarr": "\u21BB", "Or": "\u2A54", "or": "\u2228", "ord": "\u2A5D", "order": "\u2134", "orderof": "\u2134", "ordf": "\u00AA", "ordm": "\u00BA", "origof": "\u22B6", "oror": "\u2A56", "orslope": "\u2A57", "orv": "\u2A5B", "oS": "\u24C8", "Oscr": "\uD835\uDCAA", "oscr": "\u2134", "Oslash": "\u00D8", "oslash": "\u00F8", "osol": "\u2298", "Otilde": "\u00D5", "otilde": "\u00F5", "otimesas": "\u2A36", "Otimes": "\u2A37", "otimes": "\u2297", "Ouml": "\u00D6", "ouml": "\u00F6", "ovbar": "\u233D", "OverBar": "\u203E", "OverBrace": "\u23DE", "OverBracket": "\u23B4", "OverParenthesis": "\u23DC", "para": "\u00B6", "parallel": "\u2225", "par": "\u2225", "parsim": "\u2AF3", "parsl": "\u2AFD", "part": "\u2202", "PartialD": "\u2202", "Pcy": "\u041F", "pcy": "\u043F", "percnt": "%", "period": ".", "permil": "\u2030", "perp": "\u22A5", "pertenk": "\u2031", "Pfr": "\uD835\uDD13", "pfr": "\uD835\uDD2D", "Phi": "\u03A6", "phi": "\u03C6", "phiv": "\u03D5", "phmmat": "\u2133", "phone": "\u260E", "Pi": "\u03A0", "pi": "\u03C0", "pitchfork": "\u22D4", "piv": "\u03D6", "planck": "\u210F", "planckh": "\u210E", "plankv": "\u210F", "plusacir": "\u2A23", "plusb": "\u229E", "pluscir": "\u2A22", "plus": "+", "plusdo": "\u2214", "plusdu": "\u2A25", "pluse": "\u2A72", "PlusMinus": "\u00B1", "plusmn": "\u00B1", "plussim": "\u2A26", "plustwo": "\u2A27", "pm": "\u00B1", "Poincareplane": "\u210C", "pointint": "\u2A15", "popf": "\uD835\uDD61", "Popf": "\u2119", "pound": "\u00A3", "prap": "\u2AB7", "Pr": "\u2ABB", "pr": "\u227A", "prcue": "\u227C", "precapprox": "\u2AB7", "prec": "\u227A", "preccurlyeq": "\u227C", "Precedes": "\u227A", "PrecedesEqual": "\u2AAF", "PrecedesSlantEqual": "\u227C", "PrecedesTilde": "\u227E", "preceq": "\u2AAF", "precnapprox": "\u2AB9", "precneqq": "\u2AB5", "precnsim": "\u22E8", "pre": "\u2AAF", "prE": "\u2AB3", "precsim": "\u227E", "prime": "\u2032", "Prime": "\u2033", "primes": "\u2119", "prnap": "\u2AB9", "prnE": "\u2AB5", "prnsim": "\u22E8", "prod": "\u220F", "Product": "\u220F", "profalar": "\u232E", "profline": "\u2312", "profsurf": "\u2313", "prop": "\u221D", "Proportional": "\u221D", "Proportion": "\u2237", "propto": "\u221D", "prsim": "\u227E", "prurel": "\u22B0", "Pscr": "\uD835\uDCAB", "pscr": "\uD835\uDCC5", "Psi": "\u03A8", "psi": "\u03C8", "puncsp": "\u2008", "Qfr": "\uD835\uDD14", "qfr": "\uD835\uDD2E", "qint": "\u2A0C", "qopf": "\uD835\uDD62", "Qopf": "\u211A", "qprime": "\u2057", "Qscr": "\uD835\uDCAC", "qscr": "\uD835\uDCC6", "quaternions": "\u210D", "quatint": "\u2A16", "quest": "?", "questeq": "\u225F", "quot": "\"", "QUOT": "\"", "rAarr": "\u21DB", "race": "\u223D\u0331", "Racute": "\u0154", "racute": "\u0155", "radic": "\u221A", "raemptyv": "\u29B3", "rang": "\u27E9", "Rang": "\u27EB", "rangd": "\u2992", "range": "\u29A5", "rangle": "\u27E9", "raquo": "\u00BB", "rarrap": "\u2975", "rarrb": "\u21E5", "rarrbfs": "\u2920", "rarrc": "\u2933", "rarr": "\u2192", "Rarr": "\u21A0", "rArr": "\u21D2", "rarrfs": "\u291E", "rarrhk": "\u21AA", "rarrlp": "\u21AC", "rarrpl": "\u2945", "rarrsim": "\u2974", "Rarrtl": "\u2916", "rarrtl": "\u21A3", "rarrw": "\u219D", "ratail": "\u291A", "rAtail": "\u291C", "ratio": "\u2236", "rationals": "\u211A", "rbarr": "\u290D", "rBarr": "\u290F", "RBarr": "\u2910", "rbbrk": "\u2773", "rbrace": "}", "rbrack": "]", "rbrke": "\u298C", "rbrksld": "\u298E", "rbrkslu": "\u2990", "Rcaron": "\u0158", "rcaron": "\u0159", "Rcedil": "\u0156", "rcedil": "\u0157", "rceil": "\u2309", "rcub": "}", "Rcy": "\u0420", "rcy": "\u0440", "rdca": "\u2937", "rdldhar": "\u2969", "rdquo": "\u201D", "rdquor": "\u201D", "rdsh": "\u21B3", "real": "\u211C", "realine": "\u211B", "realpart": "\u211C", "reals": "\u211D", "Re": "\u211C", "rect": "\u25AD", "reg": "\u00AE", "REG": "\u00AE", "ReverseElement": "\u220B", "ReverseEquilibrium": "\u21CB", "ReverseUpEquilibrium": "\u296F", "rfisht": "\u297D", "rfloor": "\u230B", "rfr": "\uD835\uDD2F", "Rfr": "\u211C", "rHar": "\u2964", "rhard": "\u21C1", "rharu": "\u21C0", "rharul": "\u296C", "Rho": "\u03A1", "rho": "\u03C1", "rhov": "\u03F1", "RightAngleBracket": "\u27E9", "RightArrowBar": "\u21E5", "rightarrow": "\u2192", "RightArrow": "\u2192", "Rightarrow": "\u21D2", "RightArrowLeftArrow": "\u21C4", "rightarrowtail": "\u21A3", "RightCeiling": "\u2309", "RightDoubleBracket": "\u27E7", "RightDownTeeVector": "\u295D", "RightDownVectorBar": "\u2955", "RightDownVector": "\u21C2", "RightFloor": "\u230B", "rightharpoondown": "\u21C1", "rightharpoonup": "\u21C0", "rightleftarrows": "\u21C4", "rightleftharpoons": "\u21CC", "rightrightarrows": "\u21C9", "rightsquigarrow": "\u219D", "RightTeeArrow": "\u21A6", "RightTee": "\u22A2", "RightTeeVector": "\u295B", "rightthreetimes": "\u22CC", "RightTriangleBar": "\u29D0", "RightTriangle": "\u22B3", "RightTriangleEqual": "\u22B5", "RightUpDownVector": "\u294F", "RightUpTeeVector": "\u295C", "RightUpVectorBar": "\u2954", "RightUpVector": "\u21BE", "RightVectorBar": "\u2953", "RightVector": "\u21C0", "ring": "\u02DA", "risingdotseq": "\u2253", "rlarr": "\u21C4", "rlhar": "\u21CC", "rlm": "\u200F", "rmoustache": "\u23B1", "rmoust": "\u23B1", "rnmid": "\u2AEE", "roang": "\u27ED", "roarr": "\u21FE", "robrk": "\u27E7", "ropar": "\u2986", "ropf": "\uD835\uDD63", "Ropf": "\u211D", "roplus": "\u2A2E", "rotimes": "\u2A35", "RoundImplies": "\u2970", "rpar": ")", "rpargt": "\u2994", "rppolint": "\u2A12", "rrarr": "\u21C9", "Rrightarrow": "\u21DB", "rsaquo": "\u203A", "rscr": "\uD835\uDCC7", "Rscr": "\u211B", "rsh": "\u21B1", "Rsh": "\u21B1", "rsqb": "]", "rsquo": "\u2019", "rsquor": "\u2019", "rthree": "\u22CC", "rtimes": "\u22CA", "rtri": "\u25B9", "rtrie": "\u22B5", "rtrif": "\u25B8", "rtriltri": "\u29CE", "RuleDelayed": "\u29F4", "ruluhar": "\u2968", "rx": "\u211E", "Sacute": "\u015A", "sacute": "\u015B", "sbquo": "\u201A", "scap": "\u2AB8", "Scaron": "\u0160", "scaron": "\u0161", "Sc": "\u2ABC", "sc": "\u227B", "sccue": "\u227D", "sce": "\u2AB0", "scE": "\u2AB4", "Scedil": "\u015E", "scedil": "\u015F", "Scirc": "\u015C", "scirc": "\u015D", "scnap": "\u2ABA", "scnE": "\u2AB6", "scnsim": "\u22E9", "scpolint": "\u2A13", "scsim": "\u227F", "Scy": "\u0421", "scy": "\u0441", "sdotb": "\u22A1", "sdot": "\u22C5", "sdote": "\u2A66", "searhk": "\u2925", "searr": "\u2198", "seArr": "\u21D8", "searrow": "\u2198", "sect": "\u00A7", "semi": ";", "seswar": "\u2929", "setminus": "\u2216", "setmn": "\u2216", "sext": "\u2736", "Sfr": "\uD835\uDD16", "sfr": "\uD835\uDD30", "sfrown": "\u2322", "sharp": "\u266F", "SHCHcy": "\u0429", "shchcy": "\u0449", "SHcy": "\u0428", "shcy": "\u0448", "ShortDownArrow": "\u2193", "ShortLeftArrow": "\u2190", "shortmid": "\u2223", "shortparallel": "\u2225", "ShortRightArrow": "\u2192", "ShortUpArrow": "\u2191", "shy": "\u00AD", "Sigma": "\u03A3", "sigma": "\u03C3", "sigmaf": "\u03C2", "sigmav": "\u03C2", "sim": "\u223C", "simdot": "\u2A6A", "sime": "\u2243", "simeq": "\u2243", "simg": "\u2A9E", "simgE": "\u2AA0", "siml": "\u2A9D", "simlE": "\u2A9F", "simne": "\u2246", "simplus": "\u2A24", "simrarr": "\u2972", "slarr": "\u2190", "SmallCircle": "\u2218", "smallsetminus": "\u2216", "smashp": "\u2A33", "smeparsl": "\u29E4", "smid": "\u2223", "smile": "\u2323", "smt": "\u2AAA", "smte": "\u2AAC", "smtes": "\u2AAC\uFE00", "SOFTcy": "\u042C", "softcy": "\u044C", "solbar": "\u233F", "solb": "\u29C4", "sol": "/", "Sopf": "\uD835\uDD4A", "sopf": "\uD835\uDD64", "spades": "\u2660", "spadesuit": "\u2660", "spar": "\u2225", "sqcap": "\u2293", "sqcaps": "\u2293\uFE00", "sqcup": "\u2294", "sqcups": "\u2294\uFE00", "Sqrt": "\u221A", "sqsub": "\u228F", "sqsube": "\u2291", "sqsubset": "\u228F", "sqsubseteq": "\u2291", "sqsup": "\u2290", "sqsupe": "\u2292", "sqsupset": "\u2290", "sqsupseteq": "\u2292", "square": "\u25A1", "Square": "\u25A1", "SquareIntersection": "\u2293", "SquareSubset": "\u228F", "SquareSubsetEqual": "\u2291", "SquareSuperset": "\u2290", "SquareSupersetEqual": "\u2292", "SquareUnion": "\u2294", "squarf": "\u25AA", "squ": "\u25A1", "squf": "\u25AA", "srarr": "\u2192", "Sscr": "\uD835\uDCAE", "sscr": "\uD835\uDCC8", "ssetmn": "\u2216", "ssmile": "\u2323", "sstarf": "\u22C6", "Star": "\u22C6", "star": "\u2606", "starf": "\u2605", "straightepsilon": "\u03F5", "straightphi": "\u03D5", "strns": "\u00AF", "sub": "\u2282", "Sub": "\u22D0", "subdot": "\u2ABD", "subE": "\u2AC5", "sube": "\u2286", "subedot": "\u2AC3", "submult": "\u2AC1", "subnE": "\u2ACB", "subne": "\u228A", "subplus": "\u2ABF", "subrarr": "\u2979", "subset": "\u2282", "Subset": "\u22D0", "subseteq": "\u2286", "subseteqq": "\u2AC5", "SubsetEqual": "\u2286", "subsetneq": "\u228A", "subsetneqq": "\u2ACB", "subsim": "\u2AC7", "subsub": "\u2AD5", "subsup": "\u2AD3", "succapprox": "\u2AB8", "succ": "\u227B", "succcurlyeq": "\u227D", "Succeeds": "\u227B", "SucceedsEqual": "\u2AB0", "SucceedsSlantEqual": "\u227D", "SucceedsTilde": "\u227F", "succeq": "\u2AB0", "succnapprox": "\u2ABA", "succneqq": "\u2AB6", "succnsim": "\u22E9", "succsim": "\u227F", "SuchThat": "\u220B", "sum": "\u2211", "Sum": "\u2211", "sung": "\u266A", "sup1": "\u00B9", "sup2": "\u00B2", "sup3": "\u00B3", "sup": "\u2283", "Sup": "\u22D1", "supdot": "\u2ABE", "supdsub": "\u2AD8", "supE": "\u2AC6", "supe": "\u2287", "supedot": "\u2AC4", "Superset": "\u2283", "SupersetEqual": "\u2287", "suphsol": "\u27C9", "suphsub": "\u2AD7", "suplarr": "\u297B", "supmult": "\u2AC2", "supnE": "\u2ACC", "supne": "\u228B", "supplus": "\u2AC0", "supset": "\u2283", "Supset": "\u22D1", "supseteq": "\u2287", "supseteqq": "\u2AC6", "supsetneq": "\u228B", "supsetneqq": "\u2ACC", "supsim": "\u2AC8", "supsub": "\u2AD4", "supsup": "\u2AD6", "swarhk": "\u2926", "swarr": "\u2199", "swArr": "\u21D9", "swarrow": "\u2199", "swnwar": "\u292A", "szlig": "\u00DF", "Tab": "\t", "target": "\u2316", "Tau": "\u03A4", "tau": "\u03C4", "tbrk": "\u23B4", "Tcaron": "\u0164", "tcaron": "\u0165", "Tcedil": "\u0162", "tcedil": "\u0163", "Tcy": "\u0422", "tcy": "\u0442", "tdot": "\u20DB", "telrec": "\u2315", "Tfr": "\uD835\uDD17", "tfr": "\uD835\uDD31", "there4": "\u2234", "therefore": "\u2234", "Therefore": "\u2234", "Theta": "\u0398", "theta": "\u03B8", "thetasym": "\u03D1", "thetav": "\u03D1", "thickapprox": "\u2248", "thicksim": "\u223C", "ThickSpace": "\u205F\u200A", "ThinSpace": "\u2009", "thinsp": "\u2009", "thkap": "\u2248", "thksim": "\u223C", "THORN": "\u00DE", "thorn": "\u00FE", "tilde": "\u02DC", "Tilde": "\u223C", "TildeEqual": "\u2243", "TildeFullEqual": "\u2245", "TildeTilde": "\u2248", "timesbar": "\u2A31", "timesb": "\u22A0", "times": "\u00D7", "timesd": "\u2A30", "tint": "\u222D", "toea": "\u2928", "topbot": "\u2336", "topcir": "\u2AF1", "top": "\u22A4", "Topf": "\uD835\uDD4B", "topf": "\uD835\uDD65", "topfork": "\u2ADA", "tosa": "\u2929", "tprime": "\u2034", "trade": "\u2122", "TRADE": "\u2122", "triangle": "\u25B5", "triangledown": "\u25BF", "triangleleft": "\u25C3", "trianglelefteq": "\u22B4", "triangleq": "\u225C", "triangleright": "\u25B9", "trianglerighteq": "\u22B5", "tridot": "\u25EC", "trie": "\u225C", "triminus": "\u2A3A", "TripleDot": "\u20DB", "triplus": "\u2A39", "trisb": "\u29CD", "tritime": "\u2A3B", "trpezium": "\u23E2", "Tscr": "\uD835\uDCAF", "tscr": "\uD835\uDCC9", "TScy": "\u0426", "tscy": "\u0446", "TSHcy": "\u040B", "tshcy": "\u045B", "Tstrok": "\u0166", "tstrok": "\u0167", "twixt": "\u226C", "twoheadleftarrow": "\u219E", "twoheadrightarrow": "\u21A0", "Uacute": "\u00DA", "uacute": "\u00FA", "uarr": "\u2191", "Uarr": "\u219F", "uArr": "\u21D1", "Uarrocir": "\u2949", "Ubrcy": "\u040E", "ubrcy": "\u045E", "Ubreve": "\u016C", "ubreve": "\u016D", "Ucirc": "\u00DB", "ucirc": "\u00FB", "Ucy": "\u0423", "ucy": "\u0443", "udarr": "\u21C5", "Udblac": "\u0170", "udblac": "\u0171", "udhar": "\u296E", "ufisht": "\u297E", "Ufr": "\uD835\uDD18", "ufr": "\uD835\uDD32", "Ugrave": "\u00D9", "ugrave": "\u00F9", "uHar": "\u2963", "uharl": "\u21BF", "uharr": "\u21BE", "uhblk": "\u2580", "ulcorn": "\u231C", "ulcorner": "\u231C", "ulcrop": "\u230F", "ultri": "\u25F8", "Umacr": "\u016A", "umacr": "\u016B", "uml": "\u00A8", "UnderBar": "_", "UnderBrace": "\u23DF", "UnderBracket": "\u23B5", "UnderParenthesis": "\u23DD", "Union": "\u22C3", "UnionPlus": "\u228E", "Uogon": "\u0172", "uogon": "\u0173", "Uopf": "\uD835\uDD4C", "uopf": "\uD835\uDD66", "UpArrowBar": "\u2912", "uparrow": "\u2191", "UpArrow": "\u2191", "Uparrow": "\u21D1", "UpArrowDownArrow": "\u21C5", "updownarrow": "\u2195", "UpDownArrow": "\u2195", "Updownarrow": "\u21D5", "UpEquilibrium": "\u296E", "upharpoonleft": "\u21BF", "upharpoonright": "\u21BE", "uplus": "\u228E", "UpperLeftArrow": "\u2196", "UpperRightArrow": "\u2197", "upsi": "\u03C5", "Upsi": "\u03D2", "upsih": "\u03D2", "Upsilon": "\u03A5", "upsilon": "\u03C5", "UpTeeArrow": "\u21A5", "UpTee": "\u22A5", "upuparrows": "\u21C8", "urcorn": "\u231D", "urcorner": "\u231D", "urcrop": "\u230E", "Uring": "\u016E", "uring": "\u016F", "urtri": "\u25F9", "Uscr": "\uD835\uDCB0", "uscr": "\uD835\uDCCA", "utdot": "\u22F0", "Utilde": "\u0168", "utilde": "\u0169", "utri": "\u25B5", "utrif": "\u25B4", "uuarr": "\u21C8", "Uuml": "\u00DC", "uuml": "\u00FC", "uwangle": "\u29A7", "vangrt": "\u299C", "varepsilon": "\u03F5", "varkappa": "\u03F0", "varnothing": "\u2205", "varphi": "\u03D5", "varpi": "\u03D6", "varpropto": "\u221D", "varr": "\u2195", "vArr": "\u21D5", "varrho": "\u03F1", "varsigma": "\u03C2", "varsubsetneq": "\u228A\uFE00", "varsubsetneqq": "\u2ACB\uFE00", "varsupsetneq": "\u228B\uFE00", "varsupsetneqq": "\u2ACC\uFE00", "vartheta": "\u03D1", "vartriangleleft": "\u22B2", "vartriangleright": "\u22B3", "vBar": "\u2AE8", "Vbar": "\u2AEB", "vBarv": "\u2AE9", "Vcy": "\u0412", "vcy": "\u0432", "vdash": "\u22A2", "vDash": "\u22A8", "Vdash": "\u22A9", "VDash": "\u22AB", "Vdashl": "\u2AE6", "veebar": "\u22BB", "vee": "\u2228", "Vee": "\u22C1", "veeeq": "\u225A", "vellip": "\u22EE", "verbar": "|", "Verbar": "\u2016", "vert": "|", "Vert": "\u2016", "VerticalBar": "\u2223", "VerticalLine": "|", "VerticalSeparator": "\u2758", "VerticalTilde": "\u2240", "VeryThinSpace": "\u200A", "Vfr": "\uD835\uDD19", "vfr": "\uD835\uDD33", "vltri": "\u22B2", "vnsub": "\u2282\u20D2", "vnsup": "\u2283\u20D2", "Vopf": "\uD835\uDD4D", "vopf": "\uD835\uDD67", "vprop": "\u221D", "vrtri": "\u22B3", "Vscr": "\uD835\uDCB1", "vscr": "\uD835\uDCCB", "vsubnE": "\u2ACB\uFE00", "vsubne": "\u228A\uFE00", "vsupnE": "\u2ACC\uFE00", "vsupne": "\u228B\uFE00", "Vvdash": "\u22AA", "vzigzag": "\u299A", "Wcirc": "\u0174", "wcirc": "\u0175", "wedbar": "\u2A5F", "wedge": "\u2227", "Wedge": "\u22C0", "wedgeq": "\u2259", "weierp": "\u2118", "Wfr": "\uD835\uDD1A", "wfr": "\uD835\uDD34", "Wopf": "\uD835\uDD4E", "wopf": "\uD835\uDD68", "wp": "\u2118", "wr": "\u2240", "wreath": "\u2240", "Wscr": "\uD835\uDCB2", "wscr": "\uD835\uDCCC", "xcap": "\u22C2", "xcirc": "\u25EF", "xcup": "\u22C3", "xdtri": "\u25BD", "Xfr": "\uD835\uDD1B", "xfr": "\uD835\uDD35", "xharr": "\u27F7", "xhArr": "\u27FA", "Xi": "\u039E", "xi": "\u03BE", "xlarr": "\u27F5", "xlArr": "\u27F8", "xmap": "\u27FC", "xnis": "\u22FB", "xodot": "\u2A00", "Xopf": "\uD835\uDD4F", "xopf": "\uD835\uDD69", "xoplus": "\u2A01", "xotime": "\u2A02", "xrarr": "\u27F6", "xrArr": "\u27F9", "Xscr": "\uD835\uDCB3", "xscr": "\uD835\uDCCD", "xsqcup": "\u2A06", "xuplus": "\u2A04", "xutri": "\u25B3", "xvee": "\u22C1", "xwedge": "\u22C0", "Yacute": "\u00DD", "yacute": "\u00FD", "YAcy": "\u042F", "yacy": "\u044F", "Ycirc": "\u0176", "ycirc": "\u0177", "Ycy": "\u042B", "ycy": "\u044B", "yen": "\u00A5", "Yfr": "\uD835\uDD1C", "yfr": "\uD835\uDD36", "YIcy": "\u0407", "yicy": "\u0457", "Yopf": "\uD835\uDD50", "yopf": "\uD835\uDD6A", "Yscr": "\uD835\uDCB4", "yscr": "\uD835\uDCCE", "YUcy": "\u042E", "yucy": "\u044E", "yuml": "\u00FF", "Yuml": "\u0178", "Zacute": "\u0179", "zacute": "\u017A", "Zcaron": "\u017D", "zcaron": "\u017E", "Zcy": "\u0417", "zcy": "\u0437", "Zdot": "\u017B", "zdot": "\u017C", "zeetrf": "\u2128", "ZeroWidthSpace": "\u200B", "Zeta": "\u0396", "zeta": "\u03B6", "zfr": "\uD835\uDD37", "Zfr": "\u2128", "ZHcy": "\u0416", "zhcy": "\u0436", "zigrarr": "\u21DD", "zopf": "\uD835\uDD6B", "Zopf": "\u2124", "Zscr": "\uD835\uDCB5", "zscr": "\uD835\uDCCF", "zwj": "\u200D", "zwnj": "\u200C" }
+;
+},1723,[],"node_modules\\markdown-it\\node_modules\\entities\\lib\\maps\\entities.json");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = /[!-#%-\*,-\/:;\?@\[-\]_\{\}\xA1\xA7\xAB\xB6\xB7\xBB\xBF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061E\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u09FD\u0A76\u0AF0\u0C84\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166D\u166E\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2010-\u2027\u2030-\u2043\u2045-\u2051\u2053-\u205E\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E4E\u3001-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA8FC\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]|\uD800[\uDD00-\uDD02\uDF9F\uDFD0]|\uD801\uDD6F|\uD802[\uDC57\uDD1F\uDD3F\uDE50-\uDE58\uDE7F\uDEF0-\uDEF6\uDF39-\uDF3F\uDF99-\uDF9C]|\uD803[\uDF55-\uDF59]|\uD804[\uDC47-\uDC4D\uDCBB\uDCBC\uDCBE-\uDCC1\uDD40-\uDD43\uDD74\uDD75\uDDC5-\uDDC8\uDDCD\uDDDB\uDDDD-\uDDDF\uDE38-\uDE3D\uDEA9]|\uD805[\uDC4B-\uDC4F\uDC5B\uDC5D\uDCC6\uDDC1-\uDDD7\uDE41-\uDE43\uDE60-\uDE6C\uDF3C-\uDF3E]|\uD806[\uDC3B\uDE3F-\uDE46\uDE9A-\uDE9C\uDE9E-\uDEA2]|\uD807[\uDC41-\uDC45\uDC70\uDC71\uDEF7\uDEF8]|\uD809[\uDC70-\uDC74]|\uD81A[\uDE6E\uDE6F\uDEF5\uDF37-\uDF3B\uDF44]|\uD81B[\uDE97-\uDE9A]|\uD82F\uDC9F|\uD836[\uDE87-\uDE8B]|\uD83A[\uDD5E\uDD5F]/;
+},1724,[],"node_modules\\uc.micro\\categories\\P\\regex.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  exports.Any = _$$_REQUIRE(_dependencyMap[0], "./properties/Any/regex");
+  exports.Cc = _$$_REQUIRE(_dependencyMap[1], "./categories/Cc/regex");
+  exports.Cf = _$$_REQUIRE(_dependencyMap[2], "./categories/Cf/regex");
+  exports.P = _$$_REQUIRE(_dependencyMap[3], "./categories/P/regex");
+  exports.Z = _$$_REQUIRE(_dependencyMap[4], "./categories/Z/regex");
+},1725,[1726,1727,1728,1724,1729],"node_modules\\uc.micro\\index.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = /[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/;
+},1726,[],"node_modules\\uc.micro\\properties\\Any\\regex.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = /[\0-\x1F\x7F-\x9F]/;
+},1727,[],"node_modules\\uc.micro\\categories\\Cc\\regex.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = /[\xAD\u0600-\u0605\u061C\u06DD\u070F\u08E2\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u206F\uFEFF\uFFF9-\uFFFB]|\uD804[\uDCBD\uDCCD]|\uD82F[\uDCA0-\uDCA3]|\uD834[\uDD73-\uDD7A]|\uDB40[\uDC01\uDC20-\uDC7F]/;
+},1728,[],"node_modules\\uc.micro\\categories\\Cf\\regex.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = /[ \xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/;
+},1729,[],"node_modules\\uc.micro\\categories\\Z\\regex.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  /** internal
+   * class ParserInline
+   *
+   * Tokenizes paragraph content.
+   **/
+  'use strict';
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Parser rules
+
+  var _rules = [['text', _$$_REQUIRE(_dependencyMap[0], "./rules_inline/text")], ['newline', _$$_REQUIRE(_dependencyMap[1], "./rules_inline/newline")], ['escape', _$$_REQUIRE(_dependencyMap[2], "./rules_inline/escape")], ['backticks', _$$_REQUIRE(_dependencyMap[3], "./rules_inline/backticks")], ['strikethrough', _$$_REQUIRE(_dependencyMap[4], "./rules_inline/strikethrough").tokenize], ['emphasis', _$$_REQUIRE(_dependencyMap[5], "./rules_inline/emphasis").tokenize], ['link', _$$_REQUIRE(_dependencyMap[6], "./rules_inline/link")], ['image', _$$_REQUIRE(_dependencyMap[7], "./rules_inline/image")], ['autolink', _$$_REQUIRE(_dependencyMap[8], "./rules_inline/autolink")], ['html_inline', _$$_REQUIRE(_dependencyMap[9], "./rules_inline/html_inline")], ['entity', _$$_REQUIRE(_dependencyMap[10], "./rules_inline/entity")]];
+  var _rules2 = [['balance_pairs', _$$_REQUIRE(_dependencyMap[11], "./rules_inline/balance_pairs")], ['strikethrough', _$$_REQUIRE(_dependencyMap[4], "./rules_inline/strikethrough").postProcess], ['emphasis', _$$_REQUIRE(_dependencyMap[5], "./rules_inline/emphasis").postProcess], ['text_collapse', _$$_REQUIRE(_dependencyMap[12], "./rules_inline/text_collapse")]];
+
+  /**
+   * new ParserInline()
+   **/
+  function ParserInline() {
+    var i;
+
+    /**
+     * ParserInline#ruler -> Ruler
+     *
+     * [[Ruler]] instance. Keep configuration of inline rules.
+     **/
+    this.ruler = new (_$$_REQUIRE(_dependencyMap[13], "./ruler"))();
+    for (i = 0; i < _rules.length; i++) {
+      this.ruler.push(_rules[i][0], _rules[i][1]);
+    }
+
+    /**
+     * ParserInline#ruler2 -> Ruler
+     *
+     * [[Ruler]] instance. Second ruler used for post-processing
+     * (e.g. in emphasis-like rules).
+     **/
+    this.ruler2 = new (_$$_REQUIRE(_dependencyMap[13], "./ruler"))();
+    for (i = 0; i < _rules2.length; i++) {
+      this.ruler2.push(_rules2[i][0], _rules2[i][1]);
+    }
+  }
+
+  // Skip single token by running all rules in validation mode;
+  // returns `true` if any rule reported success
+  //
+  ParserInline.prototype.skipToken = function (state) {
+    var ok,
+      i,
+      pos = state.pos,
+      rules = this.ruler.getRules(''),
+      len = rules.length,
+      maxNesting = state.md.options.maxNesting,
+      cache = state.cache;
+    if (typeof cache[pos] !== 'undefined') {
+      state.pos = cache[pos];
+      return;
+    }
+    if (state.level < maxNesting) {
+      for (i = 0; i < len; i++) {
+        // Increment state.level and decrement it later to limit recursion.
+        // It's harmless to do here, because no tokens are created. But ideally,
+        // we'd need a separate private state variable for this purpose.
+        //
+        state.level++;
+        ok = rules[i](state, true);
+        state.level--;
+        if (ok) {
+          break;
+        }
+      }
+    } else {
+      // Too much nesting, just skip until the end of the paragraph.
+      //
+      // NOTE: this will cause links to behave incorrectly in the following case,
+      //       when an amount of `[` is exactly equal to `maxNesting + 1`:
+      //
+      //       [[[[[[[[[[[[[[[[[[[[[foo]()
+      //
+      // TODO: remove this workaround when CM standard will allow nested links
+      //       (we can replace it by preventing links from being parsed in
+      //       validation mode)
+      //
+      state.pos = state.posMax;
+    }
+    if (!ok) {
+      state.pos++;
+    }
+    cache[pos] = state.pos;
+  };
+
+  // Generate tokens for input range
+  //
+  ParserInline.prototype.tokenize = function (state) {
+    var ok,
+      i,
+      rules = this.ruler.getRules(''),
+      len = rules.length,
+      end = state.posMax,
+      maxNesting = state.md.options.maxNesting;
+    while (state.pos < end) {
+      // Try all possible rules.
+      // On success, rule should:
+      //
+      // - update `state.pos`
+      // - update `state.tokens`
+      // - return true
+
+      if (state.level < maxNesting) {
+        for (i = 0; i < len; i++) {
+          ok = rules[i](state, false);
+          if (ok) {
+            break;
+          }
+        }
+      }
+      if (ok) {
+        if (state.pos >= end) {
+          break;
+        }
+        continue;
+      }
+      state.pending += state.src[state.pos++];
+    }
+    if (state.pending) {
+      state.pushPending();
+    }
+  };
+
+  /**
+   * ParserInline.parse(str, md, env, outTokens)
+   *
+   * Process input string and push inline tokens into `outTokens`
+   **/
+  ParserInline.prototype.parse = function (str, md, env, outTokens) {
+    var i, rules, len;
+    var state = new this.State(str, md, env, outTokens);
+    this.tokenize(state);
+    rules = this.ruler2.getRules('');
+    len = rules.length;
+    for (i = 0; i < len; i++) {
+      rules[i](state);
+    }
+  };
+  ParserInline.prototype.State = _$$_REQUIRE(_dependencyMap[14], "./rules_inline/state_inline");
+  module.exports = ParserInline;
+},1730,[1731,1732,1733,1734,1735,1736,1737,1738,1739,1740,1742,1743,1744,1745,1746],"node_modules\\markdown-it\\lib\\parser_inline.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Skip text characters for text token, place those to pending buffer
+  // and increment current pos
+
+  'use strict';
+
+  // Rule to skip pure text
+  // '{}$%@~+=:' reserved for extentions
+
+  // !, ", #, $, %, &, ', (, ), *, +, ,, -, ., /, :, ;, <, =, >, ?, @, [, \, ], ^, _, `, {, |, }, or ~
+
+  // !!!! Don't confuse with "Markdown ASCII Punctuation" chars
+  // http://spec.commonmark.org/0.15/#ascii-punctuation-character
+  function isTerminatorChar(ch) {
+    switch (ch) {
+      case 0x0A /* \n */:
+      case 0x21 /* ! */:
+      case 0x23 /* # */:
+      case 0x24 /* $ */:
+      case 0x25 /* % */:
+      case 0x26 /* & */:
+      case 0x2A /* * */:
+      case 0x2B /* + */:
+      case 0x2D /* - */:
+      case 0x3A /* : */:
+      case 0x3C /* < */:
+      case 0x3D /* = */:
+      case 0x3E /* > */:
+      case 0x40 /* @ */:
+      case 0x5B /* [ */:
+      case 0x5C /* \ */:
+      case 0x5D /* ] */:
+      case 0x5E /* ^ */:
+      case 0x5F /* _ */:
+      case 0x60 /* ` */:
+      case 0x7B /* { */:
+      case 0x7D /* } */:
+      case 0x7E /* ~ */:
+        return true;
+      default:
+        return false;
+    }
+  }
+  module.exports = function text(state, silent) {
+    var pos = state.pos;
+    while (pos < state.posMax && !isTerminatorChar(state.src.charCodeAt(pos))) {
+      pos++;
+    }
+    if (pos === state.pos) {
+      return false;
+    }
+    if (!silent) {
+      state.pending += state.src.slice(state.pos, pos);
+    }
+    state.pos = pos;
+    return true;
+  };
+
+  // Alternative implementation, for memory.
+  //
+  // It costs 10% of performance, but allows extend terminators list, if place it
+  // to `ParcerInline` property. Probably, will switch to it sometime, such
+  // flexibility required.
+
+  /*
+  var TERMINATOR_RE = /[\n!#$%&*+\-:<=>@[\\\]^_`{}~]/;
+  
+  module.exports = function text(state, silent) {
+    var pos = state.pos,
+        idx = state.src.slice(pos).search(TERMINATOR_RE);
+  
+    // first char is terminator -> empty text
+    if (idx === 0) { return false; }
+  
+    // no terminator -> text till end of string
+    if (idx < 0) {
+      if (!silent) { state.pending += state.src.slice(pos); }
+      state.pos = state.src.length;
+      return true;
+    }
+  
+    if (!silent) { state.pending += state.src.slice(pos, pos + idx); }
+  
+    state.pos += idx;
+  
+    return true;
+  };*/
+},1731,[],"node_modules\\markdown-it\\lib\\rules_inline\\text.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Proceess '\n'
+
+  'use strict';
+
+  module.exports = function newline(state, silent) {
+    var pmax,
+      max,
+      pos = state.pos;
+    if (state.src.charCodeAt(pos) !== 0x0A /* \n */) {
+      return false;
+    }
+    pmax = state.pending.length - 1;
+    max = state.posMax;
+
+    // '  \n' -> hardbreak
+    // Lookup in pending chars is bad practice! Don't copy to other rules!
+    // Pending string is stored in concat mode, indexed lookups will cause
+    // convertion to flat mode.
+    if (!silent) {
+      if (pmax >= 0 && state.pending.charCodeAt(pmax) === 0x20) {
+        if (pmax >= 1 && state.pending.charCodeAt(pmax - 1) === 0x20) {
+          state.pending = state.pending.replace(/ +$/, '');
+          state.push('hardbreak', 'br', 0);
+        } else {
+          state.pending = state.pending.slice(0, -1);
+          state.push('softbreak', 'br', 0);
+        }
+      } else {
+        state.push('softbreak', 'br', 0);
+      }
+    }
+    pos++;
+
+    // skip heading spaces for next line
+    while (pos < max && _$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(state.src.charCodeAt(pos))) {
+      pos++;
+    }
+    state.pos = pos;
+    return true;
+  };
+},1732,[1721],"node_modules\\markdown-it\\lib\\rules_inline\\newline.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Process escaped chars and hardbreaks
+
+  'use strict';
+
+  var ESCAPED = [];
+  for (var i = 0; i < 256; i++) {
+    ESCAPED.push(0);
+  }
+  '\\!"#$%&\'()*+,./:;<=>?@[]^_`{|}~-'.split('').forEach(function (ch) {
+    ESCAPED[ch.charCodeAt(0)] = 1;
+  });
+  module.exports = function escape(state, silent) {
+    var ch,
+      pos = state.pos,
+      max = state.posMax;
+    if (state.src.charCodeAt(pos) !== 0x5C /* \ */) {
+      return false;
+    }
+    pos++;
+    if (pos < max) {
+      ch = state.src.charCodeAt(pos);
+      if (ch < 256 && ESCAPED[ch] !== 0) {
+        if (!silent) {
+          state.pending += state.src[pos];
+        }
+        state.pos += 2;
+        return true;
+      }
+      if (ch === 0x0A) {
+        if (!silent) {
+          state.push('hardbreak', 'br', 0);
+        }
+        pos++;
+        // skip leading whitespaces from next line
+        while (pos < max) {
+          ch = state.src.charCodeAt(pos);
+          if (!_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+            break;
+          }
+          pos++;
+        }
+        state.pos = pos;
+        return true;
+      }
+    }
+    if (!silent) {
+      state.pending += '\\';
+    }
+    state.pos++;
+    return true;
+  };
+},1733,[1721],"node_modules\\markdown-it\\lib\\rules_inline\\escape.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Parse backticks
+
+  'use strict';
+
+  module.exports = function backtick(state, silent) {
+    var start,
+      max,
+      marker,
+      matchStart,
+      matchEnd,
+      token,
+      pos = state.pos,
+      ch = state.src.charCodeAt(pos);
+    if (ch !== 0x60 /* ` */) {
+      return false;
+    }
+    start = pos;
+    pos++;
+    max = state.posMax;
+    while (pos < max && state.src.charCodeAt(pos) === 0x60 /* ` */) {
+      pos++;
+    }
+    marker = state.src.slice(start, pos);
+    matchStart = matchEnd = pos;
+    while ((matchStart = state.src.indexOf('`', matchEnd)) !== -1) {
+      matchEnd = matchStart + 1;
+      while (matchEnd < max && state.src.charCodeAt(matchEnd) === 0x60 /* ` */) {
+        matchEnd++;
+      }
+      if (matchEnd - matchStart === marker.length) {
+        if (!silent) {
+          token = state.push('code_inline', 'code', 0);
+          token.markup = marker;
+          token.content = state.src.slice(pos, matchStart).replace(/\n/g, ' ').replace(/^ (.+) $/, '$1');
+        }
+        state.pos = matchEnd;
+        return true;
+      }
+    }
+    if (!silent) {
+      state.pending += marker;
+    }
+    state.pos += marker.length;
+    return true;
+  };
+},1734,[],"node_modules\\markdown-it\\lib\\rules_inline\\backticks.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // ~~strike through~~
+  //
+  'use strict';
+
+  // Insert each marker as a separate text token, and add it to delimiter list
+  //
+  module.exports.tokenize = function strikethrough(state, silent) {
+    var i,
+      scanned,
+      token,
+      len,
+      ch,
+      start = state.pos,
+      marker = state.src.charCodeAt(start);
+    if (silent) {
+      return false;
+    }
+    if (marker !== 0x7E /* ~ */) {
+      return false;
+    }
+    scanned = state.scanDelims(state.pos, true);
+    len = scanned.length;
+    ch = String.fromCharCode(marker);
+    if (len < 2) {
+      return false;
+    }
+    if (len % 2) {
+      token = state.push('text', '', 0);
+      token.content = ch;
+      len--;
+    }
+    for (i = 0; i < len; i += 2) {
+      token = state.push('text', '', 0);
+      token.content = ch + ch;
+      state.delimiters.push({
+        marker: marker,
+        length: 0,
+        // disable "rule of 3" length checks meant for emphasis
+        jump: i,
+        token: state.tokens.length - 1,
+        end: -1,
+        open: scanned.can_open,
+        close: scanned.can_close
+      });
+    }
+    state.pos += scanned.length;
+    return true;
+  };
+  function postProcess(state, delimiters) {
+    var i,
+      j,
+      startDelim,
+      endDelim,
+      token,
+      loneMarkers = [],
+      max = delimiters.length;
+    for (i = 0; i < max; i++) {
+      startDelim = delimiters[i];
+      if (startDelim.marker !== 0x7E /* ~ */) {
+        continue;
+      }
+      if (startDelim.end === -1) {
+        continue;
+      }
+      endDelim = delimiters[startDelim.end];
+      token = state.tokens[startDelim.token];
+      token.type = 's_open';
+      token.tag = 's';
+      token.nesting = 1;
+      token.markup = '~~';
+      token.content = '';
+      token = state.tokens[endDelim.token];
+      token.type = 's_close';
+      token.tag = 's';
+      token.nesting = -1;
+      token.markup = '~~';
+      token.content = '';
+      if (state.tokens[endDelim.token - 1].type === 'text' && state.tokens[endDelim.token - 1].content === '~') {
+        loneMarkers.push(endDelim.token - 1);
+      }
+    }
+
+    // If a marker sequence has an odd number of characters, it's splitted
+    // like this: `~~~~~` -> `~` + `~~` + `~~`, leaving one marker at the
+    // start of the sequence.
+    //
+    // So, we have to move all those markers after subsequent s_close tags.
+    //
+    while (loneMarkers.length) {
+      i = loneMarkers.pop();
+      j = i + 1;
+      while (j < state.tokens.length && state.tokens[j].type === 's_close') {
+        j++;
+      }
+      j--;
+      if (i !== j) {
+        token = state.tokens[j];
+        state.tokens[j] = state.tokens[i];
+        state.tokens[i] = token;
+      }
+    }
+  }
+
+  // Walk through delimiter list and replace text tokens with tags
+  //
+  module.exports.postProcess = function strikethrough(state) {
+    var curr,
+      tokens_meta = state.tokens_meta,
+      max = state.tokens_meta.length;
+    postProcess(state, state.delimiters);
+    for (curr = 0; curr < max; curr++) {
+      if (tokens_meta[curr] && tokens_meta[curr].delimiters) {
+        postProcess(state, tokens_meta[curr].delimiters);
+      }
+    }
+  };
+},1735,[],"node_modules\\markdown-it\\lib\\rules_inline\\strikethrough.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Process *this* and _that_
+  //
+  'use strict';
+
+  // Insert each marker as a separate text token, and add it to delimiter list
+  //
+  module.exports.tokenize = function emphasis(state, silent) {
+    var i,
+      scanned,
+      token,
+      start = state.pos,
+      marker = state.src.charCodeAt(start);
+    if (silent) {
+      return false;
+    }
+    if (marker !== 0x5F /* _ */ && marker !== 0x2A /* * */) {
+      return false;
+    }
+    scanned = state.scanDelims(state.pos, marker === 0x2A);
+    for (i = 0; i < scanned.length; i++) {
+      token = state.push('text', '', 0);
+      token.content = String.fromCharCode(marker);
+      state.delimiters.push({
+        // Char code of the starting marker (number).
+        //
+        marker: marker,
+        // Total length of these series of delimiters.
+        //
+        length: scanned.length,
+        // An amount of characters before this one that's equivalent to
+        // current one. In plain English: if this delimiter does not open
+        // an emphasis, neither do previous `jump` characters.
+        //
+        // Used to skip sequences like "*****" in one step, for 1st asterisk
+        // value will be 0, for 2nd it's 1 and so on.
+        //
+        jump: i,
+        // A position of the token this delimiter corresponds to.
+        //
+        token: state.tokens.length - 1,
+        // If this delimiter is matched as a valid opener, `end` will be
+        // equal to its position, otherwise it's `-1`.
+        //
+        end: -1,
+        // Boolean flags that determine if this delimiter could open or close
+        // an emphasis.
+        //
+        open: scanned.can_open,
+        close: scanned.can_close
+      });
+    }
+    state.pos += scanned.length;
+    return true;
+  };
+  function postProcess(state, delimiters) {
+    var i,
+      startDelim,
+      endDelim,
+      token,
+      ch,
+      isStrong,
+      max = delimiters.length;
+    for (i = max - 1; i >= 0; i--) {
+      startDelim = delimiters[i];
+      if (startDelim.marker !== 0x5F /* _ */ && startDelim.marker !== 0x2A /* * */) {
+        continue;
+      }
+
+      // Process only opening markers
+      if (startDelim.end === -1) {
+        continue;
+      }
+      endDelim = delimiters[startDelim.end];
+
+      // If the previous delimiter has the same marker and is adjacent to this one,
+      // merge those into one strong delimiter.
+      //
+      // `<em><em>whatever</em></em>` -> `<strong>whatever</strong>`
+      //
+      isStrong = i > 0 && delimiters[i - 1].end === startDelim.end + 1 && delimiters[i - 1].token === startDelim.token - 1 && delimiters[startDelim.end + 1].token === endDelim.token + 1 && delimiters[i - 1].marker === startDelim.marker;
+      ch = String.fromCharCode(startDelim.marker);
+      token = state.tokens[startDelim.token];
+      token.type = isStrong ? 'strong_open' : 'em_open';
+      token.tag = isStrong ? 'strong' : 'em';
+      token.nesting = 1;
+      token.markup = isStrong ? ch + ch : ch;
+      token.content = '';
+      token = state.tokens[endDelim.token];
+      token.type = isStrong ? 'strong_close' : 'em_close';
+      token.tag = isStrong ? 'strong' : 'em';
+      token.nesting = -1;
+      token.markup = isStrong ? ch + ch : ch;
+      token.content = '';
+      if (isStrong) {
+        state.tokens[delimiters[i - 1].token].content = '';
+        state.tokens[delimiters[startDelim.end + 1].token].content = '';
+        i--;
+      }
+    }
+  }
+
+  // Walk through delimiter list and replace text tokens with tags
+  //
+  module.exports.postProcess = function emphasis(state) {
+    var curr,
+      tokens_meta = state.tokens_meta,
+      max = state.tokens_meta.length;
+    postProcess(state, state.delimiters);
+    for (curr = 0; curr < max; curr++) {
+      if (tokens_meta[curr] && tokens_meta[curr].delimiters) {
+        postProcess(state, tokens_meta[curr].delimiters);
+      }
+    }
+  };
+},1736,[],"node_modules\\markdown-it\\lib\\rules_inline\\emphasis.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Process [link](<to> "stuff")
+
+  'use strict';
+
+  module.exports = function link(state, silent) {
+    var attrs,
+      code,
+      label,
+      labelEnd,
+      labelStart,
+      pos,
+      res,
+      ref,
+      title,
+      token,
+      href = '',
+      oldPos = state.pos,
+      max = state.posMax,
+      start = state.pos,
+      parseReference = true;
+    if (state.src.charCodeAt(state.pos) !== 0x5B /* [ */) {
+      return false;
+    }
+    labelStart = state.pos + 1;
+    labelEnd = state.md.helpers.parseLinkLabel(state, state.pos, true);
+
+    // parser failed to find ']', so it's not a valid link
+    if (labelEnd < 0) {
+      return false;
+    }
+    pos = labelEnd + 1;
+    if (pos < max && state.src.charCodeAt(pos) === 0x28 /* ( */) {
+      //
+      // Inline link
+      //
+
+      // might have found a valid shortcut link, disable reference parsing
+      parseReference = false;
+
+      // [link](  <href>  "title"  )
+      //        ^^ skipping these spaces
+      pos++;
+      for (; pos < max; pos++) {
+        code = state.src.charCodeAt(pos);
+        if (!_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(code) && code !== 0x0A) {
+          break;
+        }
+      }
+      if (pos >= max) {
+        return false;
+      }
+
+      // [link](  <href>  "title"  )
+      //          ^^^^^^ parsing link destination
+      start = pos;
+      res = state.md.helpers.parseLinkDestination(state.src, pos, state.posMax);
+      if (res.ok) {
+        href = state.md.normalizeLink(res.str);
+        if (state.md.validateLink(href)) {
+          pos = res.pos;
+        } else {
+          href = '';
+        }
+      }
+
+      // [link](  <href>  "title"  )
+      //                ^^ skipping these spaces
+      start = pos;
+      for (; pos < max; pos++) {
+        code = state.src.charCodeAt(pos);
+        if (!_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(code) && code !== 0x0A) {
+          break;
+        }
+      }
+
+      // [link](  <href>  "title"  )
+      //                  ^^^^^^^ parsing link title
+      res = state.md.helpers.parseLinkTitle(state.src, pos, state.posMax);
+      if (pos < max && start !== pos && res.ok) {
+        title = res.str;
+        pos = res.pos;
+
+        // [link](  <href>  "title"  )
+        //                         ^^ skipping these spaces
+        for (; pos < max; pos++) {
+          code = state.src.charCodeAt(pos);
+          if (!_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(code) && code !== 0x0A) {
+            break;
+          }
+        }
+      } else {
+        title = '';
+      }
+      if (pos >= max || state.src.charCodeAt(pos) !== 0x29 /* ) */) {
+        // parsing a valid shortcut link failed, fallback to reference
+        parseReference = true;
+      }
+      pos++;
+    }
+    if (parseReference) {
+      //
+      // Link reference
+      //
+      if (typeof state.env.references === 'undefined') {
+        return false;
+      }
+      if (pos < max && state.src.charCodeAt(pos) === 0x5B /* [ */) {
+        start = pos + 1;
+        pos = state.md.helpers.parseLinkLabel(state, pos);
+        if (pos >= 0) {
+          label = state.src.slice(start, pos++);
+        } else {
+          pos = labelEnd + 1;
+        }
+      } else {
+        pos = labelEnd + 1;
+      }
+
+      // covers label === '' and label === undefined
+      // (collapsed reference link and shortcut reference link respectively)
+      if (!label) {
+        label = state.src.slice(labelStart, labelEnd);
+      }
+      ref = state.env.references[_$$_REQUIRE(_dependencyMap[0], "../common/utils").normalizeReference(label)];
+      if (!ref) {
+        state.pos = oldPos;
+        return false;
+      }
+      href = ref.href;
+      title = ref.title;
+    }
+
+    //
+    // We found the end of the link, and know for a fact it's a valid link;
+    // so all that's left to do is to call tokenizer.
+    //
+    if (!silent) {
+      state.pos = labelStart;
+      state.posMax = labelEnd;
+      token = state.push('link_open', 'a', 1);
+      token.attrs = attrs = [['href', href]];
+      if (title) {
+        attrs.push(['title', title]);
+      }
+      state.md.inline.tokenize(state);
+      token = state.push('link_close', 'a', -1);
+    }
+    state.pos = pos;
+    state.posMax = max;
+    return true;
+  };
+},1737,[1721],"node_modules\\markdown-it\\lib\\rules_inline\\link.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Process ![image](<src> "title")
+
+  'use strict';
+
+  module.exports = function image(state, silent) {
+    var attrs,
+      code,
+      content,
+      label,
+      labelEnd,
+      labelStart,
+      pos,
+      ref,
+      res,
+      title,
+      token,
+      tokens,
+      start,
+      href = '',
+      oldPos = state.pos,
+      max = state.posMax;
+    if (state.src.charCodeAt(state.pos) !== 0x21 /* ! */) {
+      return false;
+    }
+    if (state.src.charCodeAt(state.pos + 1) !== 0x5B /* [ */) {
+      return false;
+    }
+    labelStart = state.pos + 2;
+    labelEnd = state.md.helpers.parseLinkLabel(state, state.pos + 1, false);
+
+    // parser failed to find ']', so it's not a valid link
+    if (labelEnd < 0) {
+      return false;
+    }
+    pos = labelEnd + 1;
+    if (pos < max && state.src.charCodeAt(pos) === 0x28 /* ( */) {
+      //
+      // Inline link
+      //
+
+      // [link](  <href>  "title"  )
+      //        ^^ skipping these spaces
+      pos++;
+      for (; pos < max; pos++) {
+        code = state.src.charCodeAt(pos);
+        if (!_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(code) && code !== 0x0A) {
+          break;
+        }
+      }
+      if (pos >= max) {
+        return false;
+      }
+
+      // [link](  <href>  "title"  )
+      //          ^^^^^^ parsing link destination
+      start = pos;
+      res = state.md.helpers.parseLinkDestination(state.src, pos, state.posMax);
+      if (res.ok) {
+        href = state.md.normalizeLink(res.str);
+        if (state.md.validateLink(href)) {
+          pos = res.pos;
+        } else {
+          href = '';
+        }
+      }
+
+      // [link](  <href>  "title"  )
+      //                ^^ skipping these spaces
+      start = pos;
+      for (; pos < max; pos++) {
+        code = state.src.charCodeAt(pos);
+        if (!_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(code) && code !== 0x0A) {
+          break;
+        }
+      }
+
+      // [link](  <href>  "title"  )
+      //                  ^^^^^^^ parsing link title
+      res = state.md.helpers.parseLinkTitle(state.src, pos, state.posMax);
+      if (pos < max && start !== pos && res.ok) {
+        title = res.str;
+        pos = res.pos;
+
+        // [link](  <href>  "title"  )
+        //                         ^^ skipping these spaces
+        for (; pos < max; pos++) {
+          code = state.src.charCodeAt(pos);
+          if (!_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(code) && code !== 0x0A) {
+            break;
+          }
+        }
+      } else {
+        title = '';
+      }
+      if (pos >= max || state.src.charCodeAt(pos) !== 0x29 /* ) */) {
+        state.pos = oldPos;
+        return false;
+      }
+      pos++;
+    } else {
+      //
+      // Link reference
+      //
+      if (typeof state.env.references === 'undefined') {
+        return false;
+      }
+      if (pos < max && state.src.charCodeAt(pos) === 0x5B /* [ */) {
+        start = pos + 1;
+        pos = state.md.helpers.parseLinkLabel(state, pos);
+        if (pos >= 0) {
+          label = state.src.slice(start, pos++);
+        } else {
+          pos = labelEnd + 1;
+        }
+      } else {
+        pos = labelEnd + 1;
+      }
+
+      // covers label === '' and label === undefined
+      // (collapsed reference link and shortcut reference link respectively)
+      if (!label) {
+        label = state.src.slice(labelStart, labelEnd);
+      }
+      ref = state.env.references[_$$_REQUIRE(_dependencyMap[0], "../common/utils").normalizeReference(label)];
+      if (!ref) {
+        state.pos = oldPos;
+        return false;
+      }
+      href = ref.href;
+      title = ref.title;
+    }
+
+    //
+    // We found the end of the link, and know for a fact it's a valid link;
+    // so all that's left to do is to call tokenizer.
+    //
+    if (!silent) {
+      content = state.src.slice(labelStart, labelEnd);
+      state.md.inline.parse(content, state.md, state.env, tokens = []);
+      token = state.push('image', 'img', 0);
+      token.attrs = attrs = [['src', href], ['alt', '']];
+      token.children = tokens;
+      token.content = content;
+      if (title) {
+        attrs.push(['title', title]);
+      }
+    }
+    state.pos = pos;
+    state.posMax = max;
+    return true;
+  };
+},1738,[1721],"node_modules\\markdown-it\\lib\\rules_inline\\image.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Process autolinks '<protocol:...>'
+
+  'use strict';
+
+  /*eslint max-len:0*/
+  var EMAIL_RE = /^<([a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)>/;
+  var AUTOLINK_RE = /^<([a-zA-Z][a-zA-Z0-9+.\-]{1,31}):([^<>\x00-\x20]*)>/;
+  module.exports = function autolink(state, silent) {
+    var tail,
+      linkMatch,
+      emailMatch,
+      url,
+      fullUrl,
+      token,
+      pos = state.pos;
+    if (state.src.charCodeAt(pos) !== 0x3C /* < */) {
+      return false;
+    }
+    tail = state.src.slice(pos);
+    if (tail.indexOf('>') < 0) {
+      return false;
+    }
+    if (AUTOLINK_RE.test(tail)) {
+      linkMatch = tail.match(AUTOLINK_RE);
+      url = linkMatch[0].slice(1, -1);
+      fullUrl = state.md.normalizeLink(url);
+      if (!state.md.validateLink(fullUrl)) {
+        return false;
+      }
+      if (!silent) {
+        token = state.push('link_open', 'a', 1);
+        token.attrs = [['href', fullUrl]];
+        token.markup = 'autolink';
+        token.info = 'auto';
+        token = state.push('text', '', 0);
+        token.content = state.md.normalizeLinkText(url);
+        token = state.push('link_close', 'a', -1);
+        token.markup = 'autolink';
+        token.info = 'auto';
+      }
+      state.pos += linkMatch[0].length;
+      return true;
+    }
+    if (EMAIL_RE.test(tail)) {
+      emailMatch = tail.match(EMAIL_RE);
+      url = emailMatch[0].slice(1, -1);
+      fullUrl = state.md.normalizeLink('mailto:' + url);
+      if (!state.md.validateLink(fullUrl)) {
+        return false;
+      }
+      if (!silent) {
+        token = state.push('link_open', 'a', 1);
+        token.attrs = [['href', fullUrl]];
+        token.markup = 'autolink';
+        token.info = 'auto';
+        token = state.push('text', '', 0);
+        token.content = state.md.normalizeLinkText(url);
+        token = state.push('link_close', 'a', -1);
+        token.markup = 'autolink';
+        token.info = 'auto';
+      }
+      state.pos += emailMatch[0].length;
+      return true;
+    }
+    return false;
+  };
+},1739,[],"node_modules\\markdown-it\\lib\\rules_inline\\autolink.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Process html tags
+
+  'use strict';
+
+  function isLetter(ch) {
+    /*eslint no-bitwise:0*/
+    var lc = ch | 0x20; // to lower case
+    return lc >= 0x61 /* a */ && lc <= 0x7a /* z */;
+  }
+  module.exports = function html_inline(state, silent) {
+    var ch,
+      match,
+      max,
+      token,
+      pos = state.pos;
+    if (!state.md.options.html) {
+      return false;
+    }
+
+    // Check start
+    max = state.posMax;
+    if (state.src.charCodeAt(pos) !== 0x3C /* < */ || pos + 2 >= max) {
+      return false;
+    }
+
+    // Quick fail on second char
+    ch = state.src.charCodeAt(pos + 1);
+    if (ch !== 0x21 /* ! */ && ch !== 0x3F /* ? */ && ch !== 0x2F /* / */ && !isLetter(ch)) {
+      return false;
+    }
+    match = state.src.slice(pos).match(_$$_REQUIRE(_dependencyMap[0], "../common/html_re").HTML_TAG_RE);
+    if (!match) {
+      return false;
+    }
+    if (!silent) {
+      token = state.push('html_inline', '', 0);
+      token.content = state.src.slice(pos, pos + match[0].length);
+    }
+    state.pos += match[0].length;
+    return true;
+  };
+},1740,[1741],"node_modules\\markdown-it\\lib\\rules_inline\\html_inline.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Regexps to match html elements
+
+  'use strict';
+
+  var attr_name = '[a-zA-Z_:][a-zA-Z0-9:._-]*';
+  var unquoted = '[^"\'=<>`\\x00-\\x20]+';
+  var single_quoted = "'[^']*'";
+  var double_quoted = '"[^"]*"';
+  var attr_value = '(?:' + unquoted + '|' + single_quoted + '|' + double_quoted + ')';
+  var attribute = '(?:\\s+' + attr_name + '(?:\\s*=\\s*' + attr_value + ')?)';
+  var open_tag = '<[A-Za-z][A-Za-z0-9\\-]*' + attribute + '*\\s*\\/?>';
+  var close_tag = '<\\/[A-Za-z][A-Za-z0-9\\-]*\\s*>';
+  var comment = '<!---->|<!--(?:-?[^>-])(?:-?[^-])*-->';
+  var processing = '<[?].*?[?]>';
+  var declaration = '<![A-Z]+\\s+[^>]*>';
+  var cdata = '<!\\[CDATA\\[[\\s\\S]*?\\]\\]>';
+  var HTML_TAG_RE = new RegExp('^(?:' + open_tag + '|' + close_tag + '|' + comment + '|' + processing + '|' + declaration + '|' + cdata + ')');
+  var HTML_OPEN_CLOSE_TAG_RE = new RegExp('^(?:' + open_tag + '|' + close_tag + ')');
+  module.exports.HTML_TAG_RE = HTML_TAG_RE;
+  module.exports.HTML_OPEN_CLOSE_TAG_RE = HTML_OPEN_CLOSE_TAG_RE;
+},1741,[],"node_modules\\markdown-it\\lib\\common\\html_re.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Process html entity - &#123;, &#xAF;, &quot;, ...
+
+  'use strict';
+
+  var DIGITAL_RE = /^&#((?:x[a-f0-9]{1,6}|[0-9]{1,7}));/i;
+  var NAMED_RE = /^&([a-z][a-z0-9]{1,31});/i;
+  module.exports = function entity(state, silent) {
+    var ch,
+      code,
+      match,
+      pos = state.pos,
+      max = state.posMax;
+    if (state.src.charCodeAt(pos) !== 0x26 /* & */) {
+      return false;
+    }
+    if (pos + 1 < max) {
+      ch = state.src.charCodeAt(pos + 1);
+      if (ch === 0x23 /* # */) {
+        match = state.src.slice(pos).match(DIGITAL_RE);
+        if (match) {
+          if (!silent) {
+            code = match[1][0].toLowerCase() === 'x' ? parseInt(match[1].slice(1), 16) : parseInt(match[1], 10);
+            state.pending += _$$_REQUIRE(_dependencyMap[0], "../common/utils").isValidEntityCode(code) ? _$$_REQUIRE(_dependencyMap[0], "../common/utils").fromCodePoint(code) : _$$_REQUIRE(_dependencyMap[0], "../common/utils").fromCodePoint(0xFFFD);
+          }
+          state.pos += match[0].length;
+          return true;
+        }
+      } else {
+        match = state.src.slice(pos).match(NAMED_RE);
+        if (match) {
+          if (_$$_REQUIRE(_dependencyMap[0], "../common/utils").has(_$$_REQUIRE(_dependencyMap[1], "../common/entities"), match[1])) {
+            if (!silent) {
+              state.pending += _$$_REQUIRE(_dependencyMap[1], "../common/entities")[match[1]];
+            }
+            state.pos += match[0].length;
+            return true;
+          }
+        }
+      }
+    }
+    if (!silent) {
+      state.pending += '&';
+    }
+    state.pos++;
+    return true;
+  };
+},1742,[1721,1722],"node_modules\\markdown-it\\lib\\rules_inline\\entity.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // For each opening emphasis-like marker find a matching closing one
+  //
+  'use strict';
+
+  function processDelimiters(state, delimiters) {
+    var closerIdx,
+      openerIdx,
+      closer,
+      opener,
+      minOpenerIdx,
+      newMinOpenerIdx,
+      isOddMatch,
+      lastJump,
+      openersBottom = {},
+      max = delimiters.length;
+    for (closerIdx = 0; closerIdx < max; closerIdx++) {
+      closer = delimiters[closerIdx];
+
+      // Length is only used for emphasis-specific "rule of 3",
+      // if it's not defined (in strikethrough or 3rd party plugins),
+      // we can default it to 0 to disable those checks.
+      //
+      closer.length = closer.length || 0;
+      if (!closer.close) continue;
+
+      // Previously calculated lower bounds (previous fails)
+      // for each marker and each delimiter length modulo 3.
+      if (!openersBottom.hasOwnProperty(closer.marker)) {
+        openersBottom[closer.marker] = [-1, -1, -1];
+      }
+      minOpenerIdx = openersBottom[closer.marker][closer.length % 3];
+      newMinOpenerIdx = -1;
+      openerIdx = closerIdx - closer.jump - 1;
+      for (; openerIdx > minOpenerIdx; openerIdx -= opener.jump + 1) {
+        opener = delimiters[openerIdx];
+        if (opener.marker !== closer.marker) continue;
+        if (newMinOpenerIdx === -1) newMinOpenerIdx = openerIdx;
+        if (opener.open && opener.end < 0 && opener.level === closer.level) {
+          isOddMatch = false;
+
+          // from spec:
+          //
+          // If one of the delimiters can both open and close emphasis, then the
+          // sum of the lengths of the delimiter runs containing the opening and
+          // closing delimiters must not be a multiple of 3 unless both lengths
+          // are multiples of 3.
+          //
+          if (opener.close || closer.open) {
+            if ((opener.length + closer.length) % 3 === 0) {
+              if (opener.length % 3 !== 0 || closer.length % 3 !== 0) {
+                isOddMatch = true;
+              }
+            }
+          }
+          if (!isOddMatch) {
+            // If previous delimiter cannot be an opener, we can safely skip
+            // the entire sequence in future checks. This is required to make
+            // sure algorithm has linear complexity (see *_*_*_*_*_... case).
+            //
+            lastJump = openerIdx > 0 && !delimiters[openerIdx - 1].open ? delimiters[openerIdx - 1].jump + 1 : 0;
+            closer.jump = closerIdx - openerIdx + lastJump;
+            closer.open = false;
+            opener.end = closerIdx;
+            opener.jump = lastJump;
+            opener.close = false;
+            newMinOpenerIdx = -1;
+            break;
+          }
+        }
+      }
+      if (newMinOpenerIdx !== -1) {
+        // If match for this delimiter run failed, we want to set lower bound for
+        // future lookups. This is required to make sure algorithm has linear
+        // complexity.
+        //
+        // See details here:
+        // https://github.com/commonmark/cmark/issues/178#issuecomment-270417442
+        //
+        openersBottom[closer.marker][(closer.length || 0) % 3] = newMinOpenerIdx;
+      }
+    }
+  }
+  module.exports = function link_pairs(state) {
+    var curr,
+      tokens_meta = state.tokens_meta,
+      max = state.tokens_meta.length;
+    processDelimiters(state, state.delimiters);
+    for (curr = 0; curr < max; curr++) {
+      if (tokens_meta[curr] && tokens_meta[curr].delimiters) {
+        processDelimiters(state, tokens_meta[curr].delimiters);
+      }
+    }
+  };
+},1743,[],"node_modules\\markdown-it\\lib\\rules_inline\\balance_pairs.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Clean up tokens after emphasis and strikethrough postprocessing:
+  // merge adjacent text nodes into one and re-calculate all token levels
+  //
+  // This is necessary because initially emphasis delimiter markers (*, _, ~)
+  // are treated as their own separate text tokens. Then emphasis rule either
+  // leaves them as text (needed to merge with adjacent text) or turns them
+  // into opening/closing tags (which messes up levels inside).
+  //
+  'use strict';
+
+  module.exports = function text_collapse(state) {
+    var curr,
+      last,
+      level = 0,
+      tokens = state.tokens,
+      max = state.tokens.length;
+    for (curr = last = 0; curr < max; curr++) {
+      // re-calculate levels after emphasis/strikethrough turns some text nodes
+      // into opening/closing tags
+      if (tokens[curr].nesting < 0) level--; // closing tag
+      tokens[curr].level = level;
+      if (tokens[curr].nesting > 0) level++; // opening tag
+
+      if (tokens[curr].type === 'text' && curr + 1 < max && tokens[curr + 1].type === 'text') {
+        // collapse two adjacent text nodes
+        tokens[curr + 1].content = tokens[curr].content + tokens[curr + 1].content;
+      } else {
+        if (curr !== last) {
+          tokens[last] = tokens[curr];
+        }
+        last++;
+      }
+    }
+    if (curr !== last) {
+      tokens.length = last;
+    }
+  };
+},1744,[],"node_modules\\markdown-it\\lib\\rules_inline\\text_collapse.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  /**
+   * class Ruler
+   *
+   * Helper class, used by [[MarkdownIt#core]], [[MarkdownIt#block]] and
+   * [[MarkdownIt#inline]] to manage sequences of functions (rules):
+   *
+   * - keep rules in defined order
+   * - assign the name to each rule
+   * - enable/disable rules
+   * - add/replace rules
+   * - allow assign rules to additional named chains (in the same)
+   * - cacheing lists of active rules
+   *
+   * You will not need use this class directly until write plugins. For simple
+   * rules control use [[MarkdownIt.disable]], [[MarkdownIt.enable]] and
+   * [[MarkdownIt.use]].
+   **/
+  'use strict';
+
+  /**
+   * new Ruler()
+   **/
+  function Ruler() {
+    // List of added rules. Each element is:
+    //
+    // {
+    //   name: XXX,
+    //   enabled: Boolean,
+    //   fn: Function(),
+    //   alt: [ name2, name3 ]
+    // }
+    //
+    this.__rules__ = [];
+
+    // Cached rule chains.
+    //
+    // First level - chain name, '' for default.
+    // Second level - diginal anchor for fast filtering by charcodes.
+    //
+    this.__cache__ = null;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Helper methods, should not be used directly
+
+  // Find rule index by name
+  //
+  Ruler.prototype.__find__ = function (name) {
+    for (var i = 0; i < this.__rules__.length; i++) {
+      if (this.__rules__[i].name === name) {
+        return i;
+      }
+    }
+    return -1;
+  };
+
+  // Build rules lookup cache
+  //
+  Ruler.prototype.__compile__ = function () {
+    var self = this;
+    var chains = [''];
+
+    // collect unique names
+    self.__rules__.forEach(function (rule) {
+      if (!rule.enabled) {
+        return;
+      }
+      rule.alt.forEach(function (altName) {
+        if (chains.indexOf(altName) < 0) {
+          chains.push(altName);
+        }
+      });
+    });
+    self.__cache__ = {};
+    chains.forEach(function (chain) {
+      self.__cache__[chain] = [];
+      self.__rules__.forEach(function (rule) {
+        if (!rule.enabled) {
+          return;
+        }
+        if (chain && rule.alt.indexOf(chain) < 0) {
+          return;
+        }
+        self.__cache__[chain].push(rule.fn);
+      });
+    });
+  };
+
+  /**
+   * Ruler.at(name, fn [, options])
+   * - name (String): rule name to replace.
+   * - fn (Function): new rule function.
+   * - options (Object): new rule options (not mandatory).
+   *
+   * Replace rule by name with new function & options. Throws error if name not
+   * found.
+   *
+   * ##### Options:
+   *
+   * - __alt__ - array with names of "alternate" chains.
+   *
+   * ##### Example
+   *
+   * Replace existing typographer replacement rule with new one:
+   *
+   * ```javascript
+   * var md = require('markdown-it')();
+   *
+   * md.core.ruler.at('replacements', function replace(state) {
+   *   //...
+   * });
+   * ```
+   **/
+  Ruler.prototype.at = function (name, fn, options) {
+    var index = this.__find__(name);
+    var opt = options || {};
+    if (index === -1) {
+      throw new Error('Parser rule not found: ' + name);
+    }
+    this.__rules__[index].fn = fn;
+    this.__rules__[index].alt = opt.alt || [];
+    this.__cache__ = null;
+  };
+
+  /**
+   * Ruler.before(beforeName, ruleName, fn [, options])
+   * - beforeName (String): new rule will be added before this one.
+   * - ruleName (String): name of added rule.
+   * - fn (Function): rule function.
+   * - options (Object): rule options (not mandatory).
+   *
+   * Add new rule to chain before one with given name. See also
+   * [[Ruler.after]], [[Ruler.push]].
+   *
+   * ##### Options:
+   *
+   * - __alt__ - array with names of "alternate" chains.
+   *
+   * ##### Example
+   *
+   * ```javascript
+   * var md = require('markdown-it')();
+   *
+   * md.block.ruler.before('paragraph', 'my_rule', function replace(state) {
+   *   //...
+   * });
+   * ```
+   **/
+  Ruler.prototype.before = function (beforeName, ruleName, fn, options) {
+    var index = this.__find__(beforeName);
+    var opt = options || {};
+    if (index === -1) {
+      throw new Error('Parser rule not found: ' + beforeName);
+    }
+    this.__rules__.splice(index, 0, {
+      name: ruleName,
+      enabled: true,
+      fn: fn,
+      alt: opt.alt || []
+    });
+    this.__cache__ = null;
+  };
+
+  /**
+   * Ruler.after(afterName, ruleName, fn [, options])
+   * - afterName (String): new rule will be added after this one.
+   * - ruleName (String): name of added rule.
+   * - fn (Function): rule function.
+   * - options (Object): rule options (not mandatory).
+   *
+   * Add new rule to chain after one with given name. See also
+   * [[Ruler.before]], [[Ruler.push]].
+   *
+   * ##### Options:
+   *
+   * - __alt__ - array with names of "alternate" chains.
+   *
+   * ##### Example
+   *
+   * ```javascript
+   * var md = require('markdown-it')();
+   *
+   * md.inline.ruler.after('text', 'my_rule', function replace(state) {
+   *   //...
+   * });
+   * ```
+   **/
+  Ruler.prototype.after = function (afterName, ruleName, fn, options) {
+    var index = this.__find__(afterName);
+    var opt = options || {};
+    if (index === -1) {
+      throw new Error('Parser rule not found: ' + afterName);
+    }
+    this.__rules__.splice(index + 1, 0, {
+      name: ruleName,
+      enabled: true,
+      fn: fn,
+      alt: opt.alt || []
+    });
+    this.__cache__ = null;
+  };
+
+  /**
+   * Ruler.push(ruleName, fn [, options])
+   * - ruleName (String): name of added rule.
+   * - fn (Function): rule function.
+   * - options (Object): rule options (not mandatory).
+   *
+   * Push new rule to the end of chain. See also
+   * [[Ruler.before]], [[Ruler.after]].
+   *
+   * ##### Options:
+   *
+   * - __alt__ - array with names of "alternate" chains.
+   *
+   * ##### Example
+   *
+   * ```javascript
+   * var md = require('markdown-it')();
+   *
+   * md.core.ruler.push('my_rule', function replace(state) {
+   *   //...
+   * });
+   * ```
+   **/
+  Ruler.prototype.push = function (ruleName, fn, options) {
+    var opt = options || {};
+    this.__rules__.push({
+      name: ruleName,
+      enabled: true,
+      fn: fn,
+      alt: opt.alt || []
+    });
+    this.__cache__ = null;
+  };
+
+  /**
+   * Ruler.enable(list [, ignoreInvalid]) -> Array
+   * - list (String|Array): list of rule names to enable.
+   * - ignoreInvalid (Boolean): set `true` to ignore errors when rule not found.
+   *
+   * Enable rules with given names. If any rule name not found - throw Error.
+   * Errors can be disabled by second param.
+   *
+   * Returns list of found rule names (if no exception happened).
+   *
+   * See also [[Ruler.disable]], [[Ruler.enableOnly]].
+   **/
+  Ruler.prototype.enable = function (list, ignoreInvalid) {
+    if (!Array.isArray(list)) {
+      list = [list];
+    }
+    var result = [];
+
+    // Search by name and enable
+    list.forEach(function (name) {
+      var idx = this.__find__(name);
+      if (idx < 0) {
+        if (ignoreInvalid) {
+          return;
+        }
+        throw new Error('Rules manager: invalid rule name ' + name);
+      }
+      this.__rules__[idx].enabled = true;
+      result.push(name);
+    }, this);
+    this.__cache__ = null;
+    return result;
+  };
+
+  /**
+   * Ruler.enableOnly(list [, ignoreInvalid])
+   * - list (String|Array): list of rule names to enable (whitelist).
+   * - ignoreInvalid (Boolean): set `true` to ignore errors when rule not found.
+   *
+   * Enable rules with given names, and disable everything else. If any rule name
+   * not found - throw Error. Errors can be disabled by second param.
+   *
+   * See also [[Ruler.disable]], [[Ruler.enable]].
+   **/
+  Ruler.prototype.enableOnly = function (list, ignoreInvalid) {
+    if (!Array.isArray(list)) {
+      list = [list];
+    }
+    this.__rules__.forEach(function (rule) {
+      rule.enabled = false;
+    });
+    this.enable(list, ignoreInvalid);
+  };
+
+  /**
+   * Ruler.disable(list [, ignoreInvalid]) -> Array
+   * - list (String|Array): list of rule names to disable.
+   * - ignoreInvalid (Boolean): set `true` to ignore errors when rule not found.
+   *
+   * Disable rules with given names. If any rule name not found - throw Error.
+   * Errors can be disabled by second param.
+   *
+   * Returns list of found rule names (if no exception happened).
+   *
+   * See also [[Ruler.enable]], [[Ruler.enableOnly]].
+   **/
+  Ruler.prototype.disable = function (list, ignoreInvalid) {
+    if (!Array.isArray(list)) {
+      list = [list];
+    }
+    var result = [];
+
+    // Search by name and disable
+    list.forEach(function (name) {
+      var idx = this.__find__(name);
+      if (idx < 0) {
+        if (ignoreInvalid) {
+          return;
+        }
+        throw new Error('Rules manager: invalid rule name ' + name);
+      }
+      this.__rules__[idx].enabled = false;
+      result.push(name);
+    }, this);
+    this.__cache__ = null;
+    return result;
+  };
+
+  /**
+   * Ruler.getRules(chainName) -> Array
+   *
+   * Return array of active functions (rules) for given chain name. It analyzes
+   * rules configuration, compiles caches if not exists and returns result.
+   *
+   * Default chain name is `''` (empty string). It can't be skipped. That's
+   * done intentionally, to keep signature monomorphic for high speed.
+   **/
+  Ruler.prototype.getRules = function (chainName) {
+    if (this.__cache__ === null) {
+      this.__compile__();
+    }
+
+    // Chain can be empty, if rules disabled. But we still have to return Array.
+    return this.__cache__[chainName] || [];
+  };
+  module.exports = Ruler;
+},1745,[],"node_modules\\markdown-it\\lib\\ruler.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Inline parser state
+
+  'use strict';
+
+  function StateInline(src, md, env, outTokens) {
+    this.src = src;
+    this.env = env;
+    this.md = md;
+    this.tokens = outTokens;
+    this.tokens_meta = Array(outTokens.length);
+    this.pos = 0;
+    this.posMax = this.src.length;
+    this.level = 0;
+    this.pending = '';
+    this.pendingLevel = 0;
+
+    // Stores { start: end } pairs. Useful for backtrack
+    // optimization of pairs parse (emphasis, strikes).
+    this.cache = {};
+
+    // List of emphasis-like delimiters for current tag
+    this.delimiters = [];
+
+    // Stack of delimiter lists for upper level tags
+    this._prev_delimiters = [];
+  }
+
+  // Flush pending text
+  //
+  StateInline.prototype.pushPending = function () {
+    var token = new (_$$_REQUIRE(_dependencyMap[0], "../token"))('text', '', 0);
+    token.content = this.pending;
+    token.level = this.pendingLevel;
+    this.tokens.push(token);
+    this.pending = '';
+    return token;
+  };
+
+  // Push new token to "stream".
+  // If pending text exists - flush it as text token
+  //
+  StateInline.prototype.push = function (type, tag, nesting) {
+    if (this.pending) {
+      this.pushPending();
+    }
+    var token = new (_$$_REQUIRE(_dependencyMap[0], "../token"))(type, tag, nesting);
+    var token_meta = null;
+    if (nesting < 0) {
+      // closing tag
+      this.level--;
+      this.delimiters = this._prev_delimiters.pop();
+    }
+    token.level = this.level;
+    if (nesting > 0) {
+      // opening tag
+      this.level++;
+      this._prev_delimiters.push(this.delimiters);
+      this.delimiters = [];
+      token_meta = {
+        delimiters: this.delimiters
+      };
+    }
+    this.pendingLevel = this.level;
+    this.tokens.push(token);
+    this.tokens_meta.push(token_meta);
+    return token;
+  };
+
+  // Scan a sequence of emphasis-like markers, and determine whether
+  // it can start an emphasis sequence or end an emphasis sequence.
+  //
+  //  - start - position to scan from (it should point at a valid marker);
+  //  - canSplitWord - determine if these markers can be found inside a word
+  //
+  StateInline.prototype.scanDelims = function (start, canSplitWord) {
+    var pos = start,
+      lastChar,
+      nextChar,
+      count,
+      can_open,
+      can_close,
+      isLastWhiteSpace,
+      isLastPunctChar,
+      isNextWhiteSpace,
+      isNextPunctChar,
+      left_flanking = true,
+      right_flanking = true,
+      max = this.posMax,
+      marker = this.src.charCodeAt(start);
+
+    // treat beginning of the line as a whitespace
+    lastChar = start > 0 ? this.src.charCodeAt(start - 1) : 0x20;
+    while (pos < max && this.src.charCodeAt(pos) === marker) {
+      pos++;
+    }
+    count = pos - start;
+
+    // treat end of the line as a whitespace
+    nextChar = pos < max ? this.src.charCodeAt(pos) : 0x20;
+    isLastPunctChar = _$$_REQUIRE(_dependencyMap[1], "../common/utils").isMdAsciiPunct(lastChar) || _$$_REQUIRE(_dependencyMap[1], "../common/utils").isPunctChar(String.fromCharCode(lastChar));
+    isNextPunctChar = _$$_REQUIRE(_dependencyMap[1], "../common/utils").isMdAsciiPunct(nextChar) || _$$_REQUIRE(_dependencyMap[1], "../common/utils").isPunctChar(String.fromCharCode(nextChar));
+    isLastWhiteSpace = _$$_REQUIRE(_dependencyMap[1], "../common/utils").isWhiteSpace(lastChar);
+    isNextWhiteSpace = _$$_REQUIRE(_dependencyMap[1], "../common/utils").isWhiteSpace(nextChar);
+    if (isNextWhiteSpace) {
+      left_flanking = false;
+    } else if (isNextPunctChar) {
+      if (!(isLastWhiteSpace || isLastPunctChar)) {
+        left_flanking = false;
+      }
+    }
+    if (isLastWhiteSpace) {
+      right_flanking = false;
+    } else if (isLastPunctChar) {
+      if (!(isNextWhiteSpace || isNextPunctChar)) {
+        right_flanking = false;
+      }
+    }
+    if (!canSplitWord) {
+      can_open = left_flanking && (!right_flanking || isLastPunctChar);
+      can_close = right_flanking && (!left_flanking || isNextPunctChar);
+    } else {
+      can_open = left_flanking;
+      can_close = right_flanking;
+    }
+    return {
+      can_open: can_open,
+      can_close: can_close,
+      length: count
+    };
+  };
+
+  // re-export Token class to use in block rules
+  StateInline.prototype.Token = _$$_REQUIRE(_dependencyMap[0], "../token");
+  module.exports = StateInline;
+},1746,[1747,1721],"node_modules\\markdown-it\\lib\\rules_inline\\state_inline.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Token class
+
+  'use strict';
+
+  /**
+   * class Token
+   **/
+
+  /**
+   * new Token(type, tag, nesting)
+   *
+   * Create new token and fill passed properties.
+   **/
+  function Token(type, tag, nesting) {
+    /**
+     * Token#type -> String
+     *
+     * Type of the token (string, e.g. "paragraph_open")
+     **/
+    this.type = type;
+
+    /**
+     * Token#tag -> String
+     *
+     * html tag name, e.g. "p"
+     **/
+    this.tag = tag;
+
+    /**
+     * Token#attrs -> Array
+     *
+     * Html attributes. Format: `[ [ name1, value1 ], [ name2, value2 ] ]`
+     **/
+    this.attrs = null;
+
+    /**
+     * Token#map -> Array
+     *
+     * Source map info. Format: `[ line_begin, line_end ]`
+     **/
+    this.map = null;
+
+    /**
+     * Token#nesting -> Number
+     *
+     * Level change (number in {-1, 0, 1} set), where:
+     *
+     * -  `1` means the tag is opening
+     * -  `0` means the tag is self-closing
+     * - `-1` means the tag is closing
+     **/
+    this.nesting = nesting;
+
+    /**
+     * Token#level -> Number
+     *
+     * nesting level, the same as `state.level`
+     **/
+    this.level = 0;
+
+    /**
+     * Token#children -> Array
+     *
+     * An array of child nodes (inline and img tokens)
+     **/
+    this.children = null;
+
+    /**
+     * Token#content -> String
+     *
+     * In a case of self-closing tag (code, html, fence, etc.),
+     * it has contents of this tag.
+     **/
+    this.content = '';
+
+    /**
+     * Token#markup -> String
+     *
+     * '*' or '_' for emphasis, fence string for fence, etc.
+     **/
+    this.markup = '';
+
+    /**
+     * Token#info -> String
+     *
+     * fence infostring
+     **/
+    this.info = '';
+
+    /**
+     * Token#meta -> Object
+     *
+     * A place for plugins to store an arbitrary data
+     **/
+    this.meta = null;
+
+    /**
+     * Token#block -> Boolean
+     *
+     * True for block-level tokens, false for inline tokens.
+     * Used in renderer to calculate line breaks
+     **/
+    this.block = false;
+
+    /**
+     * Token#hidden -> Boolean
+     *
+     * If it's true, ignore this element when rendering. Used for tight lists
+     * to hide paragraphs.
+     **/
+    this.hidden = false;
+  }
+
+  /**
+   * Token.attrIndex(name) -> Number
+   *
+   * Search attribute index by name.
+   **/
+  Token.prototype.attrIndex = function attrIndex(name) {
+    var attrs, i, len;
+    if (!this.attrs) {
+      return -1;
+    }
+    attrs = this.attrs;
+    for (i = 0, len = attrs.length; i < len; i++) {
+      if (attrs[i][0] === name) {
+        return i;
+      }
+    }
+    return -1;
+  };
+
+  /**
+   * Token.attrPush(attrData)
+   *
+   * Add `[ name, value ]` attribute to list. Init attrs if necessary
+   **/
+  Token.prototype.attrPush = function attrPush(attrData) {
+    if (this.attrs) {
+      this.attrs.push(attrData);
+    } else {
+      this.attrs = [attrData];
+    }
+  };
+
+  /**
+   * Token.attrSet(name, value)
+   *
+   * Set `name` attribute to `value`. Override old value if exists.
+   **/
+  Token.prototype.attrSet = function attrSet(name, value) {
+    var idx = this.attrIndex(name),
+      attrData = [name, value];
+    if (idx < 0) {
+      this.attrPush(attrData);
+    } else {
+      this.attrs[idx] = attrData;
+    }
+  };
+
+  /**
+   * Token.attrGet(name)
+   *
+   * Get the value of attribute `name`, or null if it does not exist.
+   **/
+  Token.prototype.attrGet = function attrGet(name) {
+    var idx = this.attrIndex(name),
+      value = null;
+    if (idx >= 0) {
+      value = this.attrs[idx][1];
+    }
+    return value;
+  };
+
+  /**
+   * Token.attrJoin(name, value)
+   *
+   * Join value to existing attribute via space. Or create new attribute if not
+   * exists. Useful to operate with token classes.
+   **/
+  Token.prototype.attrJoin = function attrJoin(name, value) {
+    var idx = this.attrIndex(name);
+    if (idx < 0) {
+      this.attrPush([name, value]);
+    } else {
+      this.attrs[idx][1] = this.attrs[idx][1] + ' ' + value;
+    }
+  };
+  module.exports = Token;
+},1747,[],"node_modules\\markdown-it\\lib\\token.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  /** internal
+   * class ParserBlock
+   *
+   * Block-level tokenizer.
+   **/
+  'use strict';
+
+  var _rules = [
+  // First 2 params - rule name & source. Secondary array - list of rules,
+  // which can be terminated by this one.
+  ['table', _$$_REQUIRE(_dependencyMap[0], "./rules_block/table"), ['paragraph', 'reference']], ['code', _$$_REQUIRE(_dependencyMap[1], "./rules_block/code")], ['fence', _$$_REQUIRE(_dependencyMap[2], "./rules_block/fence"), ['paragraph', 'reference', 'blockquote', 'list']], ['blockquote', _$$_REQUIRE(_dependencyMap[3], "./rules_block/blockquote"), ['paragraph', 'reference', 'blockquote', 'list']], ['hr', _$$_REQUIRE(_dependencyMap[4], "./rules_block/hr"), ['paragraph', 'reference', 'blockquote', 'list']], ['list', _$$_REQUIRE(_dependencyMap[5], "./rules_block/list"), ['paragraph', 'reference', 'blockquote']], ['reference', _$$_REQUIRE(_dependencyMap[6], "./rules_block/reference")], ['heading', _$$_REQUIRE(_dependencyMap[7], "./rules_block/heading"), ['paragraph', 'reference', 'blockquote']], ['lheading', _$$_REQUIRE(_dependencyMap[8], "./rules_block/lheading")], ['html_block', _$$_REQUIRE(_dependencyMap[9], "./rules_block/html_block"), ['paragraph', 'reference', 'blockquote']], ['paragraph', _$$_REQUIRE(_dependencyMap[10], "./rules_block/paragraph")]];
+
+  /**
+   * new ParserBlock()
+   **/
+  function ParserBlock() {
+    /**
+     * ParserBlock#ruler -> Ruler
+     *
+     * [[Ruler]] instance. Keep configuration of block rules.
+     **/
+    this.ruler = new (_$$_REQUIRE(_dependencyMap[11], "./ruler"))();
+    for (var i = 0; i < _rules.length; i++) {
+      this.ruler.push(_rules[i][0], _rules[i][1], {
+        alt: (_rules[i][2] || []).slice()
+      });
+    }
+  }
+
+  // Generate tokens for input range
+  //
+  ParserBlock.prototype.tokenize = function (state, startLine, endLine) {
+    var ok,
+      i,
+      rules = this.ruler.getRules(''),
+      len = rules.length,
+      line = startLine,
+      hasEmptyLines = false,
+      maxNesting = state.md.options.maxNesting;
+    while (line < endLine) {
+      state.line = line = state.skipEmptyLines(line);
+      if (line >= endLine) {
+        break;
+      }
+
+      // Termination condition for nested calls.
+      // Nested calls currently used for blockquotes & lists
+      if (state.sCount[line] < state.blkIndent) {
+        break;
+      }
+
+      // If nesting level exceeded - skip tail to the end. That's not ordinary
+      // situation and we should not care about content.
+      if (state.level >= maxNesting) {
+        state.line = endLine;
+        break;
+      }
+
+      // Try all possible rules.
+      // On success, rule should:
+      //
+      // - update `state.line`
+      // - update `state.tokens`
+      // - return true
+
+      for (i = 0; i < len; i++) {
+        ok = rules[i](state, line, endLine, false);
+        if (ok) {
+          break;
+        }
+      }
+
+      // set state.tight if we had an empty line before current tag
+      // i.e. latest empty line should not count
+      state.tight = !hasEmptyLines;
+
+      // paragraph might "eat" one newline after it in nested lists
+      if (state.isEmpty(state.line - 1)) {
+        hasEmptyLines = true;
+      }
+      line = state.line;
+      if (line < endLine && state.isEmpty(line)) {
+        hasEmptyLines = true;
+        line++;
+        state.line = line;
+      }
+    }
+  };
+
+  /**
+   * ParserBlock.parse(str, md, env, outTokens)
+   *
+   * Process input string and push block tokens into `outTokens`
+   **/
+  ParserBlock.prototype.parse = function (src, md, env, outTokens) {
+    var state;
+    if (!src) {
+      return;
+    }
+    state = new this.State(src, md, env, outTokens);
+    this.tokenize(state, state.line, state.lineMax);
+  };
+  ParserBlock.prototype.State = _$$_REQUIRE(_dependencyMap[12], "./rules_block/state_block");
+  module.exports = ParserBlock;
+},1748,[1749,1750,1751,1752,1753,1754,1755,1756,1757,1758,1760,1745,1761],"node_modules\\markdown-it\\lib\\parser_block.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // GFM table, non-standard
+
+  'use strict';
+
+  function getLine(state, line) {
+    var pos = state.bMarks[line] + state.blkIndent,
+      max = state.eMarks[line];
+    return state.src.substr(pos, max - pos);
+  }
+  function escapedSplit(str) {
+    var result = [],
+      pos = 0,
+      max = str.length,
+      ch,
+      escapes = 0,
+      lastPos = 0,
+      backTicked = false,
+      lastBackTick = 0;
+    ch = str.charCodeAt(pos);
+    while (pos < max) {
+      if (ch === 0x60 /* ` */) {
+        if (backTicked) {
+          // make \` close code sequence, but not open it;
+          // the reason is: `\` is correct code block
+          backTicked = false;
+          lastBackTick = pos;
+        } else if (escapes % 2 === 0) {
+          backTicked = true;
+          lastBackTick = pos;
+        }
+      } else if (ch === 0x7c /* | */ && escapes % 2 === 0 && !backTicked) {
+        result.push(str.substring(lastPos, pos));
+        lastPos = pos + 1;
+      }
+      if (ch === 0x5c /* \ */) {
+        escapes++;
+      } else {
+        escapes = 0;
+      }
+      pos++;
+
+      // If there was an un-closed backtick, go back to just after
+      // the last backtick, but as if it was a normal character
+      if (pos === max && backTicked) {
+        backTicked = false;
+        pos = lastBackTick + 1;
+      }
+      ch = str.charCodeAt(pos);
+    }
+    result.push(str.substring(lastPos));
+    return result;
+  }
+  module.exports = function table(state, startLine, endLine, silent) {
+    var ch, lineText, pos, i, nextLine, columns, columnCount, token, aligns, t, tableLines, tbodyLines;
+
+    // should have at least two lines
+    if (startLine + 2 > endLine) {
+      return false;
+    }
+    nextLine = startLine + 1;
+    if (state.sCount[nextLine] < state.blkIndent) {
+      return false;
+    }
+
+    // if it's indented more than 3 spaces, it should be a code block
+    if (state.sCount[nextLine] - state.blkIndent >= 4) {
+      return false;
+    }
+
+    // first character of the second line should be '|', '-', ':',
+    // and no other characters are allowed but spaces;
+    // basically, this is the equivalent of /^[-:|][-:|\s]*$/ regexp
+
+    pos = state.bMarks[nextLine] + state.tShift[nextLine];
+    if (pos >= state.eMarks[nextLine]) {
+      return false;
+    }
+    ch = state.src.charCodeAt(pos++);
+    if (ch !== 0x7C /* | */ && ch !== 0x2D /* - */ && ch !== 0x3A /* : */) {
+      return false;
+    }
+    while (pos < state.eMarks[nextLine]) {
+      ch = state.src.charCodeAt(pos);
+      if (ch !== 0x7C /* | */ && ch !== 0x2D /* - */ && ch !== 0x3A /* : */ && !_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+        return false;
+      }
+      pos++;
+    }
+    lineText = getLine(state, startLine + 1);
+    columns = lineText.split('|');
+    aligns = [];
+    for (i = 0; i < columns.length; i++) {
+      t = columns[i].trim();
+      if (!t) {
+        // allow empty columns before and after table, but not in between columns;
+        // e.g. allow ` |---| `, disallow ` ---||--- `
+        if (i === 0 || i === columns.length - 1) {
+          continue;
+        } else {
+          return false;
+        }
+      }
+      if (!/^:?-+:?$/.test(t)) {
+        return false;
+      }
+      if (t.charCodeAt(t.length - 1) === 0x3A /* : */) {
+        aligns.push(t.charCodeAt(0) === 0x3A /* : */ ? 'center' : 'right');
+      } else if (t.charCodeAt(0) === 0x3A /* : */) {
+        aligns.push('left');
+      } else {
+        aligns.push('');
+      }
+    }
+    lineText = getLine(state, startLine).trim();
+    if (lineText.indexOf('|') === -1) {
+      return false;
+    }
+    if (state.sCount[startLine] - state.blkIndent >= 4) {
+      return false;
+    }
+    columns = escapedSplit(lineText.replace(/^\||\|$/g, ''));
+
+    // header row will define an amount of columns in the entire table,
+    // and align row shouldn't be smaller than that (the rest of the rows can)
+    columnCount = columns.length;
+    if (columnCount > aligns.length) {
+      return false;
+    }
+    if (silent) {
+      return true;
+    }
+    token = state.push('table_open', 'table', 1);
+    token.map = tableLines = [startLine, 0];
+    token = state.push('thead_open', 'thead', 1);
+    token.map = [startLine, startLine + 1];
+    token = state.push('tr_open', 'tr', 1);
+    token.map = [startLine, startLine + 1];
+    for (i = 0; i < columns.length; i++) {
+      token = state.push('th_open', 'th', 1);
+      token.map = [startLine, startLine + 1];
+      if (aligns[i]) {
+        token.attrs = [['style', 'text-align:' + aligns[i]]];
+      }
+      token = state.push('inline', '', 0);
+      token.content = columns[i].trim();
+      token.map = [startLine, startLine + 1];
+      token.children = [];
+      token = state.push('th_close', 'th', -1);
+    }
+    token = state.push('tr_close', 'tr', -1);
+    token = state.push('thead_close', 'thead', -1);
+    token = state.push('tbody_open', 'tbody', 1);
+    token.map = tbodyLines = [startLine + 2, 0];
+    for (nextLine = startLine + 2; nextLine < endLine; nextLine++) {
+      if (state.sCount[nextLine] < state.blkIndent) {
+        break;
+      }
+      lineText = getLine(state, nextLine).trim();
+      if (lineText.indexOf('|') === -1) {
+        break;
+      }
+      if (state.sCount[nextLine] - state.blkIndent >= 4) {
+        break;
+      }
+      columns = escapedSplit(lineText.replace(/^\||\|$/g, ''));
+      token = state.push('tr_open', 'tr', 1);
+      for (i = 0; i < columnCount; i++) {
+        token = state.push('td_open', 'td', 1);
+        if (aligns[i]) {
+          token.attrs = [['style', 'text-align:' + aligns[i]]];
+        }
+        token = state.push('inline', '', 0);
+        token.content = columns[i] ? columns[i].trim() : '';
+        token.children = [];
+        token = state.push('td_close', 'td', -1);
+      }
+      token = state.push('tr_close', 'tr', -1);
+    }
+    token = state.push('tbody_close', 'tbody', -1);
+    token = state.push('table_close', 'table', -1);
+    tableLines[1] = tbodyLines[1] = nextLine;
+    state.line = nextLine;
+    return true;
+  };
+},1749,[1721],"node_modules\\markdown-it\\lib\\rules_block\\table.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Code block (4 spaces padded)
+
+  'use strict';
+
+  module.exports = function code(state, startLine, endLine /*, silent*/) {
+    var nextLine, last, token;
+    if (state.sCount[startLine] - state.blkIndent < 4) {
+      return false;
+    }
+    last = nextLine = startLine + 1;
+    while (nextLine < endLine) {
+      if (state.isEmpty(nextLine)) {
+        nextLine++;
+        continue;
+      }
+      if (state.sCount[nextLine] - state.blkIndent >= 4) {
+        nextLine++;
+        last = nextLine;
+        continue;
+      }
+      break;
+    }
+    state.line = last;
+    token = state.push('code_block', 'code', 0);
+    token.content = state.getLines(startLine, last, 4 + state.blkIndent, true);
+    token.map = [startLine, state.line];
+    return true;
+  };
+},1750,[],"node_modules\\markdown-it\\lib\\rules_block\\code.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // fences (``` lang, ~~~ lang)
+
+  'use strict';
+
+  module.exports = function fence(state, startLine, endLine, silent) {
+    var marker,
+      len,
+      params,
+      nextLine,
+      mem,
+      token,
+      markup,
+      haveEndMarker = false,
+      pos = state.bMarks[startLine] + state.tShift[startLine],
+      max = state.eMarks[startLine];
+
+    // if it's indented more than 3 spaces, it should be a code block
+    if (state.sCount[startLine] - state.blkIndent >= 4) {
+      return false;
+    }
+    if (pos + 3 > max) {
+      return false;
+    }
+    marker = state.src.charCodeAt(pos);
+    if (marker !== 0x7E /* ~ */ && marker !== 0x60 /* ` */) {
+      return false;
+    }
+
+    // scan marker length
+    mem = pos;
+    pos = state.skipChars(pos, marker);
+    len = pos - mem;
+    if (len < 3) {
+      return false;
+    }
+    markup = state.src.slice(mem, pos);
+    params = state.src.slice(pos, max);
+    if (marker === 0x60 /* ` */) {
+      if (params.indexOf(String.fromCharCode(marker)) >= 0) {
+        return false;
+      }
+    }
+
+    // Since start is found, we can report success here in validation mode
+    if (silent) {
+      return true;
+    }
+
+    // search end of block
+    nextLine = startLine;
+    for (;;) {
+      nextLine++;
+      if (nextLine >= endLine) {
+        // unclosed block should be autoclosed by end of document.
+        // also block seems to be autoclosed by end of parent
+        break;
+      }
+      pos = mem = state.bMarks[nextLine] + state.tShift[nextLine];
+      max = state.eMarks[nextLine];
+      if (pos < max && state.sCount[nextLine] < state.blkIndent) {
+        // non-empty line with negative indent should stop the list:
+        // - ```
+        //  test
+        break;
+      }
+      if (state.src.charCodeAt(pos) !== marker) {
+        continue;
+      }
+      if (state.sCount[nextLine] - state.blkIndent >= 4) {
+        // closing fence should be indented less than 4 spaces
+        continue;
+      }
+      pos = state.skipChars(pos, marker);
+
+      // closing code fence must be at least as long as the opening one
+      if (pos - mem < len) {
+        continue;
+      }
+
+      // make sure tail has spaces only
+      pos = state.skipSpaces(pos);
+      if (pos < max) {
+        continue;
+      }
+      haveEndMarker = true;
+      // found!
+      break;
+    }
+
+    // If a fence has heading spaces, they should be removed from its inner block
+    len = state.sCount[startLine];
+    state.line = nextLine + (haveEndMarker ? 1 : 0);
+    token = state.push('fence', 'code', 0);
+    token.info = params;
+    token.content = state.getLines(startLine + 1, nextLine, len, true);
+    token.markup = markup;
+    token.map = [startLine, state.line];
+    return true;
+  };
+},1751,[],"node_modules\\markdown-it\\lib\\rules_block\\fence.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Block quotes
+
+  'use strict';
+
+  module.exports = function blockquote(state, startLine, endLine, silent) {
+    var adjustTab,
+      ch,
+      i,
+      initial,
+      l,
+      lastLineEmpty,
+      lines,
+      nextLine,
+      offset,
+      oldBMarks,
+      oldBSCount,
+      oldIndent,
+      oldParentType,
+      oldSCount,
+      oldTShift,
+      spaceAfterMarker,
+      terminate,
+      terminatorRules,
+      token,
+      wasOutdented,
+      oldLineMax = state.lineMax,
+      pos = state.bMarks[startLine] + state.tShift[startLine],
+      max = state.eMarks[startLine];
+
+    // if it's indented more than 3 spaces, it should be a code block
+    if (state.sCount[startLine] - state.blkIndent >= 4) {
+      return false;
+    }
+
+    // check the block quote marker
+    if (state.src.charCodeAt(pos++) !== 0x3E /* > */) {
+      return false;
+    }
+
+    // we know that it's going to be a valid blockquote,
+    // so no point trying to find the end of it in silent mode
+    if (silent) {
+      return true;
+    }
+
+    // skip spaces after ">" and re-calculate offset
+    initial = offset = state.sCount[startLine] + pos - (state.bMarks[startLine] + state.tShift[startLine]);
+
+    // skip one optional space after '>'
+    if (state.src.charCodeAt(pos) === 0x20 /* space */) {
+      // ' >   test '
+      //     ^ -- position start of line here:
+      pos++;
+      initial++;
+      offset++;
+      adjustTab = false;
+      spaceAfterMarker = true;
+    } else if (state.src.charCodeAt(pos) === 0x09 /* tab */) {
+      spaceAfterMarker = true;
+      if ((state.bsCount[startLine] + offset) % 4 === 3) {
+        // '  >\t  test '
+        //       ^ -- position start of line here (tab has width===1)
+        pos++;
+        initial++;
+        offset++;
+        adjustTab = false;
+      } else {
+        // ' >\t  test '
+        //    ^ -- position start of line here + shift bsCount slightly
+        //         to make extra space appear
+        adjustTab = true;
+      }
+    } else {
+      spaceAfterMarker = false;
+    }
+    oldBMarks = [state.bMarks[startLine]];
+    state.bMarks[startLine] = pos;
+    while (pos < max) {
+      ch = state.src.charCodeAt(pos);
+      if (_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+        if (ch === 0x09) {
+          offset += 4 - (offset + state.bsCount[startLine] + (adjustTab ? 1 : 0)) % 4;
+        } else {
+          offset++;
+        }
+      } else {
+        break;
+      }
+      pos++;
+    }
+    oldBSCount = [state.bsCount[startLine]];
+    state.bsCount[startLine] = state.sCount[startLine] + 1 + (spaceAfterMarker ? 1 : 0);
+    lastLineEmpty = pos >= max;
+    oldSCount = [state.sCount[startLine]];
+    state.sCount[startLine] = offset - initial;
+    oldTShift = [state.tShift[startLine]];
+    state.tShift[startLine] = pos - state.bMarks[startLine];
+    terminatorRules = state.md.block.ruler.getRules('blockquote');
+    oldParentType = state.parentType;
+    state.parentType = 'blockquote';
+    wasOutdented = false;
+
+    // Search the end of the block
+    //
+    // Block ends with either:
+    //  1. an empty line outside:
+    //     ```
+    //     > test
+    //
+    //     ```
+    //  2. an empty line inside:
+    //     ```
+    //     >
+    //     test
+    //     ```
+    //  3. another tag:
+    //     ```
+    //     > test
+    //      - - -
+    //     ```
+    for (nextLine = startLine + 1; nextLine < endLine; nextLine++) {
+      // check if it's outdented, i.e. it's inside list item and indented
+      // less than said list item:
+      //
+      // ```
+      // 1. anything
+      //    > current blockquote
+      // 2. checking this line
+      // ```
+      if (state.sCount[nextLine] < state.blkIndent) wasOutdented = true;
+      pos = state.bMarks[nextLine] + state.tShift[nextLine];
+      max = state.eMarks[nextLine];
+      if (pos >= max) {
+        // Case 1: line is not inside the blockquote, and this line is empty.
+        break;
+      }
+      if (state.src.charCodeAt(pos++) === 0x3E /* > */ && !wasOutdented) {
+        // This line is inside the blockquote.
+
+        // skip spaces after ">" and re-calculate offset
+        initial = offset = state.sCount[nextLine] + pos - (state.bMarks[nextLine] + state.tShift[nextLine]);
+
+        // skip one optional space after '>'
+        if (state.src.charCodeAt(pos) === 0x20 /* space */) {
+          // ' >   test '
+          //     ^ -- position start of line here:
+          pos++;
+          initial++;
+          offset++;
+          adjustTab = false;
+          spaceAfterMarker = true;
+        } else if (state.src.charCodeAt(pos) === 0x09 /* tab */) {
+          spaceAfterMarker = true;
+          if ((state.bsCount[nextLine] + offset) % 4 === 3) {
+            // '  >\t  test '
+            //       ^ -- position start of line here (tab has width===1)
+            pos++;
+            initial++;
+            offset++;
+            adjustTab = false;
+          } else {
+            // ' >\t  test '
+            //    ^ -- position start of line here + shift bsCount slightly
+            //         to make extra space appear
+            adjustTab = true;
+          }
+        } else {
+          spaceAfterMarker = false;
+        }
+        oldBMarks.push(state.bMarks[nextLine]);
+        state.bMarks[nextLine] = pos;
+        while (pos < max) {
+          ch = state.src.charCodeAt(pos);
+          if (_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+            if (ch === 0x09) {
+              offset += 4 - (offset + state.bsCount[nextLine] + (adjustTab ? 1 : 0)) % 4;
+            } else {
+              offset++;
+            }
+          } else {
+            break;
+          }
+          pos++;
+        }
+        lastLineEmpty = pos >= max;
+        oldBSCount.push(state.bsCount[nextLine]);
+        state.bsCount[nextLine] = state.sCount[nextLine] + 1 + (spaceAfterMarker ? 1 : 0);
+        oldSCount.push(state.sCount[nextLine]);
+        state.sCount[nextLine] = offset - initial;
+        oldTShift.push(state.tShift[nextLine]);
+        state.tShift[nextLine] = pos - state.bMarks[nextLine];
+        continue;
+      }
+
+      // Case 2: line is not inside the blockquote, and the last line was empty.
+      if (lastLineEmpty) {
+        break;
+      }
+
+      // Case 3: another tag found.
+      terminate = false;
+      for (i = 0, l = terminatorRules.length; i < l; i++) {
+        if (terminatorRules[i](state, nextLine, endLine, true)) {
+          terminate = true;
+          break;
+        }
+      }
+      if (terminate) {
+        // Quirk to enforce "hard termination mode" for paragraphs;
+        // normally if you call `tokenize(state, startLine, nextLine)`,
+        // paragraphs will look below nextLine for paragraph continuation,
+        // but if blockquote is terminated by another tag, they shouldn't
+        state.lineMax = nextLine;
+        if (state.blkIndent !== 0) {
+          // state.blkIndent was non-zero, we now set it to zero,
+          // so we need to re-calculate all offsets to appear as
+          // if indent wasn't changed
+          oldBMarks.push(state.bMarks[nextLine]);
+          oldBSCount.push(state.bsCount[nextLine]);
+          oldTShift.push(state.tShift[nextLine]);
+          oldSCount.push(state.sCount[nextLine]);
+          state.sCount[nextLine] -= state.blkIndent;
+        }
+        break;
+      }
+      oldBMarks.push(state.bMarks[nextLine]);
+      oldBSCount.push(state.bsCount[nextLine]);
+      oldTShift.push(state.tShift[nextLine]);
+      oldSCount.push(state.sCount[nextLine]);
+
+      // A negative indentation means that this is a paragraph continuation
+      //
+      state.sCount[nextLine] = -1;
+    }
+    oldIndent = state.blkIndent;
+    state.blkIndent = 0;
+    token = state.push('blockquote_open', 'blockquote', 1);
+    token.markup = '>';
+    token.map = lines = [startLine, 0];
+    state.md.block.tokenize(state, startLine, nextLine);
+    token = state.push('blockquote_close', 'blockquote', -1);
+    token.markup = '>';
+    state.lineMax = oldLineMax;
+    state.parentType = oldParentType;
+    lines[1] = state.line;
+
+    // Restore original tShift; this might not be necessary since the parser
+    // has already been here, but just to make sure we can do that.
+    for (i = 0; i < oldTShift.length; i++) {
+      state.bMarks[i + startLine] = oldBMarks[i];
+      state.tShift[i + startLine] = oldTShift[i];
+      state.sCount[i + startLine] = oldSCount[i];
+      state.bsCount[i + startLine] = oldBSCount[i];
+    }
+    state.blkIndent = oldIndent;
+    return true;
+  };
+},1752,[1721],"node_modules\\markdown-it\\lib\\rules_block\\blockquote.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Horizontal rule
+
+  'use strict';
+
+  module.exports = function hr(state, startLine, endLine, silent) {
+    var marker,
+      cnt,
+      ch,
+      token,
+      pos = state.bMarks[startLine] + state.tShift[startLine],
+      max = state.eMarks[startLine];
+
+    // if it's indented more than 3 spaces, it should be a code block
+    if (state.sCount[startLine] - state.blkIndent >= 4) {
+      return false;
+    }
+    marker = state.src.charCodeAt(pos++);
+
+    // Check hr marker
+    if (marker !== 0x2A /* * */ && marker !== 0x2D /* - */ && marker !== 0x5F /* _ */) {
+      return false;
+    }
+
+    // markers can be mixed with spaces, but there should be at least 3 of them
+
+    cnt = 1;
+    while (pos < max) {
+      ch = state.src.charCodeAt(pos++);
+      if (ch !== marker && !_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+        return false;
+      }
+      if (ch === marker) {
+        cnt++;
+      }
+    }
+    if (cnt < 3) {
+      return false;
+    }
+    if (silent) {
+      return true;
+    }
+    state.line = startLine + 1;
+    token = state.push('hr', 'hr', 0);
+    token.map = [startLine, state.line];
+    token.markup = Array(cnt + 1).join(String.fromCharCode(marker));
+    return true;
+  };
+},1753,[1721],"node_modules\\markdown-it\\lib\\rules_block\\hr.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Lists
+
+  'use strict';
+
+  // Search `[-+*][\n ]`, returns next pos after marker on success
+  // or -1 on fail.
+  function skipBulletListMarker(state, startLine) {
+    var marker, pos, max, ch;
+    pos = state.bMarks[startLine] + state.tShift[startLine];
+    max = state.eMarks[startLine];
+    marker = state.src.charCodeAt(pos++);
+    // Check bullet
+    if (marker !== 0x2A /* * */ && marker !== 0x2D /* - */ && marker !== 0x2B /* + */) {
+      return -1;
+    }
+    if (pos < max) {
+      ch = state.src.charCodeAt(pos);
+      if (!_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+        // " -test " - is not a list item
+        return -1;
+      }
+    }
+    return pos;
+  }
+
+  // Search `\d+[.)][\n ]`, returns next pos after marker on success
+  // or -1 on fail.
+  function skipOrderedListMarker(state, startLine) {
+    var ch,
+      start = state.bMarks[startLine] + state.tShift[startLine],
+      pos = start,
+      max = state.eMarks[startLine];
+
+    // List marker should have at least 2 chars (digit + dot)
+    if (pos + 1 >= max) {
+      return -1;
+    }
+    ch = state.src.charCodeAt(pos++);
+    if (ch < 0x30 /* 0 */ || ch > 0x39 /* 9 */) {
+      return -1;
+    }
+    for (;;) {
+      // EOL -> fail
+      if (pos >= max) {
+        return -1;
+      }
+      ch = state.src.charCodeAt(pos++);
+      if (ch >= 0x30 /* 0 */ && ch <= 0x39 /* 9 */) {
+        // List marker should have no more than 9 digits
+        // (prevents integer overflow in browsers)
+        if (pos - start >= 10) {
+          return -1;
+        }
+        continue;
+      }
+
+      // found valid marker
+      if (ch === 0x29 /* ) */ || ch === 0x2e /* . */) {
+        break;
+      }
+      return -1;
+    }
+    if (pos < max) {
+      ch = state.src.charCodeAt(pos);
+      if (!_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+        // " 1.test " - is not a list item
+        return -1;
+      }
+    }
+    return pos;
+  }
+  function markTightParagraphs(state, idx) {
+    var i,
+      l,
+      level = state.level + 2;
+    for (i = idx + 2, l = state.tokens.length - 2; i < l; i++) {
+      if (state.tokens[i].level === level && state.tokens[i].type === 'paragraph_open') {
+        state.tokens[i + 2].hidden = true;
+        state.tokens[i].hidden = true;
+        i += 2;
+      }
+    }
+  }
+  module.exports = function list(state, startLine, endLine, silent) {
+    var ch,
+      contentStart,
+      i,
+      indent,
+      indentAfterMarker,
+      initial,
+      isOrdered,
+      itemLines,
+      l,
+      listLines,
+      listTokIdx,
+      markerCharCode,
+      markerValue,
+      max,
+      nextLine,
+      offset,
+      oldListIndent,
+      oldParentType,
+      oldSCount,
+      oldTShift,
+      oldTight,
+      pos,
+      posAfterMarker,
+      prevEmptyEnd,
+      start,
+      terminate,
+      terminatorRules,
+      token,
+      isTerminatingParagraph = false,
+      tight = true;
+
+    // if it's indented more than 3 spaces, it should be a code block
+    if (state.sCount[startLine] - state.blkIndent >= 4) {
+      return false;
+    }
+
+    // Special case:
+    //  - item 1
+    //   - item 2
+    //    - item 3
+    //     - item 4
+    //      - this one is a paragraph continuation
+    if (state.listIndent >= 0 && state.sCount[startLine] - state.listIndent >= 4 && state.sCount[startLine] < state.blkIndent) {
+      return false;
+    }
+
+    // limit conditions when list can interrupt
+    // a paragraph (validation mode only)
+    if (silent && state.parentType === 'paragraph') {
+      // Next list item should still terminate previous list item;
+      //
+      // This code can fail if plugins use blkIndent as well as lists,
+      // but I hope the spec gets fixed long before that happens.
+      //
+      if (state.tShift[startLine] >= state.blkIndent) {
+        isTerminatingParagraph = true;
+      }
+    }
+
+    // Detect list type and position after marker
+    if ((posAfterMarker = skipOrderedListMarker(state, startLine)) >= 0) {
+      isOrdered = true;
+      start = state.bMarks[startLine] + state.tShift[startLine];
+      markerValue = Number(state.src.substr(start, posAfterMarker - start - 1));
+
+      // If we're starting a new ordered list right after
+      // a paragraph, it should start with 1.
+      if (isTerminatingParagraph && markerValue !== 1) return false;
+    } else if ((posAfterMarker = skipBulletListMarker(state, startLine)) >= 0) {
+      isOrdered = false;
+    } else {
+      return false;
+    }
+
+    // If we're starting a new unordered list right after
+    // a paragraph, first line should not be empty.
+    if (isTerminatingParagraph) {
+      if (state.skipSpaces(posAfterMarker) >= state.eMarks[startLine]) return false;
+    }
+
+    // We should terminate list on style change. Remember first one to compare.
+    markerCharCode = state.src.charCodeAt(posAfterMarker - 1);
+
+    // For validation mode we can terminate immediately
+    if (silent) {
+      return true;
+    }
+
+    // Start list
+    listTokIdx = state.tokens.length;
+    if (isOrdered) {
+      token = state.push('ordered_list_open', 'ol', 1);
+      if (markerValue !== 1) {
+        token.attrs = [['start', markerValue]];
+      }
+    } else {
+      token = state.push('bullet_list_open', 'ul', 1);
+    }
+    token.map = listLines = [startLine, 0];
+    token.markup = String.fromCharCode(markerCharCode);
+
+    //
+    // Iterate list items
+    //
+
+    nextLine = startLine;
+    prevEmptyEnd = false;
+    terminatorRules = state.md.block.ruler.getRules('list');
+    oldParentType = state.parentType;
+    state.parentType = 'list';
+    while (nextLine < endLine) {
+      pos = posAfterMarker;
+      max = state.eMarks[nextLine];
+      initial = offset = state.sCount[nextLine] + posAfterMarker - (state.bMarks[startLine] + state.tShift[startLine]);
+      while (pos < max) {
+        ch = state.src.charCodeAt(pos);
+        if (ch === 0x09) {
+          offset += 4 - (offset + state.bsCount[nextLine]) % 4;
+        } else if (ch === 0x20) {
+          offset++;
+        } else {
+          break;
+        }
+        pos++;
+      }
+      contentStart = pos;
+      if (contentStart >= max) {
+        // trimming space in "-    \n  3" case, indent is 1 here
+        indentAfterMarker = 1;
+      } else {
+        indentAfterMarker = offset - initial;
+      }
+
+      // If we have more than 4 spaces, the indent is 1
+      // (the rest is just indented code block)
+      if (indentAfterMarker > 4) {
+        indentAfterMarker = 1;
+      }
+
+      // "  -  test"
+      //  ^^^^^ - calculating total length of this thing
+      indent = initial + indentAfterMarker;
+
+      // Run subparser & write tokens
+      token = state.push('list_item_open', 'li', 1);
+      token.markup = String.fromCharCode(markerCharCode);
+      token.map = itemLines = [startLine, 0];
+
+      // change current state, then restore it after parser subcall
+      oldTight = state.tight;
+      oldTShift = state.tShift[startLine];
+      oldSCount = state.sCount[startLine];
+
+      //  - example list
+      // ^ listIndent position will be here
+      //   ^ blkIndent position will be here
+      //
+      oldListIndent = state.listIndent;
+      state.listIndent = state.blkIndent;
+      state.blkIndent = indent;
+      state.tight = true;
+      state.tShift[startLine] = contentStart - state.bMarks[startLine];
+      state.sCount[startLine] = offset;
+      if (contentStart >= max && state.isEmpty(startLine + 1)) {
+        // workaround for this case
+        // (list item is empty, list terminates before "foo"):
+        // ~~~~~~~~
+        //   -
+        //
+        //     foo
+        // ~~~~~~~~
+        state.line = Math.min(state.line + 2, endLine);
+      } else {
+        state.md.block.tokenize(state, startLine, endLine, true);
+      }
+
+      // If any of list item is tight, mark list as tight
+      if (!state.tight || prevEmptyEnd) {
+        tight = false;
+      }
+      // Item become loose if finish with empty line,
+      // but we should filter last element, because it means list finish
+      prevEmptyEnd = state.line - startLine > 1 && state.isEmpty(state.line - 1);
+      state.blkIndent = state.listIndent;
+      state.listIndent = oldListIndent;
+      state.tShift[startLine] = oldTShift;
+      state.sCount[startLine] = oldSCount;
+      state.tight = oldTight;
+      token = state.push('list_item_close', 'li', -1);
+      token.markup = String.fromCharCode(markerCharCode);
+      nextLine = startLine = state.line;
+      itemLines[1] = nextLine;
+      contentStart = state.bMarks[startLine];
+      if (nextLine >= endLine) {
+        break;
+      }
+
+      //
+      // Try to check if list is terminated or continued.
+      //
+      if (state.sCount[nextLine] < state.blkIndent) {
+        break;
+      }
+
+      // if it's indented more than 3 spaces, it should be a code block
+      if (state.sCount[startLine] - state.blkIndent >= 4) {
+        break;
+      }
+
+      // fail if terminating block found
+      terminate = false;
+      for (i = 0, l = terminatorRules.length; i < l; i++) {
+        if (terminatorRules[i](state, nextLine, endLine, true)) {
+          terminate = true;
+          break;
+        }
+      }
+      if (terminate) {
+        break;
+      }
+
+      // fail if list has another type
+      if (isOrdered) {
+        posAfterMarker = skipOrderedListMarker(state, nextLine);
+        if (posAfterMarker < 0) {
+          break;
+        }
+      } else {
+        posAfterMarker = skipBulletListMarker(state, nextLine);
+        if (posAfterMarker < 0) {
+          break;
+        }
+      }
+      if (markerCharCode !== state.src.charCodeAt(posAfterMarker - 1)) {
+        break;
+      }
+    }
+
+    // Finalize list
+    if (isOrdered) {
+      token = state.push('ordered_list_close', 'ol', -1);
+    } else {
+      token = state.push('bullet_list_close', 'ul', -1);
+    }
+    token.markup = String.fromCharCode(markerCharCode);
+    listLines[1] = nextLine;
+    state.line = nextLine;
+    state.parentType = oldParentType;
+
+    // mark paragraphs tight if needed
+    if (tight) {
+      markTightParagraphs(state, listTokIdx);
+    }
+    return true;
+  };
+},1754,[1721],"node_modules\\markdown-it\\lib\\rules_block\\list.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  module.exports = function reference(state, startLine, _endLine, silent) {
+    var ch,
+      destEndPos,
+      destEndLineNo,
+      endLine,
+      href,
+      i,
+      l,
+      label,
+      labelEnd,
+      oldParentType,
+      res,
+      start,
+      str,
+      terminate,
+      terminatorRules,
+      title,
+      lines = 0,
+      pos = state.bMarks[startLine] + state.tShift[startLine],
+      max = state.eMarks[startLine],
+      nextLine = startLine + 1;
+
+    // if it's indented more than 3 spaces, it should be a code block
+    if (state.sCount[startLine] - state.blkIndent >= 4) {
+      return false;
+    }
+    if (state.src.charCodeAt(pos) !== 0x5B /* [ */) {
+      return false;
+    }
+
+    // Simple check to quickly interrupt scan on [link](url) at the start of line.
+    // Can be useful on practice: https://github.com/markdown-it/markdown-it/issues/54
+    while (++pos < max) {
+      if (state.src.charCodeAt(pos) === 0x5D /* ] */ && state.src.charCodeAt(pos - 1) !== 0x5C /* \ */) {
+        if (pos + 1 === max) {
+          return false;
+        }
+        if (state.src.charCodeAt(pos + 1) !== 0x3A /* : */) {
+          return false;
+        }
+        break;
+      }
+    }
+    endLine = state.lineMax;
+
+    // jump line-by-line until empty one or EOF
+    terminatorRules = state.md.block.ruler.getRules('reference');
+    oldParentType = state.parentType;
+    state.parentType = 'reference';
+    for (; nextLine < endLine && !state.isEmpty(nextLine); nextLine++) {
+      // this would be a code block normally, but after paragraph
+      // it's considered a lazy continuation regardless of what's there
+      if (state.sCount[nextLine] - state.blkIndent > 3) {
+        continue;
+      }
+
+      // quirk for blockquotes, this line should already be checked by that rule
+      if (state.sCount[nextLine] < 0) {
+        continue;
+      }
+
+      // Some tags can terminate paragraph without empty line.
+      terminate = false;
+      for (i = 0, l = terminatorRules.length; i < l; i++) {
+        if (terminatorRules[i](state, nextLine, endLine, true)) {
+          terminate = true;
+          break;
+        }
+      }
+      if (terminate) {
+        break;
+      }
+    }
+    str = state.getLines(startLine, nextLine, state.blkIndent, false).trim();
+    max = str.length;
+    for (pos = 1; pos < max; pos++) {
+      ch = str.charCodeAt(pos);
+      if (ch === 0x5B /* [ */) {
+        return false;
+      } else if (ch === 0x5D /* ] */) {
+        labelEnd = pos;
+        break;
+      } else if (ch === 0x0A /* \n */) {
+        lines++;
+      } else if (ch === 0x5C /* \ */) {
+        pos++;
+        if (pos < max && str.charCodeAt(pos) === 0x0A) {
+          lines++;
+        }
+      }
+    }
+    if (labelEnd < 0 || str.charCodeAt(labelEnd + 1) !== 0x3A /* : */) {
+      return false;
+    }
+
+    // [label]:   destination   'title'
+    //         ^^^ skip optional whitespace here
+    for (pos = labelEnd + 2; pos < max; pos++) {
+      ch = str.charCodeAt(pos);
+      if (ch === 0x0A) {
+        lines++;
+      } else if (_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+        /*eslint no-empty:0*/
+      } else {
+        break;
+      }
+    }
+
+    // [label]:   destination   'title'
+    //            ^^^^^^^^^^^ parse this
+    res = state.md.helpers.parseLinkDestination(str, pos, max);
+    if (!res.ok) {
+      return false;
+    }
+    href = state.md.normalizeLink(res.str);
+    if (!state.md.validateLink(href)) {
+      return false;
+    }
+    pos = res.pos;
+    lines += res.lines;
+
+    // save cursor state, we could require to rollback later
+    destEndPos = pos;
+    destEndLineNo = lines;
+
+    // [label]:   destination   'title'
+    //                       ^^^ skipping those spaces
+    start = pos;
+    for (; pos < max; pos++) {
+      ch = str.charCodeAt(pos);
+      if (ch === 0x0A) {
+        lines++;
+      } else if (_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+        /*eslint no-empty:0*/
+      } else {
+        break;
+      }
+    }
+
+    // [label]:   destination   'title'
+    //                          ^^^^^^^ parse this
+    res = state.md.helpers.parseLinkTitle(str, pos, max);
+    if (pos < max && start !== pos && res.ok) {
+      title = res.str;
+      pos = res.pos;
+      lines += res.lines;
+    } else {
+      title = '';
+      pos = destEndPos;
+      lines = destEndLineNo;
+    }
+
+    // skip trailing spaces until the rest of the line
+    while (pos < max) {
+      ch = str.charCodeAt(pos);
+      if (!_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+        break;
+      }
+      pos++;
+    }
+    if (pos < max && str.charCodeAt(pos) !== 0x0A) {
+      if (title) {
+        // garbage at the end of the line after title,
+        // but it could still be a valid reference if we roll back
+        title = '';
+        pos = destEndPos;
+        lines = destEndLineNo;
+        while (pos < max) {
+          ch = str.charCodeAt(pos);
+          if (!_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+            break;
+          }
+          pos++;
+        }
+      }
+    }
+    if (pos < max && str.charCodeAt(pos) !== 0x0A) {
+      // garbage at the end of the line
+      return false;
+    }
+    label = _$$_REQUIRE(_dependencyMap[0], "../common/utils").normalizeReference(str.slice(1, labelEnd));
+    if (!label) {
+      // CommonMark 0.20 disallows empty labels
+      return false;
+    }
+
+    // Reference can not terminate anything. This check is for safety only.
+    /*istanbul ignore if*/
+    if (silent) {
+      return true;
+    }
+    if (typeof state.env.references === 'undefined') {
+      state.env.references = {};
+    }
+    if (typeof state.env.references[label] === 'undefined') {
+      state.env.references[label] = {
+        title: title,
+        href: href
+      };
+    }
+    state.parentType = oldParentType;
+    state.line = startLine + lines + 1;
+    return true;
+  };
+},1755,[1721],"node_modules\\markdown-it\\lib\\rules_block\\reference.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // heading (#, ##, ...)
+
+  'use strict';
+
+  module.exports = function heading(state, startLine, endLine, silent) {
+    var ch,
+      level,
+      tmp,
+      token,
+      pos = state.bMarks[startLine] + state.tShift[startLine],
+      max = state.eMarks[startLine];
+
+    // if it's indented more than 3 spaces, it should be a code block
+    if (state.sCount[startLine] - state.blkIndent >= 4) {
+      return false;
+    }
+    ch = state.src.charCodeAt(pos);
+    if (ch !== 0x23 /* # */ || pos >= max) {
+      return false;
+    }
+
+    // count heading level
+    level = 1;
+    ch = state.src.charCodeAt(++pos);
+    while (ch === 0x23 /* # */ && pos < max && level <= 6) {
+      level++;
+      ch = state.src.charCodeAt(++pos);
+    }
+    if (level > 6 || pos < max && !_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+      return false;
+    }
+    if (silent) {
+      return true;
+    }
+
+    // Let's cut tails like '    ###  ' from the end of string
+
+    max = state.skipSpacesBack(max, pos);
+    tmp = state.skipCharsBack(max, 0x23, pos); // #
+    if (tmp > pos && _$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(state.src.charCodeAt(tmp - 1))) {
+      max = tmp;
+    }
+    state.line = startLine + 1;
+    token = state.push('heading_open', 'h' + String(level), 1);
+    token.markup = '########'.slice(0, level);
+    token.map = [startLine, state.line];
+    token = state.push('inline', '', 0);
+    token.content = state.src.slice(pos, max).trim();
+    token.map = [startLine, state.line];
+    token.children = [];
+    token = state.push('heading_close', 'h' + String(level), -1);
+    token.markup = '########'.slice(0, level);
+    return true;
+  };
+},1756,[1721],"node_modules\\markdown-it\\lib\\rules_block\\heading.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // lheading (---, ===)
+
+  'use strict';
+
+  module.exports = function lheading(state, startLine, endLine /*, silent*/) {
+    var content,
+      terminate,
+      i,
+      l,
+      token,
+      pos,
+      max,
+      level,
+      marker,
+      nextLine = startLine + 1,
+      oldParentType,
+      terminatorRules = state.md.block.ruler.getRules('paragraph');
+
+    // if it's indented more than 3 spaces, it should be a code block
+    if (state.sCount[startLine] - state.blkIndent >= 4) {
+      return false;
+    }
+    oldParentType = state.parentType;
+    state.parentType = 'paragraph'; // use paragraph to match terminatorRules
+
+    // jump line-by-line until empty one or EOF
+    for (; nextLine < endLine && !state.isEmpty(nextLine); nextLine++) {
+      // this would be a code block normally, but after paragraph
+      // it's considered a lazy continuation regardless of what's there
+      if (state.sCount[nextLine] - state.blkIndent > 3) {
+        continue;
+      }
+
+      //
+      // Check for underline in setext header
+      //
+      if (state.sCount[nextLine] >= state.blkIndent) {
+        pos = state.bMarks[nextLine] + state.tShift[nextLine];
+        max = state.eMarks[nextLine];
+        if (pos < max) {
+          marker = state.src.charCodeAt(pos);
+          if (marker === 0x2D /* - */ || marker === 0x3D /* = */) {
+            pos = state.skipChars(pos, marker);
+            pos = state.skipSpaces(pos);
+            if (pos >= max) {
+              level = marker === 0x3D /* = */ ? 1 : 2;
+              break;
+            }
+          }
+        }
+      }
+
+      // quirk for blockquotes, this line should already be checked by that rule
+      if (state.sCount[nextLine] < 0) {
+        continue;
+      }
+
+      // Some tags can terminate paragraph without empty line.
+      terminate = false;
+      for (i = 0, l = terminatorRules.length; i < l; i++) {
+        if (terminatorRules[i](state, nextLine, endLine, true)) {
+          terminate = true;
+          break;
+        }
+      }
+      if (terminate) {
+        break;
+      }
+    }
+    if (!level) {
+      // Didn't find valid underline
+      return false;
+    }
+    content = state.getLines(startLine, nextLine, state.blkIndent, false).trim();
+    state.line = nextLine + 1;
+    token = state.push('heading_open', 'h' + String(level), 1);
+    token.markup = String.fromCharCode(marker);
+    token.map = [startLine, state.line];
+    token = state.push('inline', '', 0);
+    token.content = content;
+    token.map = [startLine, state.line - 1];
+    token.children = [];
+    token = state.push('heading_close', 'h' + String(level), -1);
+    token.markup = String.fromCharCode(marker);
+    state.parentType = oldParentType;
+    return true;
+  };
+},1757,[],"node_modules\\markdown-it\\lib\\rules_block\\lheading.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // HTML block
+
+  'use strict';
+
+  // An array of opening and corresponding closing sequences for html tags,
+  // last argument defines whether it can terminate a paragraph or not
+  //
+  var HTML_SEQUENCES = [[/^<(script|pre|style)(?=(\s|>|$))/i, /<\/(script|pre|style)>/i, true], [/^<!--/, /-->/, true], [/^<\?/, /\?>/, true], [/^<![A-Z]/, />/, true], [/^<!\[CDATA\[/, /\]\]>/, true], [new RegExp('^</?(' + _$$_REQUIRE(_dependencyMap[0], "../common/html_blocks").join('|') + ')(?=(\\s|/?>|$))', 'i'), /^$/, true], [new RegExp(_$$_REQUIRE(_dependencyMap[1], "../common/html_re").HTML_OPEN_CLOSE_TAG_RE.source + '\\s*$'), /^$/, false]];
+  module.exports = function html_block(state, startLine, endLine, silent) {
+    var i,
+      nextLine,
+      token,
+      lineText,
+      pos = state.bMarks[startLine] + state.tShift[startLine],
+      max = state.eMarks[startLine];
+
+    // if it's indented more than 3 spaces, it should be a code block
+    if (state.sCount[startLine] - state.blkIndent >= 4) {
+      return false;
+    }
+    if (!state.md.options.html) {
+      return false;
+    }
+    if (state.src.charCodeAt(pos) !== 0x3C /* < */) {
+      return false;
+    }
+    lineText = state.src.slice(pos, max);
+    for (i = 0; i < HTML_SEQUENCES.length; i++) {
+      if (HTML_SEQUENCES[i][0].test(lineText)) {
+        break;
+      }
+    }
+    if (i === HTML_SEQUENCES.length) {
+      return false;
+    }
+    if (silent) {
+      // true if this sequence can be a terminator, false otherwise
+      return HTML_SEQUENCES[i][2];
+    }
+    nextLine = startLine + 1;
+
+    // If we are here - we detected HTML block.
+    // Let's roll down till block end.
+    if (!HTML_SEQUENCES[i][1].test(lineText)) {
+      for (; nextLine < endLine; nextLine++) {
+        if (state.sCount[nextLine] < state.blkIndent) {
+          break;
+        }
+        pos = state.bMarks[nextLine] + state.tShift[nextLine];
+        max = state.eMarks[nextLine];
+        lineText = state.src.slice(pos, max);
+        if (HTML_SEQUENCES[i][1].test(lineText)) {
+          if (lineText.length !== 0) {
+            nextLine++;
+          }
+          break;
+        }
+      }
+    }
+    state.line = nextLine;
+    token = state.push('html_block', '', 0);
+    token.map = [startLine, nextLine];
+    token.content = state.getLines(startLine, nextLine, state.blkIndent, true);
+    return true;
+  };
+},1758,[1759,1741],"node_modules\\markdown-it\\lib\\rules_block\\html_block.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // List of valid html blocks names, accorting to commonmark spec
+  // http://jgm.github.io/CommonMark/spec.html#html-blocks
+
+  'use strict';
+
+  module.exports = ['address', 'article', 'aside', 'base', 'basefont', 'blockquote', 'body', 'caption', 'center', 'col', 'colgroup', 'dd', 'details', 'dialog', 'dir', 'div', 'dl', 'dt', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'frame', 'frameset', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hr', 'html', 'iframe', 'legend', 'li', 'link', 'main', 'menu', 'menuitem', 'meta', 'nav', 'noframes', 'ol', 'optgroup', 'option', 'p', 'param', 'section', 'source', 'summary', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'title', 'tr', 'track', 'ul'];
+},1759,[],"node_modules\\markdown-it\\lib\\common\\html_blocks.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Paragraph
+
+  'use strict';
+
+  module.exports = function paragraph(state, startLine /*, endLine*/) {
+    var content,
+      terminate,
+      i,
+      l,
+      token,
+      oldParentType,
+      nextLine = startLine + 1,
+      terminatorRules = state.md.block.ruler.getRules('paragraph'),
+      endLine = state.lineMax;
+    oldParentType = state.parentType;
+    state.parentType = 'paragraph';
+
+    // jump line-by-line until empty one or EOF
+    for (; nextLine < endLine && !state.isEmpty(nextLine); nextLine++) {
+      // this would be a code block normally, but after paragraph
+      // it's considered a lazy continuation regardless of what's there
+      if (state.sCount[nextLine] - state.blkIndent > 3) {
+        continue;
+      }
+
+      // quirk for blockquotes, this line should already be checked by that rule
+      if (state.sCount[nextLine] < 0) {
+        continue;
+      }
+
+      // Some tags can terminate paragraph without empty line.
+      terminate = false;
+      for (i = 0, l = terminatorRules.length; i < l; i++) {
+        if (terminatorRules[i](state, nextLine, endLine, true)) {
+          terminate = true;
+          break;
+        }
+      }
+      if (terminate) {
+        break;
+      }
+    }
+    content = state.getLines(startLine, nextLine, state.blkIndent, false).trim();
+    state.line = nextLine;
+    token = state.push('paragraph_open', 'p', 1);
+    token.map = [startLine, state.line];
+    token = state.push('inline', '', 0);
+    token.content = content;
+    token.map = [startLine, state.line];
+    token.children = [];
+    token = state.push('paragraph_close', 'p', -1);
+    state.parentType = oldParentType;
+    return true;
+  };
+},1760,[],"node_modules\\markdown-it\\lib\\rules_block\\paragraph.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Parser state class
+
+  'use strict';
+
+  function StateBlock(src, md, env, tokens) {
+    var ch, s, start, pos, len, indent, offset, indent_found;
+    this.src = src;
+
+    // link to parser instance
+    this.md = md;
+    this.env = env;
+
+    //
+    // Internal state vartiables
+    //
+
+    this.tokens = tokens;
+    this.bMarks = []; // line begin offsets for fast jumps
+    this.eMarks = []; // line end offsets for fast jumps
+    this.tShift = []; // offsets of the first non-space characters (tabs not expanded)
+    this.sCount = []; // indents for each line (tabs expanded)
+
+    // An amount of virtual spaces (tabs expanded) between beginning
+    // of each line (bMarks) and real beginning of that line.
+    //
+    // It exists only as a hack because blockquotes override bMarks
+    // losing information in the process.
+    //
+    // It's used only when expanding tabs, you can think about it as
+    // an initial tab length, e.g. bsCount=21 applied to string `\t123`
+    // means first tab should be expanded to 4-21%4 === 3 spaces.
+    //
+    this.bsCount = [];
+
+    // block parser variables
+    this.blkIndent = 0; // required block content indent (for example, if we are
+    // inside a list, it would be positioned after list marker)
+    this.line = 0; // line index in src
+    this.lineMax = 0; // lines count
+    this.tight = false; // loose/tight mode for lists
+    this.ddIndent = -1; // indent of the current dd block (-1 if there isn't any)
+    this.listIndent = -1; // indent of the current list block (-1 if there isn't any)
+
+    // can be 'blockquote', 'list', 'root', 'paragraph' or 'reference'
+    // used in lists to determine if they interrupt a paragraph
+    this.parentType = 'root';
+    this.level = 0;
+
+    // renderer
+    this.result = '';
+
+    // Create caches
+    // Generate markers.
+    s = this.src;
+    indent_found = false;
+    for (start = pos = indent = offset = 0, len = s.length; pos < len; pos++) {
+      ch = s.charCodeAt(pos);
+      if (!indent_found) {
+        if (_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+          indent++;
+          if (ch === 0x09) {
+            offset += 4 - offset % 4;
+          } else {
+            offset++;
+          }
+          continue;
+        } else {
+          indent_found = true;
+        }
+      }
+      if (ch === 0x0A || pos === len - 1) {
+        if (ch !== 0x0A) {
+          pos++;
+        }
+        this.bMarks.push(start);
+        this.eMarks.push(pos);
+        this.tShift.push(indent);
+        this.sCount.push(offset);
+        this.bsCount.push(0);
+        indent_found = false;
+        indent = 0;
+        offset = 0;
+        start = pos + 1;
+      }
+    }
+
+    // Push fake entry to simplify cache bounds checks
+    this.bMarks.push(s.length);
+    this.eMarks.push(s.length);
+    this.tShift.push(0);
+    this.sCount.push(0);
+    this.bsCount.push(0);
+    this.lineMax = this.bMarks.length - 1; // don't count last fake line
+  }
+
+  // Push new token to "stream".
+  //
+  StateBlock.prototype.push = function (type, tag, nesting) {
+    var token = new (_$$_REQUIRE(_dependencyMap[1], "../token"))(type, tag, nesting);
+    token.block = true;
+    if (nesting < 0) this.level--; // closing tag
+    token.level = this.level;
+    if (nesting > 0) this.level++; // opening tag
+
+    this.tokens.push(token);
+    return token;
+  };
+  StateBlock.prototype.isEmpty = function isEmpty(line) {
+    return this.bMarks[line] + this.tShift[line] >= this.eMarks[line];
+  };
+  StateBlock.prototype.skipEmptyLines = function skipEmptyLines(from) {
+    for (var max = this.lineMax; from < max; from++) {
+      if (this.bMarks[from] + this.tShift[from] < this.eMarks[from]) {
+        break;
+      }
+    }
+    return from;
+  };
+
+  // Skip spaces from given position.
+  StateBlock.prototype.skipSpaces = function skipSpaces(pos) {
+    var ch;
+    for (var max = this.src.length; pos < max; pos++) {
+      ch = this.src.charCodeAt(pos);
+      if (!_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+        break;
+      }
+    }
+    return pos;
+  };
+
+  // Skip spaces from given position in reverse.
+  StateBlock.prototype.skipSpacesBack = function skipSpacesBack(pos, min) {
+    if (pos <= min) {
+      return pos;
+    }
+    while (pos > min) {
+      if (!_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(this.src.charCodeAt(--pos))) {
+        return pos + 1;
+      }
+    }
+    return pos;
+  };
+
+  // Skip char codes from given position
+  StateBlock.prototype.skipChars = function skipChars(pos, code) {
+    for (var max = this.src.length; pos < max; pos++) {
+      if (this.src.charCodeAt(pos) !== code) {
+        break;
+      }
+    }
+    return pos;
+  };
+
+  // Skip char codes reverse from given position - 1
+  StateBlock.prototype.skipCharsBack = function skipCharsBack(pos, code, min) {
+    if (pos <= min) {
+      return pos;
+    }
+    while (pos > min) {
+      if (code !== this.src.charCodeAt(--pos)) {
+        return pos + 1;
+      }
+    }
+    return pos;
+  };
+
+  // cut lines range from source.
+  StateBlock.prototype.getLines = function getLines(begin, end, indent, keepLastLF) {
+    var i,
+      lineIndent,
+      ch,
+      first,
+      last,
+      queue,
+      lineStart,
+      line = begin;
+    if (begin >= end) {
+      return '';
+    }
+    queue = new Array(end - begin);
+    for (i = 0; line < end; line++, i++) {
+      lineIndent = 0;
+      lineStart = first = this.bMarks[line];
+      if (line + 1 < end || keepLastLF) {
+        // No need for bounds check because we have fake entry on tail.
+        last = this.eMarks[line] + 1;
+      } else {
+        last = this.eMarks[line];
+      }
+      while (first < last && lineIndent < indent) {
+        ch = this.src.charCodeAt(first);
+        if (_$$_REQUIRE(_dependencyMap[0], "../common/utils").isSpace(ch)) {
+          if (ch === 0x09) {
+            lineIndent += 4 - (lineIndent + this.bsCount[line]) % 4;
+          } else {
+            lineIndent++;
+          }
+        } else if (first - lineStart < this.tShift[line]) {
+          // patched tShift masked characters to look like spaces (blockquotes, list markers)
+          lineIndent++;
+        } else {
+          break;
+        }
+        first++;
+      }
+      if (lineIndent > indent) {
+        // partially expanding tabs in code blocks, e.g '\t\tfoobar'
+        // with indent=2 becomes '  \tfoobar'
+        queue[i] = new Array(lineIndent - indent + 1).join(' ') + this.src.slice(first, last);
+      } else {
+        queue[i] = this.src.slice(first, last);
+      }
+    }
+    return queue.join('');
+  };
+
+  // re-export Token class to use in block rules
+  StateBlock.prototype.Token = _$$_REQUIRE(_dependencyMap[1], "../token");
+  module.exports = StateBlock;
+},1761,[1721,1747],"node_modules\\markdown-it\\lib\\rules_block\\state_block.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  /** internal
+   * class Core
+   *
+   * Top-level rules executor. Glues block/inline parsers and does intermediate
+   * transformations.
+   **/
+  'use strict';
+
+  var _rules = [['normalize', _$$_REQUIRE(_dependencyMap[0], "./rules_core/normalize")], ['block', _$$_REQUIRE(_dependencyMap[1], "./rules_core/block")], ['inline', _$$_REQUIRE(_dependencyMap[2], "./rules_core/inline")], ['linkify', _$$_REQUIRE(_dependencyMap[3], "./rules_core/linkify")], ['replacements', _$$_REQUIRE(_dependencyMap[4], "./rules_core/replacements")], ['smartquotes', _$$_REQUIRE(_dependencyMap[5], "./rules_core/smartquotes")]];
+
+  /**
+   * new Core()
+   **/
+  function Core() {
+    /**
+     * Core#ruler -> Ruler
+     *
+     * [[Ruler]] instance. Keep configuration of core rules.
+     **/
+    this.ruler = new (_$$_REQUIRE(_dependencyMap[6], "./ruler"))();
+    for (var i = 0; i < _rules.length; i++) {
+      this.ruler.push(_rules[i][0], _rules[i][1]);
+    }
+  }
+
+  /**
+   * Core.process(state)
+   *
+   * Executes core chain rules.
+   **/
+  Core.prototype.process = function (state) {
+    var i, l, rules;
+    rules = this.ruler.getRules('');
+    for (i = 0, l = rules.length; i < l; i++) {
+      rules[i](state);
+    }
+  };
+  Core.prototype.State = _$$_REQUIRE(_dependencyMap[7], "./rules_core/state_core");
+  module.exports = Core;
+},1762,[1763,1764,1765,1766,1767,1768,1745,1769],"node_modules\\markdown-it\\lib\\parser_core.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Normalize input string
+
+  'use strict';
+
+  // https://spec.commonmark.org/0.29/#line-ending
+  var NEWLINES_RE = /\r\n?|\n/g;
+  var NULL_RE = /\0/g;
+  module.exports = function normalize(state) {
+    var str;
+
+    // Normalize newlines
+    str = state.src.replace(NEWLINES_RE, '\n');
+
+    // Replace NULL characters
+    str = str.replace(NULL_RE, "\uFFFD");
+    state.src = str;
+  };
+},1763,[],"node_modules\\markdown-it\\lib\\rules_core\\normalize.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  module.exports = function block(state) {
+    var token;
+    if (state.inlineMode) {
+      token = new state.Token('inline', '', 0);
+      token.content = state.src;
+      token.map = [0, 1];
+      token.children = [];
+      state.tokens.push(token);
+    } else {
+      state.md.block.parse(state.src, state.md, state.env, state.tokens);
+    }
+  };
+},1764,[],"node_modules\\markdown-it\\lib\\rules_core\\block.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  module.exports = function inline(state) {
+    var tokens = state.tokens,
+      tok,
+      i,
+      l;
+
+    // Parse inlines
+    for (i = 0, l = tokens.length; i < l; i++) {
+      tok = tokens[i];
+      if (tok.type === 'inline') {
+        state.md.inline.parse(tok.content, state.md, state.env, tok.children);
+      }
+    }
+  };
+},1765,[],"node_modules\\markdown-it\\lib\\rules_core\\inline.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Replace link-like texts with link nodes.
+  //
+  // Currently restricted by `md.validateLink()` to http/https/ftp
+  //
+  'use strict';
+
+  function isLinkOpen(str) {
+    return /^<a[>\s]/i.test(str);
+  }
+  function isLinkClose(str) {
+    return /^<\/a\s*>/i.test(str);
+  }
+  module.exports = function linkify(state) {
+    var i,
+      j,
+      l,
+      tokens,
+      token,
+      currentToken,
+      nodes,
+      ln,
+      text,
+      pos,
+      lastPos,
+      level,
+      htmlLinkLevel,
+      url,
+      fullUrl,
+      urlText,
+      blockTokens = state.tokens,
+      links;
+    if (!state.md.options.linkify) {
+      return;
+    }
+    for (j = 0, l = blockTokens.length; j < l; j++) {
+      if (blockTokens[j].type !== 'inline' || !state.md.linkify.pretest(blockTokens[j].content)) {
+        continue;
+      }
+      tokens = blockTokens[j].children;
+      htmlLinkLevel = 0;
+
+      // We scan from the end, to keep position when new tags added.
+      // Use reversed logic in links start/end match
+      for (i = tokens.length - 1; i >= 0; i--) {
+        currentToken = tokens[i];
+
+        // Skip content of markdown links
+        if (currentToken.type === 'link_close') {
+          i--;
+          while (tokens[i].level !== currentToken.level && tokens[i].type !== 'link_open') {
+            i--;
+          }
+          continue;
+        }
+
+        // Skip content of html tag links
+        if (currentToken.type === 'html_inline') {
+          if (isLinkOpen(currentToken.content) && htmlLinkLevel > 0) {
+            htmlLinkLevel--;
+          }
+          if (isLinkClose(currentToken.content)) {
+            htmlLinkLevel++;
+          }
+        }
+        if (htmlLinkLevel > 0) {
+          continue;
+        }
+        if (currentToken.type === 'text' && state.md.linkify.test(currentToken.content)) {
+          text = currentToken.content;
+          links = state.md.linkify.match(text);
+
+          // Now split string to nodes
+          nodes = [];
+          level = currentToken.level;
+          lastPos = 0;
+          for (ln = 0; ln < links.length; ln++) {
+            url = links[ln].url;
+            fullUrl = state.md.normalizeLink(url);
+            if (!state.md.validateLink(fullUrl)) {
+              continue;
+            }
+            urlText = links[ln].text;
+
+            // Linkifier might send raw hostnames like "example.com", where url
+            // starts with domain name. So we prepend http:// in those cases,
+            // and remove it afterwards.
+            //
+            if (!links[ln].schema) {
+              urlText = state.md.normalizeLinkText('http://' + urlText).replace(/^http:\/\//, '');
+            } else if (links[ln].schema === 'mailto:' && !/^mailto:/i.test(urlText)) {
+              urlText = state.md.normalizeLinkText('mailto:' + urlText).replace(/^mailto:/, '');
+            } else {
+              urlText = state.md.normalizeLinkText(urlText);
+            }
+            pos = links[ln].index;
+            if (pos > lastPos) {
+              token = new state.Token('text', '', 0);
+              token.content = text.slice(lastPos, pos);
+              token.level = level;
+              nodes.push(token);
+            }
+            token = new state.Token('link_open', 'a', 1);
+            token.attrs = [['href', fullUrl]];
+            token.level = level++;
+            token.markup = 'linkify';
+            token.info = 'auto';
+            nodes.push(token);
+            token = new state.Token('text', '', 0);
+            token.content = urlText;
+            token.level = level;
+            nodes.push(token);
+            token = new state.Token('link_close', 'a', -1);
+            token.level = --level;
+            token.markup = 'linkify';
+            token.info = 'auto';
+            nodes.push(token);
+            lastPos = links[ln].lastIndex;
+          }
+          if (lastPos < text.length) {
+            token = new state.Token('text', '', 0);
+            token.content = text.slice(lastPos);
+            token.level = level;
+            nodes.push(token);
+          }
+
+          // replace current node
+          blockTokens[j].children = tokens = _$$_REQUIRE(_dependencyMap[0], "../common/utils").arrayReplaceAt(tokens, i, nodes);
+        }
+      }
+    }
+  };
+},1766,[1721],"node_modules\\markdown-it\\lib\\rules_core\\linkify.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Simple typographic replacements
+  //
+  // (c) (C) → ©
+  // (tm) (TM) → ™
+  // (r) (R) → ®
+  // +- → ±
+  // (p) (P) -> §
+  // ... → … (also ?.... → ?.., !.... → !..)
+  // ???????? → ???, !!!!! → !!!, `,,` → `,`
+  // -- → &ndash;, --- → &mdash;
+  //
+  'use strict';
+
+  // TODO:
+  // - fractionals 1/2, 1/4, 3/4 -> ½, ¼, ¾
+  // - miltiplication 2 x 4 -> 2 × 4
+  var RARE_RE = /\+-|\.\.|\?\?\?\?|!!!!|,,|--/;
+
+  // Workaround for phantomjs - need regex without /g flag,
+  // or root check will fail every second time
+  var SCOPED_ABBR_TEST_RE = /\((c|tm|r|p)\)/i;
+  var SCOPED_ABBR_RE = /\((c|tm|r|p)\)/ig;
+  var SCOPED_ABBR = {
+    c: '©',
+    r: '®',
+    p: '§',
+    tm: '™'
+  };
+  function replaceFn(match, name) {
+    return SCOPED_ABBR[name.toLowerCase()];
+  }
+  function replace_scoped(inlineTokens) {
+    var i,
+      token,
+      inside_autolink = 0;
+    for (i = inlineTokens.length - 1; i >= 0; i--) {
+      token = inlineTokens[i];
+      if (token.type === 'text' && !inside_autolink) {
+        token.content = token.content.replace(SCOPED_ABBR_RE, replaceFn);
+      }
+      if (token.type === 'link_open' && token.info === 'auto') {
+        inside_autolink--;
+      }
+      if (token.type === 'link_close' && token.info === 'auto') {
+        inside_autolink++;
+      }
+    }
+  }
+  function replace_rare(inlineTokens) {
+    var i,
+      token,
+      inside_autolink = 0;
+    for (i = inlineTokens.length - 1; i >= 0; i--) {
+      token = inlineTokens[i];
+      if (token.type === 'text' && !inside_autolink) {
+        if (RARE_RE.test(token.content)) {
+          token.content = token.content.replace(/\+-/g, '±')
+          // .., ..., ....... -> …
+          // but ?..... & !..... -> ?.. & !..
+          .replace(/\.{2,}/g, '…').replace(/([?!])…/g, '$1..').replace(/([?!]){4,}/g, '$1$1$1').replace(/,{2,}/g, ',')
+          // em-dash
+          .replace(/(^|[^-])---([^-]|$)/mg, "$1\u2014$2")
+          // en-dash
+          .replace(/(^|\s)--(\s|$)/mg, "$1\u2013$2").replace(/(^|[^-\s])--([^-\s]|$)/mg, "$1\u2013$2");
+        }
+      }
+      if (token.type === 'link_open' && token.info === 'auto') {
+        inside_autolink--;
+      }
+      if (token.type === 'link_close' && token.info === 'auto') {
+        inside_autolink++;
+      }
+    }
+  }
+  module.exports = function replace(state) {
+    var blkIdx;
+    if (!state.md.options.typographer) {
+      return;
+    }
+    for (blkIdx = state.tokens.length - 1; blkIdx >= 0; blkIdx--) {
+      if (state.tokens[blkIdx].type !== 'inline') {
+        continue;
+      }
+      if (SCOPED_ABBR_TEST_RE.test(state.tokens[blkIdx].content)) {
+        replace_scoped(state.tokens[blkIdx].children);
+      }
+      if (RARE_RE.test(state.tokens[blkIdx].content)) {
+        replace_rare(state.tokens[blkIdx].children);
+      }
+    }
+  };
+},1767,[],"node_modules\\markdown-it\\lib\\rules_core\\replacements.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Convert straight quotation marks to typographic ones
+  //
+  'use strict';
+
+  var QUOTE_TEST_RE = /['"]/;
+  var QUOTE_RE = /['"]/g;
+  var APOSTROPHE = "\u2019"; /* ’ */
+
+  function replaceAt(str, index, ch) {
+    return str.substr(0, index) + ch + str.substr(index + 1);
+  }
+  function process_inlines(tokens, state) {
+    var i, token, text, t, pos, max, thisLevel, item, lastChar, nextChar, isLastPunctChar, isNextPunctChar, isLastWhiteSpace, isNextWhiteSpace, canOpen, canClose, j, isSingle, stack, openQuote, closeQuote;
+    stack = [];
+    for (i = 0; i < tokens.length; i++) {
+      token = tokens[i];
+      thisLevel = tokens[i].level;
+      for (j = stack.length - 1; j >= 0; j--) {
+        if (stack[j].level <= thisLevel) {
+          break;
+        }
+      }
+      stack.length = j + 1;
+      if (token.type !== 'text') {
+        continue;
+      }
+      text = token.content;
+      pos = 0;
+      max = text.length;
+
+      /*eslint no-labels:0,block-scoped-var:0*/
+      OUTER: while (pos < max) {
+        QUOTE_RE.lastIndex = pos;
+        t = QUOTE_RE.exec(text);
+        if (!t) {
+          break;
+        }
+        canOpen = canClose = true;
+        pos = t.index + 1;
+        isSingle = t[0] === "'";
+
+        // Find previous character,
+        // default to space if it's the beginning of the line
+        //
+        lastChar = 0x20;
+        if (t.index - 1 >= 0) {
+          lastChar = text.charCodeAt(t.index - 1);
+        } else {
+          for (j = i - 1; j >= 0; j--) {
+            if (tokens[j].type === 'softbreak' || tokens[j].type === 'hardbreak') break; // lastChar defaults to 0x20
+            if (tokens[j].type !== 'text') continue;
+            lastChar = tokens[j].content.charCodeAt(tokens[j].content.length - 1);
+            break;
+          }
+        }
+
+        // Find next character,
+        // default to space if it's the end of the line
+        //
+        nextChar = 0x20;
+        if (pos < max) {
+          nextChar = text.charCodeAt(pos);
+        } else {
+          for (j = i + 1; j < tokens.length; j++) {
+            if (tokens[j].type === 'softbreak' || tokens[j].type === 'hardbreak') break; // nextChar defaults to 0x20
+            if (tokens[j].type !== 'text') continue;
+            nextChar = tokens[j].content.charCodeAt(0);
+            break;
+          }
+        }
+        isLastPunctChar = _$$_REQUIRE(_dependencyMap[0], "../common/utils").isMdAsciiPunct(lastChar) || _$$_REQUIRE(_dependencyMap[0], "../common/utils").isPunctChar(String.fromCharCode(lastChar));
+        isNextPunctChar = _$$_REQUIRE(_dependencyMap[0], "../common/utils").isMdAsciiPunct(nextChar) || _$$_REQUIRE(_dependencyMap[0], "../common/utils").isPunctChar(String.fromCharCode(nextChar));
+        isLastWhiteSpace = _$$_REQUIRE(_dependencyMap[0], "../common/utils").isWhiteSpace(lastChar);
+        isNextWhiteSpace = _$$_REQUIRE(_dependencyMap[0], "../common/utils").isWhiteSpace(nextChar);
+        if (isNextWhiteSpace) {
+          canOpen = false;
+        } else if (isNextPunctChar) {
+          if (!(isLastWhiteSpace || isLastPunctChar)) {
+            canOpen = false;
+          }
+        }
+        if (isLastWhiteSpace) {
+          canClose = false;
+        } else if (isLastPunctChar) {
+          if (!(isNextWhiteSpace || isNextPunctChar)) {
+            canClose = false;
+          }
+        }
+        if (nextChar === 0x22 /* " */ && t[0] === '"') {
+          if (lastChar >= 0x30 /* 0 */ && lastChar <= 0x39 /* 9 */) {
+            // special case: 1"" - count first quote as an inch
+            canClose = canOpen = false;
+          }
+        }
+        if (canOpen && canClose) {
+          // treat this as the middle of the word
+          canOpen = false;
+          canClose = isNextPunctChar;
+        }
+        if (!canOpen && !canClose) {
+          // middle of word
+          if (isSingle) {
+            token.content = replaceAt(token.content, t.index, APOSTROPHE);
+          }
+          continue;
+        }
+        if (canClose) {
+          // this could be a closing quote, rewind the stack to get a match
+          for (j = stack.length - 1; j >= 0; j--) {
+            item = stack[j];
+            if (stack[j].level < thisLevel) {
+              break;
+            }
+            if (item.single === isSingle && stack[j].level === thisLevel) {
+              item = stack[j];
+              if (isSingle) {
+                openQuote = state.md.options.quotes[2];
+                closeQuote = state.md.options.quotes[3];
+              } else {
+                openQuote = state.md.options.quotes[0];
+                closeQuote = state.md.options.quotes[1];
+              }
+
+              // replace token.content *before* tokens[item.token].content,
+              // because, if they are pointing at the same token, replaceAt
+              // could mess up indices when quote length != 1
+              token.content = replaceAt(token.content, t.index, closeQuote);
+              tokens[item.token].content = replaceAt(tokens[item.token].content, item.pos, openQuote);
+              pos += closeQuote.length - 1;
+              if (item.token === i) {
+                pos += openQuote.length - 1;
+              }
+              text = token.content;
+              max = text.length;
+              stack.length = j;
+              continue OUTER;
+            }
+          }
+        }
+        if (canOpen) {
+          stack.push({
+            token: i,
+            pos: t.index,
+            single: isSingle,
+            level: thisLevel
+          });
+        } else if (canClose && isSingle) {
+          token.content = replaceAt(token.content, t.index, APOSTROPHE);
+        }
+      }
+    }
+  }
+  module.exports = function smartquotes(state) {
+    /*eslint max-depth:0*/
+    var blkIdx;
+    if (!state.md.options.typographer) {
+      return;
+    }
+    for (blkIdx = state.tokens.length - 1; blkIdx >= 0; blkIdx--) {
+      if (state.tokens[blkIdx].type !== 'inline' || !QUOTE_TEST_RE.test(state.tokens[blkIdx].content)) {
+        continue;
+      }
+      process_inlines(state.tokens[blkIdx].children, state);
+    }
+  };
+},1768,[1721],"node_modules\\markdown-it\\lib\\rules_core\\smartquotes.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Core state object
+  //
+  'use strict';
+
+  function StateCore(src, md, env) {
+    this.src = src;
+    this.env = env;
+    this.tokens = [];
+    this.inlineMode = false;
+    this.md = md; // link to parser instance
+  }
+
+  // re-export Token class to use in core rules
+  StateCore.prototype.Token = _$$_REQUIRE(_dependencyMap[0], "../token");
+  module.exports = StateCore;
+},1769,[1747],"node_modules\\markdown-it\\lib\\rules_core\\state_core.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  /**
+   * class Renderer
+   *
+   * Generates HTML from parsed token stream. Each instance has independent
+   * copy of rules. Those can be rewritten with ease. Also, you can add new
+   * rules if you create plugin and adds new token types.
+   **/
+  'use strict';
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  var default_rules = {};
+  default_rules.code_inline = function (tokens, idx, options, env, slf) {
+    var token = tokens[idx];
+    return '<code' + slf.renderAttrs(token) + '>' + _$$_REQUIRE(_dependencyMap[0], "./common/utils").escapeHtml(tokens[idx].content) + '</code>';
+  };
+  default_rules.code_block = function (tokens, idx, options, env, slf) {
+    var token = tokens[idx];
+    return '<pre' + slf.renderAttrs(token) + '><code>' + _$$_REQUIRE(_dependencyMap[0], "./common/utils").escapeHtml(tokens[idx].content) + '</code></pre>\n';
+  };
+  default_rules.fence = function (tokens, idx, options, env, slf) {
+    var token = tokens[idx],
+      info = token.info ? _$$_REQUIRE(_dependencyMap[0], "./common/utils").unescapeAll(token.info).trim() : '',
+      langName = '',
+      highlighted,
+      i,
+      tmpAttrs,
+      tmpToken;
+    if (info) {
+      langName = info.split(/\s+/g)[0];
+    }
+    if (options.highlight) {
+      highlighted = options.highlight(token.content, langName) || _$$_REQUIRE(_dependencyMap[0], "./common/utils").escapeHtml(token.content);
+    } else {
+      highlighted = _$$_REQUIRE(_dependencyMap[0], "./common/utils").escapeHtml(token.content);
+    }
+    if (highlighted.indexOf('<pre') === 0) {
+      return highlighted + '\n';
+    }
+
+    // If language exists, inject class gently, without modifying original token.
+    // May be, one day we will add .clone() for token and simplify this part, but
+    // now we prefer to keep things local.
+    if (info) {
+      i = token.attrIndex('class');
+      tmpAttrs = token.attrs ? token.attrs.slice() : [];
+      if (i < 0) {
+        tmpAttrs.push(['class', options.langPrefix + langName]);
+      } else {
+        tmpAttrs[i][1] += ' ' + options.langPrefix + langName;
+      }
+
+      // Fake token just to render attributes
+      tmpToken = {
+        attrs: tmpAttrs
+      };
+      return '<pre><code' + slf.renderAttrs(tmpToken) + '>' + highlighted + '</code></pre>\n';
+    }
+    return '<pre><code' + slf.renderAttrs(token) + '>' + highlighted + '</code></pre>\n';
+  };
+  default_rules.image = function (tokens, idx, options, env, slf) {
+    var token = tokens[idx];
+
+    // "alt" attr MUST be set, even if empty. Because it's mandatory and
+    // should be placed on proper position for tests.
+    //
+    // Replace content with actual value
+
+    token.attrs[token.attrIndex('alt')][1] = slf.renderInlineAsText(token.children, options, env);
+    return slf.renderToken(tokens, idx, options);
+  };
+  default_rules.hardbreak = function (tokens, idx, options /*, env */) {
+    return options.xhtmlOut ? '<br />\n' : '<br>\n';
+  };
+  default_rules.softbreak = function (tokens, idx, options /*, env */) {
+    return options.breaks ? options.xhtmlOut ? '<br />\n' : '<br>\n' : '\n';
+  };
+  default_rules.text = function (tokens, idx /*, options, env */) {
+    return _$$_REQUIRE(_dependencyMap[0], "./common/utils").escapeHtml(tokens[idx].content);
+  };
+  default_rules.html_block = function (tokens, idx /*, options, env */) {
+    return tokens[idx].content;
+  };
+  default_rules.html_inline = function (tokens, idx /*, options, env */) {
+    return tokens[idx].content;
+  };
+
+  /**
+   * new Renderer()
+   *
+   * Creates new [[Renderer]] instance and fill [[Renderer#rules]] with defaults.
+   **/
+  function Renderer() {
+    /**
+     * Renderer#rules -> Object
+     *
+     * Contains render rules for tokens. Can be updated and extended.
+     *
+     * ##### Example
+     *
+     * ```javascript
+     * var md = require('markdown-it')();
+     *
+     * md.renderer.rules.strong_open  = function () { return '<b>'; };
+     * md.renderer.rules.strong_close = function () { return '</b>'; };
+     *
+     * var result = md.renderInline(...);
+     * ```
+     *
+     * Each rule is called as independent static function with fixed signature:
+     *
+     * ```javascript
+     * function my_token_render(tokens, idx, options, env, renderer) {
+     *   // ...
+     *   return renderedHTML;
+     * }
+     * ```
+     *
+     * See [source code](https://github.com/markdown-it/markdown-it/blob/master/lib/renderer.js)
+     * for more details and examples.
+     **/
+    this.rules = _$$_REQUIRE(_dependencyMap[0], "./common/utils").assign({}, default_rules);
+  }
+
+  /**
+   * Renderer.renderAttrs(token) -> String
+   *
+   * Render token attributes to string.
+   **/
+  Renderer.prototype.renderAttrs = function renderAttrs(token) {
+    var i, l, result;
+    if (!token.attrs) {
+      return '';
+    }
+    result = '';
+    for (i = 0, l = token.attrs.length; i < l; i++) {
+      result += ' ' + _$$_REQUIRE(_dependencyMap[0], "./common/utils").escapeHtml(token.attrs[i][0]) + '="' + _$$_REQUIRE(_dependencyMap[0], "./common/utils").escapeHtml(token.attrs[i][1]) + '"';
+    }
+    return result;
+  };
+
+  /**
+   * Renderer.renderToken(tokens, idx, options) -> String
+   * - tokens (Array): list of tokens
+   * - idx (Numbed): token index to render
+   * - options (Object): params of parser instance
+   *
+   * Default token renderer. Can be overriden by custom function
+   * in [[Renderer#rules]].
+   **/
+  Renderer.prototype.renderToken = function renderToken(tokens, idx, options) {
+    var nextToken,
+      result = '',
+      needLf = false,
+      token = tokens[idx];
+
+    // Tight list paragraphs
+    if (token.hidden) {
+      return '';
+    }
+
+    // Insert a newline between hidden paragraph and subsequent opening
+    // block-level tag.
+    //
+    // For example, here we should insert a newline before blockquote:
+    //  - a
+    //    >
+    //
+    if (token.block && token.nesting !== -1 && idx && tokens[idx - 1].hidden) {
+      result += '\n';
+    }
+
+    // Add token name, e.g. `<img`
+    result += (token.nesting === -1 ? '</' : '<') + token.tag;
+
+    // Encode attributes, e.g. `<img src="foo"`
+    result += this.renderAttrs(token);
+
+    // Add a slash for self-closing tags, e.g. `<img src="foo" /`
+    if (token.nesting === 0 && options.xhtmlOut) {
+      result += ' /';
+    }
+
+    // Check if we need to add a newline after this tag
+    if (token.block) {
+      needLf = true;
+      if (token.nesting === 1) {
+        if (idx + 1 < tokens.length) {
+          nextToken = tokens[idx + 1];
+          if (nextToken.type === 'inline' || nextToken.hidden) {
+            // Block-level tag containing an inline tag.
+            //
+            needLf = false;
+          } else if (nextToken.nesting === -1 && nextToken.tag === token.tag) {
+            // Opening tag + closing tag of the same type. E.g. `<li></li>`.
+            //
+            needLf = false;
+          }
+        }
+      }
+    }
+    result += needLf ? '>\n' : '>';
+    return result;
+  };
+
+  /**
+   * Renderer.renderInline(tokens, options, env) -> String
+   * - tokens (Array): list on block tokens to renter
+   * - options (Object): params of parser instance
+   * - env (Object): additional data from parsed input (references, for example)
+   *
+   * The same as [[Renderer.render]], but for single token of `inline` type.
+   **/
+  Renderer.prototype.renderInline = function (tokens, options, env) {
+    var type,
+      result = '',
+      rules = this.rules;
+    for (var i = 0, len = tokens.length; i < len; i++) {
+      type = tokens[i].type;
+      if (typeof rules[type] !== 'undefined') {
+        result += rules[type](tokens, i, options, env, this);
+      } else {
+        result += this.renderToken(tokens, i, options);
+      }
+    }
+    return result;
+  };
+
+  /** internal
+   * Renderer.renderInlineAsText(tokens, options, env) -> String
+   * - tokens (Array): list on block tokens to renter
+   * - options (Object): params of parser instance
+   * - env (Object): additional data from parsed input (references, for example)
+   *
+   * Special kludge for image `alt` attributes to conform CommonMark spec.
+   * Don't try to use it! Spec requires to show `alt` content with stripped markup,
+   * instead of simple escaping.
+   **/
+  Renderer.prototype.renderInlineAsText = function (tokens, options, env) {
+    var result = '';
+    for (var i = 0, len = tokens.length; i < len; i++) {
+      if (tokens[i].type === 'text') {
+        result += tokens[i].content;
+      } else if (tokens[i].type === 'image') {
+        result += this.renderInlineAsText(tokens[i].children, options, env);
+      }
+    }
+    return result;
+  };
+
+  /**
+   * Renderer.render(tokens, options, env) -> String
+   * - tokens (Array): list on block tokens to renter
+   * - options (Object): params of parser instance
+   * - env (Object): additional data from parsed input (references, for example)
+   *
+   * Takes token stream and generates HTML. Probably, you will never need to call
+   * this method directly.
+   **/
+  Renderer.prototype.render = function (tokens, options, env) {
+    var i,
+      len,
+      type,
+      result = '',
+      rules = this.rules;
+    for (i = 0, len = tokens.length; i < len; i++) {
+      type = tokens[i].type;
+      if (type === 'inline') {
+        result += this.renderInline(tokens[i].children, options, env);
+      } else if (typeof rules[type] !== 'undefined') {
+        result += rules[tokens[i].type](tokens, i, options, env, this);
+      } else {
+        result += this.renderToken(tokens, i, options, env);
+      }
+    }
+    return result;
+  };
+  module.exports = Renderer;
+},1770,[1721],"node_modules\\markdown-it\\lib\\renderer.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Helpers
+
+  // Merge objects
+  //
+  function assign(obj /*from1, from2, from3, ...*/) {
+    var sources = Array.prototype.slice.call(arguments, 1);
+    sources.forEach(function (source) {
+      if (!source) {
+        return;
+      }
+      Object.keys(source).forEach(function (key) {
+        obj[key] = source[key];
+      });
+    });
+    return obj;
+  }
+  function _class(obj) {
+    return Object.prototype.toString.call(obj);
+  }
+  function isString(obj) {
+    return _class(obj) === '[object String]';
+  }
+  function isObject(obj) {
+    return _class(obj) === '[object Object]';
+  }
+  function isRegExp(obj) {
+    return _class(obj) === '[object RegExp]';
+  }
+  function isFunction(obj) {
+    return _class(obj) === '[object Function]';
+  }
+  function escapeRE(str) {
+    return str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&');
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  var defaultOptions = {
+    fuzzyLink: true,
+    fuzzyEmail: true,
+    fuzzyIP: false
+  };
+  function isOptionsObj(obj) {
+    return Object.keys(obj || {}).reduce(function (acc, k) {
+      return acc || defaultOptions.hasOwnProperty(k);
+    }, false);
+  }
+  var defaultSchemas = {
+    'http:': {
+      validate: function validate(text, pos, self) {
+        var tail = text.slice(pos);
+        if (!self.re.http) {
+          // compile lazily, because "host"-containing variables can change on tlds update.
+          self.re.http = new RegExp('^\\/\\/' + self.re.src_auth + self.re.src_host_port_strict + self.re.src_path, 'i');
+        }
+        if (self.re.http.test(tail)) {
+          return tail.match(self.re.http)[0].length;
+        }
+        return 0;
+      }
+    },
+    'https:': 'http:',
+    'ftp:': 'http:',
+    '//': {
+      validate: function validate(text, pos, self) {
+        var tail = text.slice(pos);
+        if (!self.re.no_http) {
+          // compile lazily, because "host"-containing variables can change on tlds update.
+          self.re.no_http = new RegExp('^' + self.re.src_auth +
+          // Don't allow single-level domains, because of false positives like '//test'
+          // with code comments
+          '(?:localhost|(?:(?:' + self.re.src_domain + ')\\.)+' + self.re.src_domain_root + ')' + self.re.src_port + self.re.src_host_terminator + self.re.src_path, 'i');
+        }
+        if (self.re.no_http.test(tail)) {
+          // should not be `://` & `///`, that protects from errors in protocol name
+          if (pos >= 3 && text[pos - 3] === ':') {
+            return 0;
+          }
+          if (pos >= 3 && text[pos - 3] === '/') {
+            return 0;
+          }
+          return tail.match(self.re.no_http)[0].length;
+        }
+        return 0;
+      }
+    },
+    'mailto:': {
+      validate: function validate(text, pos, self) {
+        var tail = text.slice(pos);
+        if (!self.re.mailto) {
+          self.re.mailto = new RegExp('^' + self.re.src_email_name + '@' + self.re.src_host_strict, 'i');
+        }
+        if (self.re.mailto.test(tail)) {
+          return tail.match(self.re.mailto)[0].length;
+        }
+        return 0;
+      }
+    }
+  };
+
+  /*eslint-disable max-len*/
+
+  // RE pattern for 2-character tlds (autogenerated by ./support/tlds_2char_gen.js)
+  var tlds_2ch_src_re = 'a[cdefgilmnoqrstuwxz]|b[abdefghijmnorstvwyz]|c[acdfghiklmnoruvwxyz]|d[ejkmoz]|e[cegrstu]|f[ijkmor]|g[abdefghilmnpqrstuwy]|h[kmnrtu]|i[delmnoqrst]|j[emop]|k[eghimnprwyz]|l[abcikrstuvy]|m[acdeghklmnopqrstuvwxyz]|n[acefgilopruz]|om|p[aefghklmnrstwy]|qa|r[eosuw]|s[abcdeghijklmnortuvxyz]|t[cdfghjklmnortvwz]|u[agksyz]|v[aceginu]|w[fs]|y[et]|z[amw]';
+
+  // DON'T try to make PRs with changes. Extend TLDs with LinkifyIt.tlds() instead
+  var tlds_default = 'biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф'.split('|');
+
+  /*eslint-enable max-len*/
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  function resetScanCache(self) {
+    self.__index__ = -1;
+    self.__text_cache__ = '';
+  }
+  function createValidator(re) {
+    return function (text, pos) {
+      var tail = text.slice(pos);
+      if (re.test(tail)) {
+        return tail.match(re)[0].length;
+      }
+      return 0;
+    };
+  }
+  function createNormalizer() {
+    return function (match, self) {
+      self.normalize(match);
+    };
+  }
+
+  // Schemas compiler. Build regexps.
+  //
+  function compile(self) {
+    // Load & clone RE patterns.
+    var re = self.re = _$$_REQUIRE(_dependencyMap[0], "./lib/re")(self.__opts__);
+
+    // Define dynamic patterns
+    var tlds = self.__tlds__.slice();
+    self.onCompile();
+    if (!self.__tlds_replaced__) {
+      tlds.push(tlds_2ch_src_re);
+    }
+    tlds.push(re.src_xn);
+    re.src_tlds = tlds.join('|');
+    function untpl(tpl) {
+      return tpl.replace('%TLDS%', re.src_tlds);
+    }
+    re.email_fuzzy = RegExp(untpl(re.tpl_email_fuzzy), 'i');
+    re.link_fuzzy = RegExp(untpl(re.tpl_link_fuzzy), 'i');
+    re.link_no_ip_fuzzy = RegExp(untpl(re.tpl_link_no_ip_fuzzy), 'i');
+    re.host_fuzzy_test = RegExp(untpl(re.tpl_host_fuzzy_test), 'i');
+
+    //
+    // Compile each schema
+    //
+
+    var aliases = [];
+    self.__compiled__ = {}; // Reset compiled data
+
+    function schemaError(name, val) {
+      throw new Error('(LinkifyIt) Invalid schema "' + name + '": ' + val);
+    }
+    Object.keys(self.__schemas__).forEach(function (name) {
+      var val = self.__schemas__[name];
+
+      // skip disabled methods
+      if (val === null) {
+        return;
+      }
+      var compiled = {
+        validate: null,
+        link: null
+      };
+      self.__compiled__[name] = compiled;
+      if (isObject(val)) {
+        if (isRegExp(val.validate)) {
+          compiled.validate = createValidator(val.validate);
+        } else if (isFunction(val.validate)) {
+          compiled.validate = val.validate;
+        } else {
+          schemaError(name, val);
+        }
+        if (isFunction(val.normalize)) {
+          compiled.normalize = val.normalize;
+        } else if (!val.normalize) {
+          compiled.normalize = createNormalizer();
+        } else {
+          schemaError(name, val);
+        }
+        return;
+      }
+      if (isString(val)) {
+        aliases.push(name);
+        return;
+      }
+      schemaError(name, val);
+    });
+
+    //
+    // Compile postponed aliases
+    //
+
+    aliases.forEach(function (alias) {
+      if (!self.__compiled__[self.__schemas__[alias]]) {
+        // Silently fail on missed schemas to avoid errons on disable.
+        // schemaError(alias, self.__schemas__[alias]);
+        return;
+      }
+      self.__compiled__[alias].validate = self.__compiled__[self.__schemas__[alias]].validate;
+      self.__compiled__[alias].normalize = self.__compiled__[self.__schemas__[alias]].normalize;
+    });
+
+    //
+    // Fake record for guessed links
+    //
+    self.__compiled__[''] = {
+      validate: null,
+      normalize: createNormalizer()
+    };
+
+    //
+    // Build schema condition
+    //
+    var slist = Object.keys(self.__compiled__).filter(function (name) {
+      // Filter disabled & fake schemas
+      return name.length > 0 && self.__compiled__[name];
+    }).map(escapeRE).join('|');
+    // (?!_) cause 1.5x slowdown
+    self.re.schema_test = RegExp("(^|(?!_)(?:[><\uFF5C]|" + re.src_ZPCc + '))(' + slist + ')', 'i');
+    self.re.schema_search = RegExp("(^|(?!_)(?:[><\uFF5C]|" + re.src_ZPCc + '))(' + slist + ')', 'ig');
+    self.re.pretest = RegExp('(' + self.re.schema_test.source + ')|(' + self.re.host_fuzzy_test.source + ')|@', 'i');
+
+    //
+    // Cleanup
+    //
+
+    resetScanCache(self);
+  }
+
+  /**
+   * class Match
+   *
+   * Match result. Single element of array, returned by [[LinkifyIt#match]]
+   **/
+  function Match(self, shift) {
+    var start = self.__index__,
+      end = self.__last_index__,
+      text = self.__text_cache__.slice(start, end);
+
+    /**
+     * Match#schema -> String
+     *
+     * Prefix (protocol) for matched string.
+     **/
+    this.schema = self.__schema__.toLowerCase();
+    /**
+     * Match#index -> Number
+     *
+     * First position of matched string.
+     **/
+    this.index = start + shift;
+    /**
+     * Match#lastIndex -> Number
+     *
+     * Next position after matched string.
+     **/
+    this.lastIndex = end + shift;
+    /**
+     * Match#raw -> String
+     *
+     * Matched string.
+     **/
+    this.raw = text;
+    /**
+     * Match#text -> String
+     *
+     * Notmalized text of matched string.
+     **/
+    this.text = text;
+    /**
+     * Match#url -> String
+     *
+     * Normalized url of matched string.
+     **/
+    this.url = text;
+  }
+  function createMatch(self, shift) {
+    var match = new Match(self, shift);
+    self.__compiled__[match.schema].normalize(match, self);
+    return match;
+  }
+
+  /**
+   * class LinkifyIt
+   **/
+
+  /**
+   * new LinkifyIt(schemas, options)
+   * - schemas (Object): Optional. Additional schemas to validate (prefix/validator)
+   * - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP: true|false }
+   *
+   * Creates new linkifier instance with optional additional schemas.
+   * Can be called without `new` keyword for convenience.
+   *
+   * By default understands:
+   *
+   * - `http(s)://...` , `ftp://...`, `mailto:...` & `//...` links
+   * - "fuzzy" links and emails (example.com, foo@bar.com).
+   *
+   * `schemas` is an object, where each key/value describes protocol/rule:
+   *
+   * - __key__ - link prefix (usually, protocol name with `:` at the end, `skype:`
+   *   for example). `linkify-it` makes shure that prefix is not preceeded with
+   *   alphanumeric char and symbols. Only whitespaces and punctuation allowed.
+   * - __value__ - rule to check tail after link prefix
+   *   - _String_ - just alias to existing rule
+   *   - _Object_
+   *     - _validate_ - validator function (should return matched length on success),
+   *       or `RegExp`.
+   *     - _normalize_ - optional function to normalize text & url of matched result
+   *       (for example, for @twitter mentions).
+   *
+   * `options`:
+   *
+   * - __fuzzyLink__ - recognige URL-s without `http(s):` prefix. Default `true`.
+   * - __fuzzyIP__ - allow IPs in fuzzy links above. Can conflict with some texts
+   *   like version numbers. Default `false`.
+   * - __fuzzyEmail__ - recognize emails without `mailto:` prefix.
+   *
+   **/
+  function LinkifyIt(schemas, options) {
+    if (!(this instanceof LinkifyIt)) {
+      return new LinkifyIt(schemas, options);
+    }
+    if (!options) {
+      if (isOptionsObj(schemas)) {
+        options = schemas;
+        schemas = {};
+      }
+    }
+    this.__opts__ = assign({}, defaultOptions, options);
+
+    // Cache last tested result. Used to skip repeating steps on next `match` call.
+    this.__index__ = -1;
+    this.__last_index__ = -1; // Next scan position
+    this.__schema__ = '';
+    this.__text_cache__ = '';
+    this.__schemas__ = assign({}, defaultSchemas, schemas);
+    this.__compiled__ = {};
+    this.__tlds__ = tlds_default;
+    this.__tlds_replaced__ = false;
+    this.re = {};
+    compile(this);
+  }
+
+  /** chainable
+   * LinkifyIt#add(schema, definition)
+   * - schema (String): rule name (fixed pattern prefix)
+   * - definition (String|RegExp|Object): schema definition
+   *
+   * Add new rule definition. See constructor description for details.
+   **/
+  LinkifyIt.prototype.add = function add(schema, definition) {
+    this.__schemas__[schema] = definition;
+    compile(this);
+    return this;
+  };
+
+  /** chainable
+   * LinkifyIt#set(options)
+   * - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP: true|false }
+   *
+   * Set recognition options for links without schema.
+   **/
+  LinkifyIt.prototype.set = function set(options) {
+    this.__opts__ = assign(this.__opts__, options);
+    return this;
+  };
+
+  /**
+   * LinkifyIt#test(text) -> Boolean
+   *
+   * Searches linkifiable pattern and returns `true` on success or `false` on fail.
+   **/
+  LinkifyIt.prototype.test = function test(text) {
+    // Reset scan cache
+    this.__text_cache__ = text;
+    this.__index__ = -1;
+    if (!text.length) {
+      return false;
+    }
+    var m, ml, me, len, shift, next, re, tld_pos, at_pos;
+
+    // try to scan for link with schema - that's the most simple rule
+    if (this.re.schema_test.test(text)) {
+      re = this.re.schema_search;
+      re.lastIndex = 0;
+      while ((m = re.exec(text)) !== null) {
+        len = this.testSchemaAt(text, m[2], re.lastIndex);
+        if (len) {
+          this.__schema__ = m[2];
+          this.__index__ = m.index + m[1].length;
+          this.__last_index__ = m.index + m[0].length + len;
+          break;
+        }
+      }
+    }
+    if (this.__opts__.fuzzyLink && this.__compiled__['http:']) {
+      // guess schemaless links
+      tld_pos = text.search(this.re.host_fuzzy_test);
+      if (tld_pos >= 0) {
+        // if tld is located after found link - no need to check fuzzy pattern
+        if (this.__index__ < 0 || tld_pos < this.__index__) {
+          if ((ml = text.match(this.__opts__.fuzzyIP ? this.re.link_fuzzy : this.re.link_no_ip_fuzzy)) !== null) {
+            shift = ml.index + ml[1].length;
+            if (this.__index__ < 0 || shift < this.__index__) {
+              this.__schema__ = '';
+              this.__index__ = shift;
+              this.__last_index__ = ml.index + ml[0].length;
+            }
+          }
+        }
+      }
+    }
+    if (this.__opts__.fuzzyEmail && this.__compiled__['mailto:']) {
+      // guess schemaless emails
+      at_pos = text.indexOf('@');
+      if (at_pos >= 0) {
+        // We can't skip this check, because this cases are possible:
+        // 192.168.1.1@gmail.com, my.in@example.com
+        if ((me = text.match(this.re.email_fuzzy)) !== null) {
+          shift = me.index + me[1].length;
+          next = me.index + me[0].length;
+          if (this.__index__ < 0 || shift < this.__index__ || shift === this.__index__ && next > this.__last_index__) {
+            this.__schema__ = 'mailto:';
+            this.__index__ = shift;
+            this.__last_index__ = next;
+          }
+        }
+      }
+    }
+    return this.__index__ >= 0;
+  };
+
+  /**
+   * LinkifyIt#pretest(text) -> Boolean
+   *
+   * Very quick check, that can give false positives. Returns true if link MAY BE
+   * can exists. Can be used for speed optimization, when you need to check that
+   * link NOT exists.
+   **/
+  LinkifyIt.prototype.pretest = function pretest(text) {
+    return this.re.pretest.test(text);
+  };
+
+  /**
+   * LinkifyIt#testSchemaAt(text, name, position) -> Number
+   * - text (String): text to scan
+   * - name (String): rule (schema) name
+   * - position (Number): text offset to check from
+   *
+   * Similar to [[LinkifyIt#test]] but checks only specific protocol tail exactly
+   * at given position. Returns length of found pattern (0 on fail).
+   **/
+  LinkifyIt.prototype.testSchemaAt = function testSchemaAt(text, schema, pos) {
+    // If not supported schema check requested - terminate
+    if (!this.__compiled__[schema.toLowerCase()]) {
+      return 0;
+    }
+    return this.__compiled__[schema.toLowerCase()].validate(text, pos, this);
+  };
+
+  /**
+   * LinkifyIt#match(text) -> Array|null
+   *
+   * Returns array of found link descriptions or `null` on fail. We strongly
+   * recommend to use [[LinkifyIt#test]] first, for best speed.
+   *
+   * ##### Result match description
+   *
+   * - __schema__ - link schema, can be empty for fuzzy links, or `//` for
+   *   protocol-neutral  links.
+   * - __index__ - offset of matched text
+   * - __lastIndex__ - index of next char after mathch end
+   * - __raw__ - matched text
+   * - __text__ - normalized text
+   * - __url__ - link, generated from matched text
+   **/
+  LinkifyIt.prototype.match = function match(text) {
+    var shift = 0,
+      result = [];
+
+    // Try to take previous element from cache, if .test() called before
+    if (this.__index__ >= 0 && this.__text_cache__ === text) {
+      result.push(createMatch(this, shift));
+      shift = this.__last_index__;
+    }
+
+    // Cut head if cache was used
+    var tail = shift ? text.slice(shift) : text;
+
+    // Scan string until end reached
+    while (this.test(tail)) {
+      result.push(createMatch(this, shift));
+      tail = tail.slice(this.__last_index__);
+      shift += this.__last_index__;
+    }
+    if (result.length) {
+      return result;
+    }
+    return null;
+  };
+
+  /** chainable
+   * LinkifyIt#tlds(list [, keepOld]) -> this
+   * - list (Array): list of tlds
+   * - keepOld (Boolean): merge with current list if `true` (`false` by default)
+   *
+   * Load (or merge) new tlds list. Those are user for fuzzy links (without prefix)
+   * to avoid false positives. By default this algorythm used:
+   *
+   * - hostname with any 2-letter root zones are ok.
+   * - biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф
+   *   are ok.
+   * - encoded (`xn--...`) root zones are ok.
+   *
+   * If list is replaced, then exact match for 2-chars root zones will be checked.
+   **/
+  LinkifyIt.prototype.tlds = function tlds(list, keepOld) {
+    list = Array.isArray(list) ? list : [list];
+    if (!keepOld) {
+      this.__tlds__ = list.slice();
+      this.__tlds_replaced__ = true;
+      compile(this);
+      return this;
+    }
+    this.__tlds__ = this.__tlds__.concat(list).sort().filter(function (el, idx, arr) {
+      return el !== arr[idx - 1];
+    }).reverse();
+    compile(this);
+    return this;
+  };
+
+  /**
+   * LinkifyIt#normalize(match)
+   *
+   * Default normalizer (if schema does not define it's own).
+   **/
+  LinkifyIt.prototype.normalize = function normalize(match) {
+    // Do minimal possible changes by default. Need to collect feedback prior
+    // to move forward https://github.com/markdown-it/linkify-it/issues/1
+
+    if (!match.schema) {
+      match.url = 'http://' + match.url;
+    }
+    if (match.schema === 'mailto:' && !/^mailto:/i.test(match.url)) {
+      match.url = 'mailto:' + match.url;
+    }
+  };
+
+  /**
+   * LinkifyIt#onCompile()
+   *
+   * Override to modify basic RegExp-s.
+   **/
+  LinkifyIt.prototype.onCompile = function onCompile() {};
+  module.exports = LinkifyIt;
+},1771,[1772],"node_modules\\linkify-it\\index.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  'use strict';
+
+  module.exports = function (opts) {
+    var re = {};
+
+    // Use direct extract instead of `regenerate` to reduse browserified size
+    re.src_Any = _$$_REQUIRE(_dependencyMap[0], "uc.micro/properties/Any/regex").source;
+    re.src_Cc = _$$_REQUIRE(_dependencyMap[1], "uc.micro/categories/Cc/regex").source;
+    re.src_Z = _$$_REQUIRE(_dependencyMap[2], "uc.micro/categories/Z/regex").source;
+    re.src_P = _$$_REQUIRE(_dependencyMap[3], "uc.micro/categories/P/regex").source;
+
+    // \p{\Z\P\Cc\CF} (white spaces + control + format + punctuation)
+    re.src_ZPCc = [re.src_Z, re.src_P, re.src_Cc].join('|');
+
+    // \p{\Z\Cc} (white spaces + control)
+    re.src_ZCc = [re.src_Z, re.src_Cc].join('|');
+
+    // Experimental. List of chars, completely prohibited in links
+    // because can separate it from other part of text
+    var text_separators = "[><\uFF5C]";
+
+    // All possible word characters (everything without punctuation, spaces & controls)
+    // Defined via punctuation & spaces to save space
+    // Should be something like \p{\L\N\S\M} (\w but without `_`)
+    re.src_pseudo_letter = '(?:(?!' + text_separators + '|' + re.src_ZPCc + ')' + re.src_Any + ')';
+    // The same as abothe but without [0-9]
+    // var src_pseudo_letter_non_d = '(?:(?![0-9]|' + src_ZPCc + ')' + src_Any + ')';
+
+    ////////////////////////////////////////////////////////////////////////////////
+
+    re.src_ip4 = '(?:(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)';
+
+    // Prohibit any of "@/[]()" in user/pass to avoid wrong domain fetch.
+    re.src_auth = '(?:(?:(?!' + re.src_ZCc + '|[@/\\[\\]()]).)+@)?';
+    re.src_port = '(?::(?:6(?:[0-4]\\d{3}|5(?:[0-4]\\d{2}|5(?:[0-2]\\d|3[0-5])))|[1-5]?\\d{1,4}))?';
+    re.src_host_terminator = '(?=$|' + text_separators + '|' + re.src_ZPCc + ')(?!-|_|:\\d|\\.-|\\.(?!$|' + re.src_ZPCc + '))';
+    re.src_path = '(?:' + '[/?#]' + '(?:' + '(?!' + re.src_ZCc + '|' + text_separators + '|[()[\\]{}.,"\'?!\\-]).|' + '\\[(?:(?!' + re.src_ZCc + '|\\]).)*\\]|' + '\\((?:(?!' + re.src_ZCc + '|[)]).)*\\)|' + '\\{(?:(?!' + re.src_ZCc + '|[}]).)*\\}|' + '\\"(?:(?!' + re.src_ZCc + '|["]).)+\\"|' + "\\'(?:(?!" + re.src_ZCc + "|[']).)+\\'|" + "\\'(?=" + re.src_pseudo_letter + '|[-]).|' +
+    // allow `I'm_king` if no pair found
+    '\\.{2,4}[a-zA-Z0-9%/]|' +
+    // github has ... in commit range links,
+    // google has .... in links (issue #66)
+    // Restrict to
+    // - english
+    // - percent-encoded
+    // - parts of file path
+    // until more examples found.
+    '\\.(?!' + re.src_ZCc + '|[.]).|' + (opts && opts['---'] ? '\\-(?!--(?:[^-]|$))(?:-*)|' // `---` => long dash, terminate
+    : '\\-+|') + '\\,(?!' + re.src_ZCc + ').|' +
+    // allow `,,,` in paths
+    '\\!(?!' + re.src_ZCc + '|[!]).|' + '\\?(?!' + re.src_ZCc + '|[?]).' + ')+' + '|\\/' + ')?';
+
+    // Allow anything in markdown spec, forbid quote (") at the first position
+    // because emails enclosed in quotes are far more common
+    re.src_email_name = '[\\-;:&=\\+\\$,\\.a-zA-Z0-9_][\\-;:&=\\+\\$,\\"\\.a-zA-Z0-9_]*';
+    re.src_xn = 'xn--[a-z0-9\\-]{1,59}';
+
+    // More to read about domain names
+    // http://serverfault.com/questions/638260/
+
+    re.src_domain_root =
+    // Allow letters & digits (http://test1)
+    '(?:' + re.src_xn + '|' + re.src_pseudo_letter + '{1,63}' + ')';
+    re.src_domain = '(?:' + re.src_xn + '|' + '(?:' + re.src_pseudo_letter + ')' + '|' + '(?:' + re.src_pseudo_letter + '(?:-|' + re.src_pseudo_letter + '){0,61}' + re.src_pseudo_letter + ')' + ')';
+    re.src_host = '(?:' +
+    // Don't need IP check, because digits are already allowed in normal domain names
+    //   src_ip4 +
+    // '|' +
+    '(?:(?:(?:' + re.src_domain + ')\\.)*' + re.src_domain /*_root*/ + ')' + ')';
+    re.tpl_host_fuzzy = '(?:' + re.src_ip4 + '|' + '(?:(?:(?:' + re.src_domain + ')\\.)+(?:%TLDS%))' + ')';
+    re.tpl_host_no_ip_fuzzy = '(?:(?:(?:' + re.src_domain + ')\\.)+(?:%TLDS%))';
+    re.src_host_strict = re.src_host + re.src_host_terminator;
+    re.tpl_host_fuzzy_strict = re.tpl_host_fuzzy + re.src_host_terminator;
+    re.src_host_port_strict = re.src_host + re.src_port + re.src_host_terminator;
+    re.tpl_host_port_fuzzy_strict = re.tpl_host_fuzzy + re.src_port + re.src_host_terminator;
+    re.tpl_host_port_no_ip_fuzzy_strict = re.tpl_host_no_ip_fuzzy + re.src_port + re.src_host_terminator;
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Main rules
+
+    // Rude test fuzzy links by host, for quick deny
+    re.tpl_host_fuzzy_test = 'localhost|www\\.|\\.\\d{1,3}\\.|(?:\\.(?:%TLDS%)(?:' + re.src_ZPCc + '|>|$))';
+    re.tpl_email_fuzzy = '(^|' + text_separators + '|"|\\(|' + re.src_ZCc + ')' + '(' + re.src_email_name + '@' + re.tpl_host_fuzzy_strict + ')';
+    re.tpl_link_fuzzy =
+    // Fuzzy link can't be prepended with .:/\- and non punctuation.
+    // but can start with > (markdown blockquote)
+    "(^|(?![.:/\\-_@])(?:[$+<=>^`|\uFF5C]|" + re.src_ZPCc + '))' + "((?![$+<=>^`|\uFF5C])" + re.tpl_host_port_fuzzy_strict + re.src_path + ')';
+    re.tpl_link_no_ip_fuzzy =
+    // Fuzzy link can't be prepended with .:/\- and non punctuation.
+    // but can start with > (markdown blockquote)
+    "(^|(?![.:/\\-_@])(?:[$+<=>^`|\uFF5C]|" + re.src_ZPCc + '))' + "((?![$+<=>^`|\uFF5C])" + re.tpl_host_port_no_ip_fuzzy_strict + re.src_path + ')';
+    return re;
+  };
+},1772,[1726,1727,1729,1724],"node_modules\\linkify-it\\lib\\re.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Just a shortcut for bulk export
+  'use strict';
+
+  exports.parseLinkLabel = _$$_REQUIRE(_dependencyMap[0], "./parse_link_label");
+  exports.parseLinkDestination = _$$_REQUIRE(_dependencyMap[1], "./parse_link_destination");
+  exports.parseLinkTitle = _$$_REQUIRE(_dependencyMap[2], "./parse_link_title");
+},1773,[1774,1775,1776],"node_modules\\markdown-it\\lib\\helpers\\index.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Parse link label
+  //
+  // this function assumes that first character ("[") already matches;
+  // returns the end of the label
+  //
+  'use strict';
+
+  module.exports = function parseLinkLabel(state, start, disableNested) {
+    var level,
+      found,
+      marker,
+      prevPos,
+      labelEnd = -1,
+      max = state.posMax,
+      oldPos = state.pos;
+    state.pos = start + 1;
+    level = 1;
+    while (state.pos < max) {
+      marker = state.src.charCodeAt(state.pos);
+      if (marker === 0x5D /* ] */) {
+        level--;
+        if (level === 0) {
+          found = true;
+          break;
+        }
+      }
+      prevPos = state.pos;
+      state.md.inline.skipToken(state);
+      if (marker === 0x5B /* [ */) {
+        if (prevPos === state.pos - 1) {
+          // increase level if we find text `[`, which is not a part of any token
+          level++;
+        } else if (disableNested) {
+          state.pos = oldPos;
+          return -1;
+        }
+      }
+    }
+    if (found) {
+      labelEnd = state.pos;
+    }
+
+    // restore old state
+    state.pos = oldPos;
+    return labelEnd;
+  };
+},1774,[],"node_modules\\markdown-it\\lib\\helpers\\parse_link_label.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Parse link destination
+  //
+  'use strict';
+
+  module.exports = function parseLinkDestination(str, pos, max) {
+    var code,
+      level,
+      lines = 0,
+      start = pos,
+      result = {
+        ok: false,
+        pos: 0,
+        lines: 0,
+        str: ''
+      };
+    if (str.charCodeAt(pos) === 0x3C /* < */) {
+      pos++;
+      while (pos < max) {
+        code = str.charCodeAt(pos);
+        if (code === 0x0A /* \n */) {
+          return result;
+        }
+        if (code === 0x3E /* > */) {
+          result.pos = pos + 1;
+          result.str = _$$_REQUIRE(_dependencyMap[0], "../common/utils").unescapeAll(str.slice(start + 1, pos));
+          result.ok = true;
+          return result;
+        }
+        if (code === 0x5C /* \ */ && pos + 1 < max) {
+          pos += 2;
+          continue;
+        }
+        pos++;
+      }
+
+      // no closing '>'
+      return result;
+    }
+
+    // this should be ... } else { ... branch
+
+    level = 0;
+    while (pos < max) {
+      code = str.charCodeAt(pos);
+      if (code === 0x20) {
+        break;
+      }
+
+      // ascii control characters
+      if (code < 0x20 || code === 0x7F) {
+        break;
+      }
+      if (code === 0x5C /* \ */ && pos + 1 < max) {
+        pos += 2;
+        continue;
+      }
+      if (code === 0x28 /* ( */) {
+        level++;
+      }
+      if (code === 0x29 /* ) */) {
+        if (level === 0) {
+          break;
+        }
+        level--;
+      }
+      pos++;
+    }
+    if (start === pos) {
+      return result;
+    }
+    if (level !== 0) {
+      return result;
+    }
+    result.str = _$$_REQUIRE(_dependencyMap[0], "../common/utils").unescapeAll(str.slice(start, pos));
+    result.lines = lines;
+    result.pos = pos;
+    result.ok = true;
+    return result;
+  };
+},1775,[1721],"node_modules\\markdown-it\\lib\\helpers\\parse_link_destination.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  // Parse link title
+  //
+  'use strict';
+
+  module.exports = function parseLinkTitle(str, pos, max) {
+    var code,
+      marker,
+      lines = 0,
+      start = pos,
+      result = {
+        ok: false,
+        pos: 0,
+        lines: 0,
+        str: ''
+      };
+    if (pos >= max) {
+      return result;
+    }
+    marker = str.charCodeAt(pos);
+    if (marker !== 0x22 /* " */ && marker !== 0x27 /* ' */ && marker !== 0x28 /* ( */) {
+      return result;
+    }
+    pos++;
+
+    // if opening marker is "(", switch it to closing marker ")"
+    if (marker === 0x28) {
+      marker = 0x29;
+    }
+    while (pos < max) {
+      code = str.charCodeAt(pos);
+      if (code === marker) {
+        result.pos = pos + 1;
+        result.lines = lines;
+        result.str = _$$_REQUIRE(_dependencyMap[0], "../common/utils").unescapeAll(str.slice(start + 1, pos));
+        result.ok = true;
+        return result;
+      } else if (code === 0x0A) {
+        lines++;
+      } else if (code === 0x5C /* \ */ && pos + 1 < max) {
+        pos++;
+        if (str.charCodeAt(pos) === 0x0A) {
+          lines++;
+        }
+      }
+      pos++;
+    }
+    return result;
+  };
+},1776,[1721],"node_modules\\markdown-it\\lib\\helpers\\parse_link_title.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = removeTextStyleProps;
+  var _textStyleProps = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "../data/textStyleProps"));
+  function removeTextStyleProps(style) {
+    var intersection = _textStyleProps.default.filter(function (value) {
+      return Object.keys(style).includes(value);
+    });
+    var obj = Object.assign({}, style);
+    intersection.forEach(function (value) {
+      delete obj[value];
+    });
+    return obj;
+  }
+},1777,[1,1698],"node_modules\\react-native-markdown-display\\src\\lib\\util\\removeTextStyleProps.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.markdownStyles = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var markdownStyles = exports.markdownStyles = _reactNative.StyleSheet.create({
+    body: {
+      color: '#333333',
+      fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(14),
+      lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(22)
+    },
+    heading1: {
+      fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(18),
+      lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(26),
+      fontWeight: '600',
+      color: '#333333',
+      marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(4)
+    },
+    heading2: {
+      fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(16),
+      lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(24),
+      fontWeight: '600',
+      color: '#333333',
+      marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(4)
+    },
+    heading3: {
+      fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(15),
+      lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(22),
+      fontWeight: '600',
+      color: '#333333',
+      marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(4)
+    },
+    heading4: {
+      fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(14),
+      lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(22),
+      fontWeight: '600',
+      color: '#333333'
+    },
+    heading5: {
+      fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(14),
+      lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(22),
+      fontWeight: '600',
+      color: '#333333'
+    },
+    heading6: {
+      fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(14),
+      lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(22),
+      fontWeight: '600',
+      color: '#333333'
+    },
+    paragraph: {
+      marginTop: 0,
+      marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
+    },
+    strong: {
+      fontWeight: '600'
+    },
+    em: {
+      fontStyle: 'italic'
+    },
+    s: {
+      textDecorationLine: 'line-through'
+    },
+    link: {
+      color: '#1677ff',
+      textDecorationLine: 'underline'
+    },
+    blockquote: {
+      backgroundColor: 'transparent',
+      borderLeftWidth: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(3),
+      borderLeftColor: '#e8e8e8',
+      paddingLeft: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(10),
+      marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
+    },
+    code_inline: {
+      paddingHorizontal: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(4),
+      paddingVertical: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(1),
+      fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(12),
+      color: '#d4380d',
+      backgroundColor: '#f5f5f5',
+      borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(3)
+    },
+    code_block: {
+      padding: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(10),
+      fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(12),
+      lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20),
+      color: '#333333',
+      backgroundColor: '#f5f5f5',
+      borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(6),
+      marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
+    },
+    fence: {
+      padding: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(10),
+      fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(12),
+      lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20),
+      color: '#333333',
+      backgroundColor: '#f5f5f5',
+      borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(6),
+      marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
+    },
+    bullet_list: {
+      marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
+    },
+    ordered_list: {
+      marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
+    },
+    list_item: {
+      marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(4)
+    },
+    hr: {
+      backgroundColor: '#e8e8e8',
+      height: 1,
+      marginVertical: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
+    },
+    tableScroll: {
+      marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8),
+      maxWidth: '100%'
+    },
+    tableScrollContent: {
+      flexGrow: 0
+    },
+    table: {
+      borderWidth: 1,
+      borderColor: '#e8e8e8',
+      borderRadius: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(6),
+      overflow: 'hidden'
+    },
+    thead: {
+      backgroundColor: '#fafafa'
+    },
+    tbody: {},
+    tr: {
+      flexDirection: 'row',
+      borderBottomWidth: 1,
+      borderColor: '#e8e8e8'
+    },
+    th: {
+      flex: 0,
+      flexShrink: 0,
+      minWidth: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(96),
+      maxWidth: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(280),
+      padding: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(6),
+      borderRightWidth: 1,
+      borderColor: '#e8e8e8'
+    },
+    td: {
+      flex: 0,
+      flexShrink: 0,
+      minWidth: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(96),
+      maxWidth: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(280),
+      padding: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(6),
+      borderRightWidth: 1,
+      borderColor: '#e8e8e8'
+    }
+  });
+},1778,[3,556],"src\\components\\MarkdownView\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.normalizeMarkdownTables = normalizeMarkdownTables;
+  function isTableRow(line) {
+    var trimmed = line.trim();
+    return trimmed.startsWith('|') && trimmed.includes('|', 1);
+  }
+  function trimTrailingEmptyTableCells(line) {
+    var trimmed = line.trim();
+    if (!isTableRow(trimmed)) {
+      return line;
+    }
+    var inner = trimmed.replace(/^\|/, '').replace(/\|$/, '');
+    var cells = inner.split('|').map(function (cell) {
+      return cell.trim();
+    });
+    while (cells.length > 0 && cells[cells.length - 1] === '') {
+      cells.pop();
+    }
+    if (cells.length === 0) {
+      return line;
+    }
+    return `| ${cells.join(' | ')} |`;
+  }
+
+  /** 去掉 markdown 表格每行末尾因多余 | 产生的空列 */
+  function normalizeMarkdownTables(markdown) {
+    if (!markdown.includes('|')) {
+      return markdown;
+    }
+    return markdown.split('\n').map(function (line) {
+      return trimTrailingEmptyTableCells(line);
+    }).join('\n');
+  }
+},1779,[],"src\\components\\MarkdownView\\normalizeMarkdownTables.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -266880,6 +277469,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     bubbleAssistant: {
       backgroundColor: '#ffffff'
     },
+    bubbleThinking: {
+      alignSelf: 'flex-start'
+    },
+    markdownWrap: {
+      width: '100%',
+      minWidth: 0
+    },
     bubbleError: {
       backgroundColor: '#fff1f0'
     },
@@ -266887,7 +277483,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       width: '100%'
     },
     text: {
-      maxWidth: '100%',
       fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(14),
       color: '#333333',
       lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(22)
@@ -266969,7 +277564,329 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1680,[3,556],"src\\pages\\aiAssistant\\com\\textMessage\\styles.ts");
+},1780,[3,556],"src\\pages\\aiAssistant\\com\\textMessage\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.stripJsonCodeBlocks = exports.parseVideoGuideMedia = exports.mapExecutePayloadToCard = exports.isStreamingExecuteJsonContent = exports.isExecutePayload = exports.extractJsonCardsFromTextContent = void 0;
+  var _toConsumableArray2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/toConsumableArray"));
+  var isRecord = function isRecord(value) {
+    return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+  };
+  var readString = function readString(record, keys) {
+    for (var key of keys) {
+      var value = record[key];
+      if (typeof value === 'string' && value.trim()) return value.trim();
+    }
+    return '';
+  };
+  var readPayloadString = function readPayloadString(payload, keys) {
+    return readString(payload, keys);
+  };
+  var parseExtend = function parseExtend(extend) {
+    if (isRecord(extend)) return extend;
+    if (typeof extend !== 'string') return null;
+    var source = extend.trim();
+    if (!source.startsWith('{')) return null;
+    try {
+      var parsed = JSON.parse(source);
+      return isRecord(parsed) ? parsed : null;
+    } catch (_unused) {
+      return null;
+    }
+  };
+  var removeSourceRanges = function removeSourceRanges(source, ranges) {
+    if (!ranges.length) return source;
+    var result = source;
+    var sorted = (0, _toConsumableArray2.default)(ranges).sort(function (a, b) {
+      return b.start - a.start;
+    });
+    for (var range of sorted) {
+      result = `${result.slice(0, range.start)}${result.slice(range.end)}`;
+    }
+    return result.replace(/\n[\t ]*\n[\t ]*\n+/g, '\n\n').trim();
+  };
+  var stripJsonCodeBlocks = exports.stripJsonCodeBlocks = function stripJsonCodeBlocks(markdown) {
+    return removeSourceRanges(markdown, (0, _$$_REQUIRE(_dependencyMap[2], "D:\\xqkj\\bokeapp\\src/components/markdownRenderer/findJsonCodeBlocks").findJsonCodeBlocks)(markdown).map(function (_ref) {
+      var start = _ref.start,
+        end = _ref.end;
+      return {
+        start: start,
+        end: end
+      };
+    }));
+  };
+  var EXECUTE_JSON_MARKERS = /"pageType"\s*:|"toolName"\s*:|"interactionType"\s*:/;
+  var isStreamingExecuteJsonContent = exports.isStreamingExecuteJsonContent = function isStreamingExecuteJsonContent(content) {
+    var trimmed = content.trimStart();
+    if (!trimmed) return false;
+    if (/^```(?:json)?/i.test(trimmed) || /^```[\t ]*j/i.test(trimmed)) {
+      return true;
+    }
+    if (trimmed.startsWith('{') && EXECUTE_JSON_MARKERS.test(trimmed)) {
+      return true;
+    }
+    return false;
+  };
+  var isExecutePayload = exports.isExecutePayload = function isExecutePayload(value) {
+    return isRecord(value);
+  };
+  var toExecutePayloads = function toExecutePayloads(value) {
+    if (Array.isArray(value)) return value.filter(isExecutePayload);
+    return isExecutePayload(value) ? [value] : [];
+  };
+  var parseVideoGuideMedia = exports.parseVideoGuideMedia = function parseVideoGuideMedia(parsed, pageType) {
+    var pageConfig = (0, _$$_REQUIRE(_dependencyMap[3], "../constants").getPageTypeConfig)(pageType);
+    var videoUrl = readPayloadString(parsed, ['videoUrl']);
+    var posterUrl = readPayloadString(parsed, ['posterUrl', 'poster']);
+    var extendRecord = parseExtend(parsed.extend);
+    if (typeof parsed.extend === 'string') {
+      var source = parsed.extend.trim();
+      if (/^https?:\/\//i.test(source) && /\.mp4(?:\?|$)/i.test(source)) {
+        videoUrl = source;
+      }
+    }
+    if (extendRecord) {
+      videoUrl = readString(extendRecord, ['videoUrl', 'url', 'video']) || videoUrl;
+      posterUrl = readString(extendRecord, ['posterUrl', 'poster']) || posterUrl;
+    }
+    return {
+      videoUrl: videoUrl || (pageConfig == null ? void 0 : pageConfig.videoUrl) || '',
+      posterUrl: posterUrl || (pageConfig == null ? void 0 : pageConfig.imgUrl) || ''
+    };
+  };
+  var mapExecutePayloadToCard = exports.mapExecutePayloadToCard = function mapExecutePayloadToCard(payload, cardId) {
+    if (!isExecutePayload(payload)) return null;
+    var pageType = payload.pageType === undefined || payload.pageType === null ? '' : String(payload.pageType);
+    var messageType = readPayloadString(payload, ['messageType', 'type']).toLowerCase().replace(/[\s_-]/g, '');
+    var isConfirm = pageType === '4' || messageType === 'confirm' || messageType === 'confirmation';
+    var isVideoGuide = pageType === '13' || messageType === 'videoguide' || messageType === 'video';
+    if (isConfirm) {
+      var _card = {
+        id: cardId,
+        role: 'assistant',
+        type: 'confirm',
+        title: readPayloadString(payload, ['title', 'pageName']) || undefined,
+        content: readPayloadString(payload, ['content', 'message']),
+        cancelText: readPayloadString(payload, ['cancelText']) || undefined,
+        confirmText: readPayloadString(payload, ['confirmText']) || undefined,
+        sessionId: readPayloadString(payload, ['sessionId']) || cardId,
+        replyId: readPayloadString(payload, ['replyId', 'messageId']) || cardId
+      };
+      return _card;
+    }
+    if (isVideoGuide) {
+      var _payload$pageType;
+      var _parseVideoGuideMedia = parseVideoGuideMedia(payload, (_payload$pageType = payload.pageType) != null ? _payload$pageType : 13),
+        videoUrl = _parseVideoGuideMedia.videoUrl,
+        posterUrl = _parseVideoGuideMedia.posterUrl;
+      var _card2 = {
+        id: cardId,
+        role: 'assistant',
+        type: 'videoGuide',
+        intro: readPayloadString(payload, ['message', 'intro', 'pageName']) || '充电指导',
+        videoUrl: videoUrl,
+        posterUrl: posterUrl,
+        pageType: payload.pageType
+      };
+      return _card2;
+    }
+    var card = {
+      id: cardId,
+      role: 'assistant',
+      type: 'phoneChange',
+      intro: readPayloadString(payload, ['message', 'intro', 'pageName']) || undefined,
+      maskedPhone: payload.extend,
+      pageType: payload.pageType
+    };
+    return card;
+  };
+  var mapBlockToCards = function mapBlockToCards(block, sessionId, cardIndexStart) {
+    var cards = [];
+    for (var payload of toExecutePayloads(block.value)) {
+      var card = mapExecutePayloadToCard(payload, `${sessionId}-card-${cardIndexStart + cards.length}`);
+      if (card) cards.push(card);
+    }
+    return cards;
+  };
+  var extractJsonCardsFromTextContent = exports.extractJsonCardsFromTextContent = function extractJsonCardsFromTextContent(content, sessionId) {
+    var cardIndexStart = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var blocks = (0, _$$_REQUIRE(_dependencyMap[2], "D:\\xqkj\\bokeapp\\src/components/markdownRenderer/findJsonCodeBlocks").findJsonCodeBlocks)(content);
+    var cards = [];
+    for (var block of blocks) {
+      cards.push.apply(cards, (0, _toConsumableArray2.default)(mapBlockToCards(block, sessionId, cardIndexStart + cards.length)));
+    }
+    if (blocks.length) {
+      return {
+        textContent: removeSourceRanges(content, blocks.map(function (_ref2) {
+          var start = _ref2.start,
+            end = _ref2.end;
+          return {
+            start: start,
+            end: end
+          };
+        })),
+        cards: cards
+      };
+    }
+    var trimmed = content.trim();
+    if (!trimmed || !trimmed.startsWith('{') && !trimmed.startsWith('[')) {
+      return {
+        textContent: content,
+        cards: []
+      };
+    }
+    try {
+      var parsed = JSON.parse(trimmed);
+      var bareCards = [];
+      for (var payload of toExecutePayloads(parsed)) {
+        var card = mapExecutePayloadToCard(payload, `${sessionId}-card-${cardIndexStart + bareCards.length}`);
+        if (card) bareCards.push(card);
+      }
+      return {
+        textContent: '',
+        cards: bareCards
+      };
+    } catch (_unused2) {
+      return {
+        textContent: content,
+        cards: []
+      };
+    }
+  };
+},1781,[1,7,1782,1783],"src\\pages\\aiAssistant\\utils\\extractJsonCardsFromMarkdown.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.findJsonCodeBlocks = void 0;
+  var JSON_FENCE_OPEN_PATTERN = /```[\t ]*(?:json\b[\t ]*(?:\r?\n|(?=[{[]))|\r?\n)/gi;
+  var JSON_FENCE_CLOSE_PATTERN = /```[\t ]*(?=\r?\n|$)/g;
+  var tryParseJson = function tryParseJson(raw) {
+    var source = raw.trim();
+    if (!source) return undefined;
+    try {
+      return JSON.parse(source);
+    } catch (_unused) {
+      return undefined;
+    }
+  };
+  var findJsonCodeBlocks = exports.findJsonCodeBlocks = function findJsonCodeBlocks(markdown) {
+    if (!markdown) return [];
+    JSON_FENCE_OPEN_PATTERN.lastIndex = 0;
+    JSON_FENCE_CLOSE_PATTERN.lastIndex = 0;
+    var results = [];
+    var seenRanges = new Set();
+    var openMatch = JSON_FENCE_OPEN_PATTERN.exec(markdown);
+    while (openMatch) {
+      var contentStart = openMatch.index + openMatch[0].length;
+      JSON_FENCE_CLOSE_PATTERN.lastIndex = contentStart;
+      var closeMatch = JSON_FENCE_CLOSE_PATTERN.exec(markdown);
+      var closed = Boolean(closeMatch);
+      var contentEnd = closeMatch ? closeMatch.index : markdown.length;
+      var blockEnd = closeMatch ? closeMatch.index + closeMatch[0].length : markdown.length;
+      var raw = markdown.slice(contentStart, contentEnd).trim();
+      var value = tryParseJson(raw);
+      if (value !== undefined) {
+        var rangeKey = `${openMatch.index}:${blockEnd}`;
+        if (!seenRanges.has(rangeKey)) {
+          seenRanges.add(rangeKey);
+          results.push({
+            raw: raw,
+            value: value,
+            start: openMatch.index,
+            end: blockEnd,
+            closed: closed
+          });
+        }
+      }
+      JSON_FENCE_OPEN_PATTERN.lastIndex = closed ? blockEnd : markdown.length;
+      openMatch = JSON_FENCE_OPEN_PATTERN.exec(markdown);
+    }
+    return results;
+  };
+},1782,[],"src\\components\\markdownRenderer\\findJsonCodeBlocks.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.PAGE_TYPE_MAP = void 0;
+  exports.getPageTypeConfig = getPageTypeConfig;
+  var PAGE_TYPE_ENTRIES = {
+    1: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_1.png',
+      route: 'BindDevice'
+    },
+    2: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_2.png',
+      route: 'DeviceInfo'
+    },
+    3: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_3.png',
+      route: 'CombineDevice'
+    },
+    5: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_5.png',
+      route: 'BindPhone'
+    },
+    6: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_6.png',
+      route: 'Account'
+    },
+    7: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_7.png',
+      route: 'Account'
+    },
+    8: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_8.png',
+      route: 'PasswordSet'
+    },
+    9: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_9.png',
+      route: 'PasswordSet'
+    },
+    10: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_10.png',
+      route: 'DeviceInfo'
+    },
+    11: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_11.png',
+      route: 'DeviceAddress'
+    },
+    12: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_12.png',
+      route: 'DeviceLog'
+    },
+    13: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/deviceChargingPoster.png',
+      videoUrl: 'https://g.18qjz.cn/img/boklock/deviceChargingVideo_compatible.mp4'
+    },
+    14: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_14.png',
+      //解绑微信
+      route: 'Account'
+    },
+    15: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_15.png',
+      //编辑组合设备
+      route: 'CombineDevice'
+    },
+    16: {
+      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_16.png',
+      //修改组合设备
+      route: 'Multiple'
+    }
+  };
+  var PAGE_TYPE_MAP = exports.PAGE_TYPE_MAP = PAGE_TYPE_ENTRIES;
+  function getPageTypeConfig(pageType) {
+    var _PAGE_TYPE_ENTRIES$ke;
+    var fallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 13;
+    var key = Number(pageType);
+    return (_PAGE_TYPE_ENTRIES$ke = PAGE_TYPE_ENTRIES[key]) != null ? _PAGE_TYPE_ENTRIES$ke : PAGE_TYPE_ENTRIES[fallback];
+  }
+},1783,[],"src\\pages\\aiAssistant\\constants.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -266978,32 +277895,47 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.default = PhoneChangeCard;
   var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[1], "react"));
   var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
-  var _AppIcon = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/components/AppIcon"));
-  var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "./styles"));
-  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime");
+  var _MarkdownView = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/components/MarkdownView"));
+  var _AppIcon = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "D:\\xqkj\\bokeapp\\src/components/AppIcon"));
+  var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "./styles"));
+  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime");
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\aiAssistant\\com\\phoneChangeCard\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   function PhoneChangeCard(_ref) {
     var data = _ref.data;
-    var navigation = (0, _$$_REQUIRE(_dependencyMap[6], "@react-navigation/native").useNavigation)();
+    console.log('data', data);
+    var navigation = (0, _$$_REQUIRE(_dependencyMap[7], "@react-navigation/native").useNavigation)();
     var maskedPhone = data.maskedPhone;
-    var pageConfig = (0, _$$_REQUIRE(_dependencyMap[7], "../../constants").getPageTypeConfig)(data == null ? void 0 : data.pageType, 7);
+    var pageConfig = (0, _$$_REQUIRE(_dependencyMap[8], "../../constants").getPageTypeConfig)(data == null ? void 0 : data.pageType, 1);
     var handleNavigate = (0, _react.useCallback)(function () {
       var route = pageConfig == null ? void 0 : pageConfig.route;
       if (!route) return;
       var params = maskedPhone && typeof maskedPhone === 'object' && Object.keys(maskedPhone).length > 0 ? maskedPhone : undefined;
-      navigation.navigate(route, params);
-    }, [maskedPhone, navigation, pageConfig == null ? void 0 : pageConfig.route]);
+      if (String(data == null ? void 0 : data.pageType) === '16') {
+        navigation.navigate('MainTabs', {
+          screen: route,
+          params: Object.assign({}, params, {
+            pageType: data == null ? void 0 : data.pageType,
+            _autoOpenAt: Date.now()
+          })
+        });
+        return;
+      }
+      navigation.navigate(route, Object.assign({}, params, {
+        pageType: (data == null ? void 0 : data.pageType) || 1,
+        _autoOpenAt: Date.now()
+      }));
+    }, [data == null ? void 0 : data.pageType, maskedPhone, navigation, pageConfig == null ? void 0 : pageConfig.route]);
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
       style: _styles.default.messageRow,
       children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
         style: _styles.default.card,
         children: [/*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
           style: _styles.default.header,
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-            style: _styles.default.title,
-            children: data == null ? void 0 : data.intro
-          }), /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
+          children: [data != null && data.intro ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_MarkdownView.default, {
+            content: data.intro,
+            style: _styles.default.introMarkdown
+          }) : null, /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.TouchableOpacity, {
             activeOpacity: 0.85,
             style: _styles.default.link,
             onPress: handleNavigate,
@@ -267012,7 +277944,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               children: "\u70B9\u51FB\u524D\u5F80"
             }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
               name: "a-nextpage",
-              size: (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(12),
+              size: (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(12),
               color: "#999999"
             })]
           })]
@@ -267029,7 +277961,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1681,[1,42,3,1377,1682,88,1087,1683,556],"src\\pages\\aiAssistant\\com\\phoneChangeCard\\index.tsx");
+},1784,[1,42,3,1680,1377,1785,88,1087,1783,556],"src\\pages\\aiAssistant\\com\\phoneChangeCard\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -267064,6 +277996,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(22),
       marginRight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
     },
+    introMarkdown: {
+      flex: 1,
+      minWidth: 0,
+      marginRight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
+    },
     link: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -267088,71 +278025,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1682,[3,556],"src\\pages\\aiAssistant\\com\\phoneChangeCard\\styles.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.PAGE_TYPE_MAP = void 0;
-  exports.getPageTypeConfig = getPageTypeConfig;
-  var PAGE_TYPE_ENTRIES = {
-    1: {
-      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_1.png',
-      route: 'BindDevice'
-    },
-    2: {
-      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_2.png',
-      route: 'DeviceInfo'
-    },
-    3: {
-      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_3.png',
-      route: 'CombineDevice'
-    },
-    5: {
-      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_5.png',
-      route: 'BindPhone'
-    },
-    6: {
-      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_6.png',
-      route: 'Account'
-    },
-    7: {
-      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_7.png',
-      route: 'ChangeMobile'
-    },
-    8: {
-      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_8.png',
-      route: 'PasswordSet'
-    },
-    9: {
-      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_9.png',
-      route: 'PasswordSet'
-    },
-    10: {
-      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_10.png',
-      route: 'DeviceInfo'
-    },
-    11: {
-      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_11.png',
-      route: 'DeviceAddress'
-    },
-    12: {
-      imgUrl: 'https://g.18qjz.cn/img/boklock/skill/skill_12.png',
-      route: 'DeviceLog'
-    },
-    13: {
-      imgUrl: 'https://g.18qjz.cn/img/boklock/deviceChargingPoster.png',
-      videoUrl: 'https://g.18qjz.cn/img/boklock/deviceChargingVideo_compatible.mp4'
-    }
-  };
-  var PAGE_TYPE_MAP = exports.PAGE_TYPE_MAP = PAGE_TYPE_ENTRIES;
-  function getPageTypeConfig(pageType) {
-    var _PAGE_TYPE_ENTRIES$ke;
-    var fallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 13;
-    var key = Number(pageType);
-    return (_PAGE_TYPE_ENTRIES$ke = PAGE_TYPE_ENTRIES[key]) != null ? _PAGE_TYPE_ENTRIES$ke : PAGE_TYPE_ENTRIES[fallback];
-  }
-},1683,[],"src\\pages\\aiAssistant\\constants.ts");
+},1785,[3,556],"src\\pages\\aiAssistant\\com\\phoneChangeCard\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -267161,67 +278034,82 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.default = ConfirmCard;
   var _react = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "react"));
   var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
-  var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "./styles"));
-  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[4], "react/jsx-runtime");
+  var _MarkdownView = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/components/MarkdownView"));
+  var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "../textMessage/styles"));
+  var _styles2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "./styles"));
+  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[6], "react/jsx-runtime");
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\aiAssistant\\com\\confirmCard\\index.tsx";
   function ConfirmCard(_ref) {
+    var _data$replyContent;
     var data = _ref.data,
       onCancel = _ref.onCancel,
       onConfirm = _ref.onConfirm;
-    var showActions = !data.submitted;
-    var getTitle = function getTitle() {
-      if (data.approved) {
-        return {
-          text: '执行完成',
-          style: _styles.default.titleCompleted
-        };
-      }
-      if (data.rejected) {
-        return {
-          text: '已取消',
-          style: _styles.default.titleCancelled
-        };
-      }
-      return {
-        text: data.title || '需要确认',
-        style: _styles.default.title
-      };
-    };
-    var title = getTitle();
+    var showActions = !data.submitted && !data.processing;
+    var hasReply = Boolean((_data$replyContent = data.replyContent) == null ? void 0 : _data$replyContent.trim());
+    var isPendingFlow = Boolean(data.submitted || data.processing || data.approved || data.rejected || hasReply);
+    var showThinking = data.processing || Boolean(data.isReplyStreaming) && !hasReply;
+    if (!isPendingFlow) {
+      return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+        style: _styles2.default.messageRow,
+        children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+          style: _styles2.default.card,
+          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+            style: _styles2.default.title,
+            selectable: true,
+            children: data.title || '需要确认'
+          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_MarkdownView.default, {
+            content: data.content || '是否执行？',
+            style: _styles2.default.contentMarkdown
+          }), showActions ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
+            style: _styles2.default.actions,
+            children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+              activeOpacity: 0.85,
+              style: _styles2.default.cancelBtn,
+              onPress: onCancel,
+              children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: _styles2.default.cancelBtnText,
+                children: data.cancelText || '取消'
+              })
+            }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
+              activeOpacity: 0.85,
+              style: _styles2.default.confirmBtn,
+              onPress: onConfirm,
+              children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+                style: _styles2.default.confirmBtnText,
+                children: data.confirmText || '确认执行'
+              })
+            })]
+          }) : null]
+        })
+      });
+    }
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
-      style: _styles.default.messageRow,
+      style: [_styles.default.messageRow, _styles.default.messageRowAssistant],
       children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-        style: _styles.default.card,
-        children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-          style: title.style,
-          children: title.text
-        }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-          style: _styles.default.content,
-          children: data.content
-        }), showActions ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
-          style: _styles.default.actions,
-          children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
-            activeOpacity: 0.85,
-            style: _styles.default.cancelBtn,
-            onPress: onCancel,
-            children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-              style: _styles.default.cancelBtnText,
-              children: data.cancelText || '取消'
-            })
-          }), /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.TouchableOpacity, {
-            activeOpacity: 0.85,
-            style: _styles.default.confirmBtn,
-            onPress: onConfirm,
-            children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-              style: _styles.default.confirmBtnText,
-              children: data.confirmText || '确认执行'
-            })
-          })]
+        style: [_styles.default.bubble, _styles.default.bubbleAssistant, _styles2.default.replyBubble, showThinking && _styles2.default.replyBubbleThinking],
+        children: [data.approved ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+          style: _styles2.default.titleCompleted,
+          selectable: true,
+          children: "\u6267\u884C\u5B8C\u6210"
+        }) : null, data.rejected ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+          style: _styles2.default.titleCancelled,
+          selectable: true,
+          children: "\u5DF2\u53D6\u6D88"
+        }) : null, showThinking ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
+          style: [_styles.default.text, _styles.default.thinkingText],
+          selectable: true,
+          children: "\u6B63\u5728\u601D\u8003\u4E2D..."
+        }) : null, hasReply ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_MarkdownView.default, {
+          content: data.replyContent,
+          isStreaming: Boolean(data.isReplyStreaming)
+        }) : null, data.rejected && data.rejectedHint ? /*#__PURE__*/(0, _jsxRuntime.jsx)(_MarkdownView.default, {
+          content: data.rejectedHint,
+          style: _styles2.default.rejectedHint
         }) : null]
       })
     });
   }
-},1684,[1,42,3,1685,88],"src\\pages\\aiAssistant\\com\\confirmCard\\index.tsx");
+},1786,[1,42,3,1680,1780,1787,88],"src\\pages\\aiAssistant\\com\\confirmCard\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -267268,6 +278156,19 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       color: '#000000',
       lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(22)
     },
+    contentMarkdown: {
+      marginBottom: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16)
+    },
+    replyBubble: {
+      width: '100%'
+    },
+    replyBubbleThinking: {
+      alignSelf: 'flex-start',
+      width: 'auto'
+    },
+    rejectedHint: {
+      marginTop: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
+    },
     actions: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -267304,7 +278205,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1685,[3,556],"src\\pages\\aiAssistant\\com\\confirmCard\\styles.ts");
+},1787,[3,556],"src\\pages\\aiAssistant\\com\\confirmCard\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -267315,14 +278216,15 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _react = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[2], "react"));
   var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
   var _reactNativeVideo = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "react-native-video"));
-  var _AppIcon = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "D:\\xqkj\\bokeapp\\src/components/AppIcon"));
-  var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "./styles"));
-  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[7], "react/jsx-runtime");
+  var _MarkdownView = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "D:\\xqkj\\bokeapp\\src/components/MarkdownView"));
+  var _AppIcon = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "D:\\xqkj\\bokeapp\\src/components/AppIcon"));
+  var _styles = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[7], "./styles"));
+  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime");
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\aiAssistant\\com\\videoGuideCard\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   function VideoGuideCard(_ref) {
     var data = _ref.data;
-    var pageConfig = (0, _$$_REQUIRE(_dependencyMap[8], "../../constants").getPageTypeConfig)(data.pageType);
+    var pageConfig = (0, _$$_REQUIRE(_dependencyMap[9], "../../constants").getPageTypeConfig)(data.pageType);
     var videoUrl = data.videoUrl || (pageConfig == null ? void 0 : pageConfig.videoUrl) || '';
     var posterUrl = data.posterUrl || (pageConfig == null ? void 0 : pageConfig.imgUrl) || '';
     var _useState = (0, _react.useState)(true),
@@ -267341,9 +278243,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       style: _styles.default.messageRow,
       children: /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
         style: _styles.default.card,
-        children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Text, {
-          style: _styles.default.title,
-          children: data.intro || '充电指导'
+        children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_MarkdownView.default, {
+          content: data.intro || '充电指导',
+          style: _styles.default.title
         }), videoUrl ? /*#__PURE__*/(0, _jsxRuntime.jsxs)(_reactNative.View, {
           style: _styles.default.videoWrap,
           children: [/*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNativeVideo.default, {
@@ -267363,7 +278265,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               return setShowPlayBtn(true);
             },
             onError: function onError() {
-              (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+              (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
                 title: '视频加载失败',
                 icon: 'none'
               });
@@ -267376,7 +278278,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
               style: _styles.default.playBtn,
               children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_AppIcon.default, {
                 name: "a-Videoguidance",
-                size: (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(24),
+                size: (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(24),
                 color: "#ffffff"
               })
             })
@@ -267385,7 +278287,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1686,[1,25,42,3,1656,1377,1687,88,1683,1190,556],"src\\pages\\aiAssistant\\com\\videoGuideCard\\index.tsx");
+},1788,[1,25,42,3,1656,1680,1377,1789,88,1783,1190,556],"src\\pages\\aiAssistant\\com\\videoGuideCard\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -267439,7 +278341,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1687,[3,556],"src\\pages\\aiAssistant\\com\\videoGuideCard\\styles.ts");
+},1789,[3,556],"src\\pages\\aiAssistant\\com\\videoGuideCard\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -267727,7 +278629,45 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1688,[3,556],"src\\pages\\aiAssistant\\styles.ts");
+},1790,[3,556],"src\\pages\\aiAssistant\\styles.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.useTabBarHeight = useTabBarHeight;
+  var _react = _$$_REQUIRE(_dependencyMap[0], "react");
+  /**
+   * 读取 TabBar 高度。实测值由 MainTabNavigator 写入 tabBarHeightStore，
+   * 页面侧不再重复测量，避免失败时 fallback 覆盖正确值。
+   */
+  function useTabBarHeight() {
+    var cachedHeight = (0, _$$_REQUIRE(_dependencyMap[1], "jotai").useAtomValue)(_$$_REQUIRE(_dependencyMap[2], "D:\\xqkj\\bokeapp\\src/store/store").tabBarHeightStore);
+    var insets = (0, _$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/libs/safeAreaContext").useSafeAreaInsets)();
+    var tabBarHeight = (0, _react.useMemo)(function () {
+      return cachedHeight > 0 ? cachedHeight : (0, _$$_REQUIRE(_dependencyMap[4], "D:\\xqkj\\bokeapp\\src/utils/tabBarHeight").getTabBarHeightFallback)(insets.bottom);
+    }, [cachedHeight, insets.bottom]);
+    return {
+      tabBarHeight: tabBarHeight
+    };
+  }
+},1791,[42,1300,1617,1251,1792],"src\\hooks\\useTabBarHeight.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.TAB_BAR_MIN_BOTTOM_INSET = exports.TAB_BAR_BASE_HEIGHT = void 0;
+  exports.getTabBarHeightFallback = getTabBarHeightFallback;
+  /** 与 MainTabNavigator tabBarStyle 保持一致 */
+  var TAB_BAR_MIN_BOTTOM_INSET = exports.TAB_BAR_MIN_BOTTOM_INSET = 20;
+  var TAB_BAR_BASE_HEIGHT = exports.TAB_BAR_BASE_HEIGHT = 60;
+
+  /**
+   * 按 TabNavigator 样式估算：60 设计稿高度 + 底部安全区（至少 20）
+   */
+  function getTabBarHeightFallback(bottomInset) {
+    return (0, _$$_REQUIRE(_dependencyMap[0], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(TAB_BAR_BASE_HEIGHT + Math.max(bottomInset, TAB_BAR_MIN_BOTTOM_INSET));
+  }
+},1792,[556],"src\\utils\\tabBarHeight.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -267742,155 +278682,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
   };
   var getWebSocketUrl = function getWebSocketUrl() {
-    var wsDomain = _$$_REQUIRE(_dependencyMap[5], "D:\\xqkj\\bokeapp\\src/config").BASE_URL.replace(/^http:\/\//, 'ws://').replace(/^https:\/\//, 'wss://');
+    var wsDomain = _$$_REQUIRE(_dependencyMap[5], "D:\\xqkj\\bokeapp\\src/config").BASE_URL.replace(/^http:\/\//, 'ws://').replace(/^https:\/\//, 'wss://').replace(/\/$/, '');
     return `${wsDomain}/boke/ws/user/chat`;
+  };
+  var getErrorMessage = function getErrorMessage(error, fallback) {
+    return error instanceof Error && error.message ? error.message : fallback;
   };
   var getStreamMessageId = function getStreamMessageId(wsMessage, fallbackId) {
     return wsMessage.sessionId || wsMessage.conversationId || fallbackId || createMessageId();
-  };
-  var EXECUTE_CODE_BLOCK_MARKER = '```json';
-  var EXECUTE_JSON_START = '{';
-  var PAGE_TYPE_MARKER = '"pageType"';
-  var EXECUTE_END_PATTERN = /\n```\r?\n/;
-  var EXECUTE_FIELD_MARKERS = ['"pageType"', '"toolName"', '"errorMsg"', '"interactionType"', '"pageName"', '"supplyMsg"'];
-  var looksLikeExecuteJson = function looksLikeExecuteJson(str) {
-    var trimmed = str.trim();
-    if (!trimmed) return false;
-    if (/^\s*\{/.test(trimmed)) return true;
-    if (trimmed.endsWith('}') && EXECUTE_FIELD_MARKERS.some(function (marker) {
-      return trimmed.includes(marker);
-    })) {
-      return true;
-    }
-    return EXECUTE_FIELD_MARKERS.some(function (marker) {
-      return trimmed.includes(marker);
-    });
-  };
-  var normalizeExecuteJsonRaw = function normalizeExecuteJsonRaw(raw) {
-    var trimmed = raw.trim();
-    if (!trimmed) return trimmed;
-    if (trimmed.startsWith('{')) return trimmed;
-    if (looksLikeExecuteJson(trimmed)) return `{${trimmed}`;
-    return trimmed;
-  };
-  var findExecuteEndIndex = function findExecuteEndIndex(buffer) {
-    var match = buffer.match(EXECUTE_END_PATTERN);
-    if (!match || match.index === undefined) return -1;
-    return match.index;
-  };
-  var getExecuteEndMarkerLength = function getExecuteEndMarkerLength(buffer, endIdx) {
-    var _match$0$length, _match$;
-    var slice = buffer.slice(endIdx);
-    var match = slice.match(EXECUTE_END_PATTERN);
-    return (_match$0$length = match == null || (_match$ = match[0]) == null ? void 0 : _match$.length) != null ? _match$0$length : 0;
-  };
-
-  /** 从首个 { 起匹配完整 JSON 对象闭合位置（相对 str 起点） */
-  var findBraceCloseIndex = function findBraceCloseIndex(str) {
-    var depth = 0;
-    var started = false;
-    var inString = false;
-    var escaped = false;
-    for (var i = 0; i < str.length; i++) {
-      var ch = str[i];
-      if (inString) {
-        if (escaped) {
-          escaped = false;
-        } else if (ch === '\\') {
-          escaped = true;
-        } else if (ch === '"') {
-          inString = false;
-        }
-        continue;
-      }
-      if (ch === '"') {
-        inString = true;
-      } else if (ch === '{') {
-        depth += 1;
-        started = true;
-      } else if (ch === '}') {
-        depth -= 1;
-        if (started && depth === 0) {
-          return i;
-        }
-      }
-    }
-    return -1;
-  };
-
-  /** 流结束后从原始字符串提取可解析的 JSON */
-  var extractJsonObject = function extractJsonObject(raw) {
-    var trimmed = normalizeExecuteJsonRaw(raw);
-    if (!trimmed) return null;
-    try {
-      JSON.parse(trimmed);
-      return trimmed;
-    } catch (_unused) {
-      // continue
-    }
-    var start = trimmed.indexOf(EXECUTE_JSON_START);
-    if (start === -1) return null;
-    var closeIdx = findBraceCloseIndex(trimmed.slice(start));
-    if (closeIdx === -1) return null;
-    var candidate = trimmed.slice(start, start + closeIdx + 1);
-    try {
-      JSON.parse(candidate);
-      return candidate;
-    } catch (_unused2) {
-      var lastEnd = trimmed.lastIndexOf('}');
-      if (lastEnd > start) {
-        var fallback = trimmed.slice(start, lastEnd + 1);
-        try {
-          JSON.parse(fallback);
-          return fallback;
-        } catch (_unused3) {
-          return null;
-        }
-      }
-    }
-    return null;
-  };
-
-  /** 起始：开头为 {，或包含 pageType（```json / {） */
-  var findExecuteStart = function findExecuteStart(buffer) {
-    var jsonAtStart = buffer.match(/^\s*\{/);
-    if (jsonAtStart) {
-      var index = buffer.indexOf(EXECUTE_JSON_START);
-      return {
-        index: index,
-        skip: 0,
-        isCodeBlock: false
-      };
-    }
-    var codeBlockIdx = buffer.indexOf(EXECUTE_CODE_BLOCK_MARKER);
-    if (codeBlockIdx !== -1) {
-      return {
-        index: codeBlockIdx,
-        skip: EXECUTE_CODE_BLOCK_MARKER.length,
-        isCodeBlock: true
-      };
-    }
-    var pageTypeIdx = buffer.indexOf(PAGE_TYPE_MARKER);
-    if (pageTypeIdx !== -1) {
-      var jsonStartIdx = buffer.lastIndexOf(EXECUTE_JSON_START, pageTypeIdx);
-      if (jsonStartIdx !== -1) {
-        return {
-          index: jsonStartIdx,
-          skip: 0,
-          isCodeBlock: false
-        };
-      }
-      return {
-        index: 0,
-        skip: 0,
-        isCodeBlock: false,
-        prependLeadingBrace: true
-      };
-    }
-    if (looksLikeExecuteJson(buffer)) {
-      return null;
-    }
-    return null;
   };
   var getNextTextSegmentIndex = function getNextTextSegmentIndex(messages, sessionId) {
     var maxIndex = -1;
@@ -267910,61 +278709,21 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return maxIndex + 1;
   };
   var createStreamParserState = function createStreamParserState(sessionId) {
-    var cardCount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+    var textSegmentIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     return {
-      phase: 'text',
-      buffer: '',
-      executeJsonBuffer: '',
-      currentTextId: `${sessionId}-text-${cardCount}`,
-      cardCount: cardCount,
-      sessionId: sessionId,
-      isCodeBlockJson: false,
-      prependLeadingBrace: false
+      currentTextId: `${sessionId}-text-${textSegmentIndex}`,
+      textSegmentIndex: textSegmentIndex,
+      sessionId: sessionId
     };
   };
-
-  /** 保留 buffer 末尾可能是 marker 前缀的部分，避免跨 chunk 截断 */
-  var findSafeFlushIndex = function findSafeFlushIndex(str, marker, isComplete) {
-    if (isComplete) return str.length;
-    for (var len = Math.min(str.length, marker.length - 1); len > 0; len--) {
-      if (marker.startsWith(str.slice(-len))) {
-        return str.length - len;
-      }
-    }
-    return str.length;
+  var cloneParserSnapshot = function cloneParserSnapshot(parser) {
+    return Object.assign({}, parser);
   };
-  var findSafeFlushIndexForText = function findSafeFlushIndexForText(str, isComplete) {
-    if (looksLikeExecuteJson(str)) {
-      return 0;
+  var resolveStreamParser = function resolveStreamParser(prev, streamId, existing) {
+    if (existing && existing.sessionId === streamId) {
+      return cloneParserSnapshot(existing);
     }
-    if (isComplete) return str.length;
-    if (/^\s*\{/.test(str)) {
-      return str.indexOf(EXECUTE_JSON_START);
-    }
-    return Math.min(findSafeFlushIndex(str, PAGE_TYPE_MARKER, false), findSafeFlushIndex(str, EXECUTE_CODE_BLOCK_MARKER, false), findSafeFlushIndex(str, EXECUTE_JSON_START, false));
-  };
-  var getTextSegmentContent = function getTextSegmentContent(messages, textId) {
-    var _item$content;
-    if (!textId) return '';
-    var item = messages.find(function (message) {
-      return message.id === textId && message.type === 'text';
-    });
-    return (item == null ? void 0 : item.type) === 'text' ? (_item$content = item.content) != null ? _item$content : '' : '';
-  };
-  var findLeakedExecuteText = function findLeakedExecuteText(messages, sessionId) {
-    for (var message of messages) {
-      var _message$content;
-      if (message.type !== 'text' || message.role !== 'assistant') continue;
-      if (!message.id.startsWith(`${sessionId}-text-`)) continue;
-      var content = (_message$content = message.content) != null ? _message$content : '';
-      if (looksLikeExecuteJson(content)) {
-        return {
-          textId: message.id,
-          content: content
-        };
-      }
-    }
-    return null;
+    return createStreamParserState(streamId, getNextTextSegmentIndex(prev, streamId));
   };
   var removeTextSegment = function removeTextSegment(messages, textId) {
     if (!textId) return messages;
@@ -267972,23 +278731,174 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return !(message.id === textId && message.type === 'text');
     });
   };
+  var ensureEmptyStreamingText = function ensureEmptyStreamingText(messages, textId) {
+    if (messages.some(function (item) {
+      return item.id === textId && item.type === 'text';
+    })) {
+      return messages;
+    }
+    return [].concat((0, _toConsumableArray2.default)(messages), [{
+      id: textId,
+      role: 'assistant',
+      type: 'text',
+      content: '',
+      isStreaming: true
+    }]);
+  };
+  var isEmptyStreamingAssistant = function isEmptyStreamingAssistant(msg) {
+    var _msg$content;
+    return msg.type === 'text' && msg.role === 'assistant' && Boolean(msg.isStreaming) && !((_msg$content = msg.content) != null && _msg$content.trim());
+  };
+  var removeEmptyStreamingAssistants = function removeEmptyStreamingAssistants(messages) {
+    return messages.filter(function (msg) {
+      return !isEmptyStreamingAssistant(msg);
+    });
+  };
+  var beginAssistantStream = function beginAssistantStream(messages, streamId) {
+    var state = createStreamParserState(streamId, getNextTextSegmentIndex(messages, streamId));
+    return {
+      messages: ensureEmptyStreamingText(messages, state.currentTextId),
+      state: state
+    };
+  };
+
+  /** 将发送阶段占位流对齐到服务端 streamId，无 type:start 时也能复用同一条思考气泡 */
+  var adoptStreamId = function adoptStreamId(messages, oldState, streamId) {
+    if ((oldState == null ? void 0 : oldState.sessionId) === streamId && oldState.currentTextId) {
+      return {
+        messages: ensureEmptyStreamingText(messages, oldState.currentTextId),
+        state: cloneParserSnapshot(oldState)
+      };
+    }
+    var state = createStreamParserState(streamId, getNextTextSegmentIndex(messages, streamId));
+    var newTextId = state.currentTextId;
+    var oldTextId = oldState == null ? void 0 : oldState.currentTextId;
+    if (!oldTextId) {
+      return {
+        messages: ensureEmptyStreamingText(messages, newTextId),
+        state: state
+      };
+    }
+    var oldIndex = messages.findIndex(function (msg) {
+      return msg.id === oldTextId && msg.type === 'text';
+    });
+    if (oldIndex < 0) {
+      return {
+        messages: ensureEmptyStreamingText(messages, newTextId),
+        state: state
+      };
+    }
+    var next = (0, _toConsumableArray2.default)(messages);
+    next[oldIndex] = Object.assign({}, next[oldIndex], {
+      id: newTextId,
+      isStreaming: true
+    });
+    return {
+      messages: ensureEmptyStreamingText(next, newTextId),
+      state: state
+    };
+  };
+  var isConfirmSessionMatchById = function isConfirmSessionMatchById(msg, sessionId) {
+    var confirmSessionId = msg.sessionId || msg.replyId || msg.id;
+    return confirmSessionId === sessionId || msg.replyId === sessionId || msg.id === sessionId;
+  };
+  var matchConfirmMessage = function matchConfirmMessage(msg, target) {
+    if (target.confirmMessageId && msg.id === target.confirmMessageId) {
+      return true;
+    }
+    return isConfirmSessionMatchById(msg, target.sessionId);
+  };
+  var isConfirmSessionMatch = function isConfirmSessionMatch(confirm, sessionId) {
+    return confirm.sessionId === sessionId || confirm.replyId === sessionId;
+  };
+  var matchConfirmTargetInText = function matchConfirmTargetInText(msg, target) {
+    if (!msg.confirm) return false;
+    if (target.confirmMessageId && `${msg.id}-confirm` === target.confirmMessageId) {
+      return true;
+    }
+    return isConfirmSessionMatch(msg.confirm, target.sessionId);
+  };
+  var upsertConfirmReply = function upsertConfirmReply(messages, target, appendContent, isReplyStreaming) {
+    var matched = false;
+    var next = messages.map(function (msg) {
+      if (msg.type === 'confirm' && matchConfirmMessage(msg, target)) {
+        var _msg$replyContent;
+        matched = true;
+        return Object.assign({}, msg, {
+          processing: false,
+          replyContent: `${(_msg$replyContent = msg.replyContent) != null ? _msg$replyContent : ''}${appendContent}`,
+          isReplyStreaming: isReplyStreaming
+        });
+      }
+      if (msg.type === 'text' && matchConfirmTargetInText(msg, target)) {
+        var _replyContent;
+        matched = true;
+        return Object.assign({}, msg, {
+          confirm: Object.assign({}, msg.confirm, {
+            processing: false,
+            replyContent: `${(_replyContent = msg.confirm.replyContent) != null ? _replyContent : ''}${appendContent}`,
+            isReplyStreaming: isReplyStreaming
+          })
+        });
+      }
+      return msg;
+    });
+    if (matched || !appendContent) {
+      return next;
+    }
+    for (var i = next.length - 1; i >= 0; i--) {
+      var msg = next[i];
+      if ((msg == null ? void 0 : msg.type) === 'confirm' && msg.submitted && !msg.approved && !msg.rejected) {
+        var _msg$replyContent2;
+        next[i] = Object.assign({}, msg, {
+          processing: false,
+          replyContent: `${(_msg$replyContent2 = msg.replyContent) != null ? _msg$replyContent2 : ''}${appendContent}`,
+          isReplyStreaming: isReplyStreaming
+        });
+        break;
+      }
+    }
+    return next;
+  };
+  var finalizeConfirmReply = function finalizeConfirmReply(messages, target) {
+    return messages.map(function (msg) {
+      if (msg.type === 'confirm' && matchConfirmMessage(msg, target)) {
+        return Object.assign({}, msg, {
+          processing: false,
+          isReplyStreaming: false
+        });
+      }
+      if (msg.type === 'text' && matchConfirmTargetInText(msg, target)) {
+        return Object.assign({}, msg, {
+          confirm: Object.assign({}, msg.confirm, {
+            processing: false,
+            isReplyStreaming: false
+          })
+        });
+      }
+      return msg;
+    });
+  };
+  var upsertStreamText = function upsertStreamText(messages, textId, appendContent, isStreaming, options) {
+    if (options != null && options.confirmTarget) {
+      return upsertConfirmReply(messages, options.confirmTarget, appendContent, isStreaming);
+    }
+    return upsertTextSegment(messages, textId, appendContent, isStreaming);
+  };
   var upsertTextSegment = function upsertTextSegment(prev, textId, appendContent, isStreaming) {
     if (!appendContent) return prev;
     var index = prev.findIndex(function (item) {
       return item.id === textId && item.type === 'text';
     });
     if (index >= 0) {
-      var _current$confirm;
+      var _current$content;
       var current = prev[index];
-      if (!((_current$confirm = current.confirm) != null && _current$confirm.submitted)) {
-        var _current$content;
-        var next = (0, _toConsumableArray2.default)(prev);
-        next[index] = Object.assign({}, current, {
-          content: ((_current$content = current.content) != null ? _current$content : '') + appendContent,
-          isStreaming: isStreaming
-        });
-        return next;
-      }
+      var next = (0, _toConsumableArray2.default)(prev);
+      next[index] = Object.assign({}, current, {
+        content: ((_current$content = current.content) != null ? _current$content : '') + appendContent,
+        isStreaming: isStreaming
+      });
+      return next;
     }
     return [].concat((0, _toConsumableArray2.default)(prev), [{
       id: textId,
@@ -268013,11 +278923,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     if (typeof data === 'string') {
       try {
         return JSON.parse(data.trim());
-      } catch (_unused4) {
+      } catch (_unused) {
         return null;
       }
     }
-    if (typeof data === 'object') {
+    if (typeof data === 'object' && !Array.isArray(data)) {
       return data;
     }
     return null;
@@ -268046,339 +278956,176 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       replyId: action.replyId
     };
   };
-  var parseVideoGuideMedia = function parseVideoGuideMedia(parsed, pageType) {
-    var pageConfig = (0, _$$_REQUIRE(_dependencyMap[6], "D:\\xqkj\\bokeapp\\src/pages/aiAssistant/constants").getPageTypeConfig)(pageType);
-    var videoUrl = parsed.videoUrl || '';
-    var posterUrl = parsed.posterUrl || parsed.poster || '';
-    var extend = parsed.extend;
-    if (typeof extend === 'string') {
-      var trimmed = extend.trim();
-      if (trimmed.startsWith('http') && /\.mp4(\?|$)/i.test(trimmed)) {
-        videoUrl = trimmed;
-      } else if (trimmed.startsWith('{')) {
-        try {
-          var ext = JSON.parse(trimmed);
-          videoUrl = ext['videoUrl'] || ext['url'] || ext['video'] || videoUrl;
-          posterUrl = ext['posterUrl'] || ext['poster'] || posterUrl;
-        } catch (_unused5) {
-          // ignore invalid extend json
-        }
-      }
-    } else if (extend && typeof extend === 'object') {
-      var _ext = extend;
-      videoUrl = _ext['videoUrl'] || _ext['url'] || _ext['video'] || videoUrl;
-      posterUrl = _ext['posterUrl'] || _ext['poster'] || posterUrl;
-    }
-    if (!videoUrl && pageConfig != null && pageConfig.videoUrl) {
-      videoUrl = pageConfig.videoUrl;
-    }
-    if (!posterUrl && pageConfig != null && pageConfig.imgUrl) {
-      posterUrl = pageConfig.imgUrl;
-    }
-    return {
-      videoUrl: videoUrl,
-      posterUrl: posterUrl
-    };
-  };
-  var mapVideoGuidePayloadToCard = function mapVideoGuidePayloadToCard(payload, fallbackId, pageType) {
-    var _parseVideoGuideMedia = parseVideoGuideMedia(payload, pageType),
-      videoUrl = _parseVideoGuideMedia.videoUrl,
-      posterUrl = _parseVideoGuideMedia.posterUrl;
-    return {
-      id: fallbackId,
-      role: 'assistant',
-      type: 'videoGuide',
-      intro: payload.message || payload.intro || payload.pageName || '充电指导',
-      videoUrl: videoUrl,
-      posterUrl: posterUrl,
-      pageType: pageType
-    };
-  };
-  var confirmMessageToAction = function confirmMessageToAction(card) {
-    return {
-      sessionId: card.sessionId || card.id,
-      replyId: card.replyId || card.id,
-      title: card.title,
-      content: card.content,
-      cancelText: card.cancelText,
-      confirmText: card.confirmText
-    };
-  };
-  var isConfirmSessionMatch = function isConfirmSessionMatch(confirm, sessionId) {
-    return confirm.sessionId === sessionId || confirm.replyId === sessionId;
-  };
-  var applyConfirmSubmittedState = function applyConfirmSubmittedState(messages, sessionId, approved) {
+  var applyConfirmProcessingState = function applyConfirmProcessingState(messages, target) {
     return messages.map(function (msg) {
       if (msg.type === 'confirm') {
-        var confirmSessionId = msg.sessionId || msg.replyId || msg.id;
-        if (confirmSessionId !== sessionId && msg.replyId !== sessionId && msg.id !== sessionId) {
+        if (!matchConfirmMessage(msg, target)) {
           return msg;
         }
         return Object.assign({}, msg, {
           submitted: true,
-          approved: approved,
-          rejected: !approved
+          processing: true,
+          replyContent: undefined,
+          isReplyStreaming: true,
+          approved: undefined,
+          rejected: undefined
         });
       }
-      if (msg.type !== 'text' || !msg.confirm || !isConfirmSessionMatch(msg.confirm, sessionId)) {
+      if (msg.type !== 'text' || !msg.confirm || !isConfirmSessionMatch(msg.confirm, target.sessionId)) {
         return msg;
       }
       return Object.assign({}, msg, {
         confirm: Object.assign({}, msg.confirm, {
           submitted: true,
-          approved: approved,
-          rejected: !approved
+          processing: true,
+          replyContent: undefined,
+          isReplyStreaming: true,
+          approved: undefined,
+          rejected: undefined
         })
       });
     });
   };
-  var applyConfirmRejectedState = function applyConfirmRejectedState(messages, sessionId, payload) {
+  var applyConfirmResetProcessingState = function applyConfirmResetProcessingState(messages, target) {
     return messages.map(function (msg) {
-      if (msg.type !== 'text' || !msg.confirm || !isConfirmSessionMatch(msg.confirm, sessionId)) {
+      if (msg.type === 'confirm') {
+        if (!matchConfirmMessage(msg, target)) {
+          return msg;
+        }
+        return Object.assign({}, msg, {
+          submitted: false,
+          processing: false,
+          approved: undefined,
+          rejected: undefined
+        });
+      }
+      if (msg.type !== 'text' || !msg.confirm || !isConfirmSessionMatch(msg.confirm, target.sessionId)) {
+        return msg;
+      }
+      return Object.assign({}, msg, {
+        confirm: Object.assign({}, msg.confirm, {
+          submitted: false,
+          processing: false,
+          approved: undefined,
+          rejected: undefined
+        })
+      });
+    });
+  };
+  var applyConfirmRejectedState = function applyConfirmRejectedState(messages, target, payload) {
+    return messages.map(function (msg) {
+      if (msg.type === 'confirm') {
+        if (!matchConfirmMessage(msg, target)) {
+          return msg;
+        }
+        return Object.assign({}, msg, {
+          submitted: true,
+          processing: false,
+          isReplyStreaming: false,
+          rejected: true,
+          approved: false,
+          rejectedMessage: (payload == null ? void 0 : payload.rejectedMessage) || msg.rejectedMessage || DEFAULT_REJECTED_MESSAGE,
+          rejectedHint: (payload == null ? void 0 : payload.rejectedHint) || msg.rejectedHint || DEFAULT_REJECTED_HINT
+        });
+      }
+      if (msg.type !== 'text' || !msg.confirm || !isConfirmSessionMatch(msg.confirm, target.sessionId)) {
         return msg;
       }
       return Object.assign({}, msg, {
         confirm: Object.assign({}, msg.confirm, {
           submitted: true,
+          processing: false,
           rejected: true,
+          approved: false,
           rejectedMessage: (payload == null ? void 0 : payload.rejectedMessage) || msg.confirm.rejectedMessage || DEFAULT_REJECTED_MESSAGE,
           rejectedHint: (payload == null ? void 0 : payload.rejectedHint) || msg.confirm.rejectedHint || DEFAULT_REJECTED_HINT
         })
       });
     });
   };
-  var findLastAssistantTextIndex = function findLastAssistantTextIndex(messages, sessionId) {
-    for (var i = messages.length - 1; i >= 0; i--) {
-      var _message$confirm;
-      var message = messages[i];
-      if (!message) continue;
-      if (message.role !== 'assistant' || message.type !== 'text') continue;
-      if ((_message$confirm = message.confirm) != null && _message$confirm.submitted) continue;
-      if (sessionId && !message.id.startsWith(`${sessionId}-text-`) && message.id !== sessionId) {
-        continue;
-      }
-      return i;
-    }
-    for (var _i = messages.length - 1; _i >= 0; _i--) {
-      var _message$confirm2;
-      var _message = messages[_i];
-      if ((_message == null ? void 0 : _message.role) === 'assistant' && (_message == null ? void 0 : _message.type) === 'text' && !((_message$confirm2 = _message.confirm) != null && _message$confirm2.submitted)) {
-        return _i;
-      }
-    }
-    return -1;
-  };
-  var mergeConfirmIntoMessages = function mergeConfirmIntoMessages(messages, action, options) {
-    var _options$appendConten;
-    var next = (0, _toConsumableArray2.default)(messages);
-    var index = findLastAssistantTextIndex(next, options == null ? void 0 : options.sessionId);
-    var extra = options == null || (_options$appendConten = options.appendContent) == null ? void 0 : _options$appendConten.trim();
-    if (index >= 0) {
-      var _textMessage$confirm, _textMessage$content;
-      var textMessage = next[index];
-      if ((_textMessage$confirm = textMessage.confirm) != null && _textMessage$confirm.submitted) {
-        return [].concat((0, _toConsumableArray2.default)(next), [{
-          id: `${(options == null ? void 0 : options.sessionId) || action.replyId}-text-${getNextTextSegmentIndex(next, (options == null ? void 0 : options.sessionId) || action.sessionId)}`,
-          role: 'assistant',
-          type: 'text',
-          content: extra || action.content || '',
-          confirm: action
-        }]);
-      }
-      var content = (_textMessage$content = textMessage.content) != null ? _textMessage$content : '';
-      if (extra && !content.includes(extra)) {
-        content = content ? `${content}\n${extra}` : extra;
-      }
-      next[index] = Object.assign({}, textMessage, {
-        content: content,
-        isStreaming: false,
-        confirm: action
-      });
-      return next;
-    }
-    return [].concat((0, _toConsumableArray2.default)(next), [{
-      id: (options == null ? void 0 : options.sessionId) || action.replyId,
-      role: 'assistant',
-      type: 'text',
-      content: extra || action.content || '',
-      confirm: action
-    }]);
+  var isSameConfirmCard = function isSameConfirmCard(card, sessionId) {
+    var cardSessionId = card.sessionId || card.replyId || card.id;
+    return Boolean(sessionId && (cardSessionId === sessionId || card.replyId === sessionId || card.id === sessionId));
   };
   var mergeConfirmCardIntoMessages = function mergeConfirmCardIntoMessages(messages, card, sessionId) {
-    return mergeConfirmIntoMessages(messages, confirmMessageToAction(card), {
-      sessionId: sessionId,
-      appendContent: card.content
+    var finalized = messages.map(function (item) {
+      return item.type === 'text' && item.isStreaming ? Object.assign({}, item, {
+        isStreaming: false
+      }) : item;
     });
-  };
-  var appendOrMergeCard = function appendOrMergeCard(messages, card, sessionId) {
-    if (card.type === 'confirm') {
-      return mergeConfirmCardIntoMessages(messages, card, sessionId);
+    var existingIndex = finalized.findIndex(function (msg) {
+      return msg.type === 'confirm' && isSameConfirmCard(msg, sessionId || card.sessionId || card.id);
+    });
+    if (existingIndex >= 0) {
+      var next = (0, _toConsumableArray2.default)(finalized);
+      next[existingIndex] = Object.assign({}, next[existingIndex], card);
+      return next;
     }
-    return [].concat((0, _toConsumableArray2.default)(messages), [card]);
+    return [].concat((0, _toConsumableArray2.default)(finalized), [card]);
   };
-  var mapExecuteJsonToCard = function mapExecuteJsonToCard(raw, sessionId, cardIndex) {
-    try {
-      var parsed = JSON.parse(raw.trim());
-      if (parsed.pageType === undefined || parsed.pageType === null || parsed.pageType === '') {
-        return null;
-      }
-      var cardId = `${sessionId}-card-${cardIndex}`;
-      var pageType = String(parsed.pageType);
-      if (pageType === '4') {
-        return mapConfirmPayloadToCard(parsed, cardId);
-      }
-      if (pageType === '13') {
-        return mapVideoGuidePayloadToCard(parsed, cardId, parsed.pageType);
-      }
-      return {
-        id: cardId,
-        role: 'assistant',
-        type: 'phoneChange',
-        intro: parsed.message || parsed.intro || parsed.pageName,
-        maskedPhone: parsed.maskedPhone || parsed.extend,
-        pageType: parsed.pageType
-      };
-    } catch (_unused6) {
-      // 流式阶段 JSON 可能尚未完整，忽略
-    }
-    return null;
+  var getSessionIdFromTextId = function getSessionIdFromTextId(textId) {
+    var match = textId.match(/^(.*)-text-\d+$/);
+    return (match == null ? void 0 : match[1]) || textId;
   };
-  var tryCreateCardFromRawJson = function tryCreateCardFromRawJson(raw, sessionId, cardIndex) {
-    var jsonStr = extractJsonObject(raw);
-    if (!jsonStr) return {
-      card: null,
-      jsonStr: null
-    };
-    var card = mapExecuteJsonToCard(jsonStr, sessionId, cardIndex);
-    return {
-      card: card,
-      jsonStr: jsonStr
-    };
-  };
-  var finalizeExecutePhase = function finalizeExecutePhase(messages, state) {
-    var leaked = findLeakedExecuteText(messages, state.sessionId);
-    var rawJson = state.executeJsonBuffer + state.buffer;
-    if (state.prependLeadingBrace && !rawJson.trimStart().startsWith('{')) {
-      rawJson = `{${rawJson}`;
+  var materializeJsonCardsFromText = function materializeJsonCardsFromText(messages, textId, sessionId) {
+    var _textMessage$content;
+    var textIndex = messages.findIndex(function (item) {
+      return item.id === textId && item.type === 'text';
+    });
+    if (textIndex < 0) return messages;
+    var textMessage = messages[textIndex];
+    var cardCount = messages.filter(function (item) {
+      return item.id.startsWith(`${sessionId}-card-`) && item.type !== 'text';
+    }).length;
+    var _extractJsonCardsFrom = (0, _$$_REQUIRE(_dependencyMap[6], "D:\\xqkj\\bokeapp\\src/pages/aiAssistant/utils/extractJsonCardsFromMarkdown").extractJsonCardsFromTextContent)((_textMessage$content = textMessage.content) != null ? _textMessage$content : '', sessionId, cardCount),
+      textContent = _extractJsonCardsFrom.textContent,
+      cards = _extractJsonCardsFrom.cards;
+    var contentChanged = textContent !== textMessage.content;
+    if (!cards.length && !contentChanged) return messages;
+    var next = (0, _toConsumableArray2.default)(messages);
+    if (textContent.trim()) {
+      next[textIndex] = Object.assign({}, textMessage, {
+        content: textContent,
+        isStreaming: false
+      });
+    } else {
+      next.splice(textIndex, 1);
     }
-    if (leaked) {
-      rawJson = normalizeExecuteJsonRaw(`${leaked.content}${rawJson}`);
-    }
-    var _tryCreateCardFromRaw = tryCreateCardFromRawJson(rawJson, state.sessionId, state.cardCount),
-      card = _tryCreateCardFromRaw.card,
-      jsonStr = _tryCreateCardFromRaw.jsonStr;
-    var nextMessages = messages;
-    if (card) {
+    var insertAt = textContent.trim() ? textIndex + 1 : textIndex;
+    for (var card of cards) {
       if (card.type === 'confirm') {
-        var _leaked$textId;
-        nextMessages = removeTextSegment(nextMessages, (_leaked$textId = leaked == null ? void 0 : leaked.textId) != null ? _leaked$textId : state.currentTextId);
-        nextMessages = mergeConfirmCardIntoMessages(nextMessages, card, state.sessionId);
-      } else {
-        var _leaked$textId2;
-        nextMessages = removeTextSegment(nextMessages, (_leaked$textId2 = leaked == null ? void 0 : leaked.textId) != null ? _leaked$textId2 : state.currentTextId);
-        nextMessages = [].concat((0, _toConsumableArray2.default)(nextMessages), [card]);
-      }
-      state.cardCount += 1;
-    } else if (jsonStr) {
-      state.cardCount += 1;
-    }
-    var rest = jsonStr ? rawJson.slice(rawJson.indexOf(jsonStr) + jsonStr.length) : rawJson;
-    return {
-      messages: nextMessages,
-      rest: rest
-    };
-  };
-  var processStreamChunk = function processStreamChunk(prev, state, chunk, isComplete) {
-    state.buffer += chunk;
-    var messages = prev;
-    while (true) {
-      if (state.phase === 'text') {
-        var executeStart = findExecuteStart(state.buffer);
-        if (!executeStart) {
-          var safeEnd = findSafeFlushIndexForText(state.buffer, isComplete);
-          var textPart = state.buffer.slice(0, safeEnd);
-          if (textPart && state.currentTextId) {
-            messages = upsertTextSegment(messages, state.currentTextId, textPart, !isComplete);
-          }
-          state.buffer = state.buffer.slice(safeEnd);
-          break;
-        }
-        var textBefore = state.buffer.slice(0, executeStart.index);
-        if (textBefore && state.currentTextId) {
-          messages = upsertTextSegment(messages, state.currentTextId, textBefore, false);
-          messages = finalizeTextSegment(messages, state.currentTextId);
-        }
-        state.buffer = state.buffer.slice(executeStart.index + executeStart.skip);
-        state.phase = 'execute';
-        state.executeJsonBuffer = '';
-        state.isCodeBlockJson = executeStart.isCodeBlock;
-        state.prependLeadingBrace = Boolean(executeStart.prependLeadingBrace);
-        state.currentTextId = null;
+        next = mergeConfirmCardIntoMessages(next, card, sessionId);
+        insertAt = next.length;
         continue;
       }
-
-      // 纯 JSON 流式：只累积，等 end 再解析，避免中途 } 误截断
-      if (!state.isCodeBlockJson) {
-        state.executeJsonBuffer += state.buffer;
-        state.buffer = '';
-        break;
-      }
-      var codeEndIdx = findExecuteEndIndex(state.buffer);
-      if (codeEndIdx === -1) {
-        var _safeEnd = findSafeFlushIndex(state.buffer, '\n```\n', isComplete);
-        state.executeJsonBuffer += state.buffer.slice(0, _safeEnd);
-        state.buffer = state.buffer.slice(_safeEnd);
-        break;
-      }
-      var jsonPart = state.executeJsonBuffer + state.buffer.slice(0, codeEndIdx);
-      var card = mapExecuteJsonToCard(jsonPart, state.sessionId, state.cardCount);
-      if (card) {
-        messages = appendOrMergeCard(messages, card, state.sessionId);
-      }
-      state.cardCount += 1;
-      var endLen = getExecuteEndMarkerLength(state.buffer, codeEndIdx);
-      state.buffer = state.buffer.slice(codeEndIdx + endLen);
-      state.phase = 'text';
-      state.executeJsonBuffer = '';
-      state.isCodeBlockJson = false;
-      state.currentTextId = `${state.sessionId}-text-${state.cardCount}`;
-      continue;
+      next.splice(insertAt, 0, card);
+      insertAt += 1;
     }
-    if (isComplete) {
-      if (state.phase === 'execute') {
-        var _finalizeExecutePhase = finalizeExecutePhase(messages, state),
-          nextMessages = _finalizeExecutePhase.messages,
-          rest = _finalizeExecutePhase.rest;
-        messages = nextMessages;
-        state.buffer = rest;
-        state.executeJsonBuffer = '';
-        state.phase = 'text';
-        state.isCodeBlockJson = false;
-        state.prependLeadingBrace = false;
-        state.currentTextId = `${state.sessionId}-text-${state.cardCount}`;
-      } else if (state.buffer || state.currentTextId) {
-        var leakedText = getTextSegmentContent(messages, state.currentTextId);
-        var combined = `${leakedText}${state.buffer}`;
-        if (looksLikeExecuteJson(combined)) {
-          var _tryCreateCardFromRaw2 = tryCreateCardFromRawJson(combined, state.sessionId, state.cardCount),
-            _card = _tryCreateCardFromRaw2.card;
-          if (_card) {
-            messages = removeTextSegment(messages, state.currentTextId);
-            messages = appendOrMergeCard(messages, _card, state.sessionId);
-            state.cardCount += 1;
-            state.buffer = '';
-          } else if (state.buffer && state.currentTextId) {
-            messages = upsertTextSegment(messages, state.currentTextId, state.buffer, false);
-            state.buffer = '';
-          }
-        } else if (state.buffer && state.currentTextId) {
-          messages = upsertTextSegment(messages, state.currentTextId, state.buffer, false);
-          state.buffer = '';
-        }
+    return next;
+  };
+  var materializeAllJsonCardsInMessages = function materializeAllJsonCardsInMessages(messages) {
+    var next = messages;
+    var textMessages = next.filter(function (item) {
+      return item.type === 'text' && item.role === 'assistant' && !item.isStreaming;
+    });
+    for (var textMessage of textMessages) {
+      next = materializeJsonCardsFromText(next, textMessage.id, getSessionIdFromTextId(textMessage.id));
+    }
+    return next;
+  };
+  var processStreamChunk = function processStreamChunk(prev, state, chunk, isComplete, options) {
+    var messages = prev;
+    if (chunk && state.currentTextId) {
+      messages = upsertStreamText(messages, state.currentTextId, chunk, !isComplete, options);
+      if (options != null && options.confirmTarget) {
+        messages = removeTextSegment(messages, state.currentTextId);
       }
-      if (state.currentTextId) {
+    }
+    if (isComplete && state.currentTextId) {
+      if (!(options != null && options.confirmTarget)) {
         messages = finalizeTextSegment(messages, state.currentTextId);
       }
+      messages = materializeJsonCardsFromText(messages, state.currentTextId, state.sessionId);
     }
     return {
       messages: messages,
@@ -268388,7 +279135,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var isSpecialCardMessage = function isSpecialCardMessage(wsMessage) {
     var data = parseWSMessageData(wsMessage.data);
     var messageType = (data == null ? void 0 : data.type) || (data == null ? void 0 : data.messageType);
-    return messageType === 'phoneChange' || messageType === 'confirm' || messageType === 'videoGuide';
+    return messageType === 'confirm' || messageType === 'videoGuide' || (data == null ? void 0 : data.pageType) !== undefined;
   };
   var mapWSMessageToChatMessage = function mapWSMessageToChatMessage(wsMessage) {
     var content = wsMessage.content,
@@ -268396,43 +279143,34 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var data = parseWSMessageData(rawData);
     var messageType = (data == null ? void 0 : data.type) || (data == null ? void 0 : data.messageType);
     var messageId = getStreamMessageId(wsMessage);
-    if (messageType === 'phoneChange') {
-      return {
-        id: messageId,
-        role: 'assistant',
-        type: 'phoneChange',
-        intro: (data == null ? void 0 : data.intro) || content,
-        maskedPhone: data == null ? void 0 : data.maskedPhone,
-        pageType: data == null ? void 0 : data.pageType
-      };
-    }
-    if (messageType === 'videoGuide') {
+    if (data) {
       var _data$pageType;
-      var pageType = (_data$pageType = data == null ? void 0 : data.pageType) != null ? _data$pageType : 13;
-      var _parseVideoGuideMedia2 = parseVideoGuideMedia(data || {}, pageType),
-        videoUrl = _parseVideoGuideMedia2.videoUrl,
-        posterUrl = _parseVideoGuideMedia2.posterUrl;
-      return {
-        id: messageId,
-        role: 'assistant',
-        type: 'videoGuide',
-        intro: (data == null ? void 0 : data.intro) || (data == null ? void 0 : data.message) || content,
-        videoUrl: (data == null ? void 0 : data.videoUrl) || videoUrl,
-        posterUrl: (data == null ? void 0 : data.posterUrl) || (data == null ? void 0 : data.poster) || posterUrl,
-        pageType: pageType
-      };
+      var pageType = (_data$pageType = data.pageType) != null ? _data$pageType : messageType === 'confirm' ? 4 : messageType === 'videoGuide' ? 13 : undefined;
+      if (pageType !== undefined) {
+        var card = (0, _$$_REQUIRE(_dependencyMap[6], "D:\\xqkj\\bokeapp\\src/pages/aiAssistant/utils/extractJsonCardsFromMarkdown").mapExecutePayloadToCard)(Object.assign({}, data, {
+          pageType: pageType
+        }), messageId);
+        if ((card == null ? void 0 : card.type) === 'confirm') {
+          return Object.assign({}, card, {
+            content: content || data.content || data.message || ''
+          });
+        }
+        if ((card == null ? void 0 : card.type) === 'videoGuide') {
+          return Object.assign({}, card, {
+            intro: data.intro || data.message || content || card.intro
+          });
+        }
+        return card;
+      }
     }
     if (messageType === 'confirm') {
-      if (data) {
-        return Object.assign({}, mapConfirmPayloadToCard(data, messageId), {
-          content: content || data.content || data.message || ''
-        });
-      }
       return {
         id: messageId,
         role: 'assistant',
         type: 'confirm',
-        content: content || ''
+        content: content || '',
+        sessionId: messageId,
+        replyId: messageId
       };
     }
     return null;
@@ -268452,7 +279190,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       id: fallbackId,
       role: 'assistant',
       type: 'confirm',
-      content: content || '',
+      content: content || '是否执行？',
       sessionId: fallbackId,
       replyId: fallbackId
     };
@@ -268469,6 +279207,73 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return msg.type === 'text' && msg.confirm && !msg.confirm.rejected && !msg.confirm.submitted || msg.type === 'confirm' && !msg.submitted;
     });
   };
+  var findConfirmIndex = function findConfirmIndex(messages, target) {
+    var directIndex = messages.findIndex(function (msg) {
+      return msg.type === 'confirm' && matchConfirmMessage(msg, target);
+    });
+    if (directIndex >= 0) return directIndex;
+
+    // 后端偶尔返回新的 sessionId；仅在候选卡片唯一时回退，避免串到旧确认卡片。
+    var submittedIndexes = messages.reduce(function (indexes, msg, index) {
+      if (msg.type === 'confirm' && msg.submitted && !msg.rejected) indexes.push(index);
+      return indexes;
+    }, []);
+    return submittedIndexes.length === 1 ? submittedIndexes[0] : -1;
+  };
+  var isTextForConfirmTarget = function isTextForConfirmTarget(message, target) {
+    var sessionId = getSessionIdFromTextId(message.id);
+    return sessionId === target.sessionId || message.id === target.sessionId;
+  };
+
+  /** 确认后将 confirm 卡片之后的所有助手文本合并进卡片，并标记执行完成 */
+  var consolidateConfirmReplyMessages = function consolidateConfirmReplyMessages(messages, target) {
+    var _confirm$replyContent;
+    var confirmIndex = findConfirmIndex(messages, target);
+    if (confirmIndex < 0) return messages;
+    var confirm = messages[confirmIndex];
+    var textIdsToRemove = [];
+    var textParts = [];
+    if ((_confirm$replyContent = confirm.replyContent) != null && _confirm$replyContent.trim()) {
+      textParts.push(confirm.replyContent.trim());
+    }
+    for (var i = confirmIndex + 1; i < messages.length; i++) {
+      var _msg$content2;
+      var msg = messages[i];
+      if ((msg == null ? void 0 : msg.type) === 'text' && msg.role === 'assistant' && (_msg$content2 = msg.content) != null && _msg$content2.trim() && isTextForConfirmTarget(msg, target)) {
+        textParts.push(msg.content.trim());
+        textIdsToRemove.push(msg.id);
+      }
+    }
+    var replyContent = textParts.join('\n\n');
+    var next = messages.filter(function (msg) {
+      return !textIdsToRemove.includes(msg.id);
+    });
+    var newConfirmIndex = next.findIndex(function (msg) {
+      return msg.id === confirm.id;
+    });
+    if (newConfirmIndex < 0) return next;
+    next[newConfirmIndex] = Object.assign({}, next[newConfirmIndex], {
+      processing: false,
+      isReplyStreaming: false,
+      replyContent: replyContent || confirm.replyContent || '',
+      submitted: true,
+      approved: true,
+      rejected: false
+    });
+    return next;
+  };
+  var shouldConsolidateConfirmReply = function shouldConsolidateConfirmReply(messages, target) {
+    var _confirm$replyContent2;
+    var confirmIndex = findConfirmIndex(messages, target);
+    if (confirmIndex < 0) return false;
+    var confirm = messages[confirmIndex];
+    if (confirm.approved) return false;
+    var hasTextsAfter = messages.slice(confirmIndex + 1).some(function (msg) {
+      var _msg$content3;
+      return msg.type === 'text' && msg.role === 'assistant' && ((_msg$content3 = msg.content) == null ? void 0 : _msg$content3.trim()) && isTextForConfirmTarget(msg, target);
+    });
+    return Boolean(((_confirm$replyContent2 = confirm.replyContent) == null ? void 0 : _confirm$replyContent2.trim()) || hasTextsAfter);
+  };
   var useAIChat = exports.useAIChat = function useAIChat(options) {
     var _options$initialMessa;
     var _useState = (0, _react.useState)((_options$initialMessa = options == null ? void 0 : options.initialMessages) != null ? _options$initialMessa : []),
@@ -268483,65 +279288,122 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
       isLoading = _useState6[0],
       setIsLoading = _useState6[1];
-    var chatKeyRef = (0, _react.useRef)(null);
     var conversationIdRef = (0, _react.useRef)(null);
     var sessionIdRef = (0, _react.useRef)(null);
     var streamingMessageIdRef = (0, _react.useRef)(null);
     var streamParserRef = (0, _react.useRef)(null);
     var pendingConfirmRef = (0, _react.useRef)(null);
+    var lastApprovedConfirmTargetRef = (0, _react.useRef)(null);
     var optionsRef = (0, _react.useRef)(options);
     var messagesRef = (0, _react.useRef)(messages);
+    var closeTimerRef = (0, _react.useRef)(null);
+    var connectionEpochRef = (0, _react.useRef)(0);
     (0, _react.useEffect)(function () {
       optionsRef.current = options;
     }, [options]);
-    (0, _react.useEffect)(function () {
-      messagesRef.current = messages;
-    }, [messages]);
-    var finalizeStream = (0, _react.useCallback)(function () {
-      setIsLoading(false);
+
+    /**
+     * WebSocket 回调可能在 React 提交 state 前连续触发。
+     * 同步更新 ref 可避免后一个 chunk 读取到旧消息，也让 end 分支拿到真实最终结果。
+     */
+    var commitMessages = (0, _react.useCallback)(function (updater) {
+      var next = updater(messagesRef.current);
+      messagesRef.current = next;
+      setMessages(next);
+      return next;
+    }, []);
+    var abortActiveAssistantStream = (0, _react.useCallback)(function () {
+      var _streamParserRef$curr;
+      var textId = (_streamParserRef$curr = streamParserRef.current) == null ? void 0 : _streamParserRef$curr.currentTextId;
       streamingMessageIdRef.current = null;
       streamParserRef.current = null;
-      setMessages(function (prev) {
-        return finalizeStreamingMessages(prev);
+      commitMessages(function (prev) {
+        return textId ? removeTextSegment(prev, textId) : removeEmptyStreamingAssistants(prev);
       });
+    }, [commitMessages]);
+    var clearScheduledClose = (0, _react.useCallback)(function () {
+      if (closeTimerRef.current) {
+        clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = null;
+      }
     }, []);
+    var scheduleSocketClose = (0, _react.useCallback)(function () {
+      clearScheduledClose();
+      closeTimerRef.current = setTimeout(function () {
+        // 主动关闭前使旧连接回调失效，避免 onClose 再次修改当前流。
+        connectionEpochRef.current += 1;
+        _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.close();
+        setIsConnected(false);
+        closeTimerRef.current = null;
+      }, 100);
+    }, [clearScheduledClose]);
+    var getPendingConfirmTarget = function getPendingConfirmTarget() {
+      var pending = pendingConfirmRef.current;
+      if (!pending) return undefined;
+      return {
+        sessionId: pending.sessionId,
+        confirmMessageId: pending.confirmMessageId
+      };
+    };
+    var finalizeStream = (0, _react.useCallback)(function () {
+      setIsLoading(false);
+      commitMessages(function (prev) {
+        var next = materializeAllJsonCardsInMessages(finalizeStreamingMessages(prev));
+        next = removeEmptyStreamingAssistants(next);
+        var pending = pendingConfirmRef.current;
+        if (pending) {
+          next = applyConfirmResetProcessingState(next, {
+            sessionId: pending.sessionId,
+            confirmMessageId: pending.confirmMessageId
+          });
+        }
+        streamParserRef.current = null;
+        streamingMessageIdRef.current = null;
+        pendingConfirmRef.current = null;
+        lastApprovedConfirmTargetRef.current = null;
+        return next;
+      });
+    }, [commitMessages]);
     var appendStreamContent = (0, _react.useCallback)(function (wsMessage, chunk) {
       var isComplete = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       var streamId = getStreamMessageId(wsMessage, streamingMessageIdRef.current);
       streamingMessageIdRef.current = streamId;
-      setMessages(function (prev) {
-        if (!streamParserRef.current || streamParserRef.current.sessionId !== streamId) {
-          streamParserRef.current = createStreamParserState(streamId, getNextTextSegmentIndex(prev, streamId));
-        }
-        var parserSnapshot = Object.assign({}, streamParserRef.current, {
-          buffer: streamParserRef.current.buffer,
-          executeJsonBuffer: streamParserRef.current.executeJsonBuffer
-        });
-        var _processStreamChunk = processStreamChunk(prev, parserSnapshot, chunk, isComplete),
+      commitMessages(function (prev) {
+        var adopted = adoptStreamId(prev, streamParserRef.current, streamId);
+        var confirmTarget = getPendingConfirmTarget();
+        var streamOptions = confirmTarget ? {
+          confirmTarget: confirmTarget
+        } : undefined;
+        var _processStreamChunk = processStreamChunk(adopted.messages, adopted.state, chunk, isComplete, streamOptions),
           messages = _processStreamChunk.messages,
           state = _processStreamChunk.state;
         streamParserRef.current = state;
         return messages;
       });
-    }, []);
+    }, [commitMessages]);
     var finishPendingConfirmReject = (0, _react.useCallback)(function (wsMessage) {
       var pending = pendingConfirmRef.current;
       if (!pending || pending.approved) return;
       var parsed = parseWSMessageData(wsMessage.data);
-      setMessages(function (prev) {
-        return applyConfirmRejectedState(prev, pending.sessionId, {
+      var target = {
+        sessionId: pending.sessionId,
+        confirmMessageId: pending.confirmMessageId
+      };
+      commitMessages(function (prev) {
+        var next = finalizeConfirmReply(prev, target);
+        next = applyConfirmRejectedState(next, target, {
           rejectedMessage: (parsed == null ? void 0 : parsed.rejectedMessage) || wsMessage.content,
           rejectedHint: parsed == null ? void 0 : parsed.rejectedHint
         });
+        return next;
       });
-      (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+      (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
         title: '已取消',
         icon: 'none'
       });
       pendingConfirmRef.current = null;
-    }, []);
+    }, [commitMessages]);
     var handleWSMessage = (0, _react.useCallback)(function (wsMessage) {
-      console.log('wsMessage', wsMessage);
       var type = wsMessage.type,
         content = wsMessage.content,
         conversationId = wsMessage.conversationId,
@@ -268553,18 +279415,19 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         sessionIdRef.current = sessionId;
       }
       if (type === 'start') {
-        var _pendingConfirmRef$cu;
         setIsLoading(true);
-        (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils/haptics").triggerLightHaptic)();
-        if ((_pendingConfirmRef$cu = pendingConfirmRef.current) != null && _pendingConfirmRef$cu.approved) {
-          (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
-            title: '已确认执行',
-            icon: 'none'
-          });
-        }
+        (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/haptics").triggerLightHaptic)();
         var streamId = getStreamMessageId(wsMessage, streamingMessageIdRef.current);
         streamingMessageIdRef.current = streamId;
-        streamParserRef.current = createStreamParserState(streamId, getNextTextSegmentIndex(messagesRef.current, streamId));
+        if (!pendingConfirmRef.current) {
+          commitMessages(function (prev) {
+            var adopted = adoptStreamId(prev, streamParserRef.current, streamId);
+            streamParserRef.current = adopted.state;
+            return adopted.messages;
+          });
+        } else {
+          streamParserRef.current = createStreamParserState(streamId, getNextTextSegmentIndex(messagesRef.current, streamId));
+        }
         return;
       }
       if (type === 'confirm') {
@@ -268572,8 +279435,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         var cardMessage = mapTopLevelConfirmMessage(wsMessage);
         if (cardMessage) {
           var _sessionId = getStreamMessageId(wsMessage);
-          setMessages(function (prev) {
-            return mergeConfirmCardIntoMessages(finalizeStreamingMessages(prev), cardMessage, _sessionId);
+          commitMessages(function (prev) {
+            var finalized = finalizeStreamingMessages(prev);
+            finalized = removeEmptyStreamingAssistants(finalized);
+            return mergeConfirmCardIntoMessages(finalized, cardMessage, _sessionId);
           });
         }
         streamingMessageIdRef.current = null;
@@ -268585,8 +279450,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           var _cardMessage = mapWSMessageToChatMessage(wsMessage);
           if (_cardMessage) {
             var _sessionId2 = getStreamMessageId(wsMessage);
-            setMessages(function (prev) {
+            commitMessages(function (prev) {
               var finalized = finalizeStreamingMessages(prev);
+              finalized = removeEmptyStreamingAssistants(finalized);
               if (_cardMessage.type === 'confirm') {
                 return mergeConfirmCardIntoMessages(finalized, _cardMessage, _sessionId2);
               }
@@ -268604,15 +279470,20 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       if (type === 'error') {
         if (pendingConfirmRef.current && !pendingConfirmRef.current.approved) {
           finishPendingConfirmReject(wsMessage);
-        } else {
-          pendingConfirmRef.current = null;
+          streamingMessageIdRef.current = null;
+          streamParserRef.current = null;
+          setIsLoading(false);
+          return;
         }
+        pendingConfirmRef.current = null;
+        lastApprovedConfirmTargetRef.current = null;
         var messageId = getStreamMessageId(wsMessage, streamingMessageIdRef.current);
         streamingMessageIdRef.current = null;
         streamParserRef.current = null;
         setIsLoading(false);
-        setMessages(function (prev) {
+        commitMessages(function (prev) {
           var finalized = finalizeStreamingMessages(prev);
+          finalized = removeEmptyStreamingAssistants(finalized);
           var index = finalized.findIndex(function (item) {
             return item.id === messageId && (item.type === 'text' || item.type === 'error');
           });
@@ -268632,104 +279503,144 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return;
       }
       if (type === 'end') {
-        var _pendingConfirmRef$cu2;
         var _streamId = getStreamMessageId(wsMessage, streamingMessageIdRef.current);
-        var finalizedMessages = [];
-        setMessages(function (prev) {
-          if (!streamParserRef.current || streamParserRef.current.sessionId !== _streamId) {
-            streamParserRef.current = createStreamParserState(_streamId, getNextTextSegmentIndex(prev, _streamId));
-          }
-          var parserSnapshot = Object.assign({}, streamParserRef.current, {
-            buffer: streamParserRef.current.buffer,
-            executeJsonBuffer: streamParserRef.current.executeJsonBuffer
-          });
-          var _processStreamChunk2 = processStreamChunk(prev, parserSnapshot, content || '', true),
+        var pendingConfirm = pendingConfirmRef.current;
+        var parserAtEnd = streamParserRef.current ? cloneParserSnapshot(streamParserRef.current) : null;
+        var finalizedMessages = commitMessages(function (prev) {
+          var _ref, _ref2, _ref3, _ref4;
+          var parserSnapshot = resolveStreamParser(prev, _streamId, parserAtEnd);
+          var confirmTarget = (_ref = (_ref2 = pendingConfirm ? {
+            sessionId: pendingConfirm.sessionId,
+            confirmMessageId: pendingConfirm.confirmMessageId
+          } : undefined) != null ? _ref2 : lastApprovedConfirmTargetRef.current) != null ? _ref : getPendingConfirmTarget();
+          var streamOptions = confirmTarget ? {
+            confirmTarget: confirmTarget
+          } : undefined;
+          var _processStreamChunk2 = processStreamChunk(prev, parserSnapshot, content || '', true, streamOptions),
             messages = _processStreamChunk2.messages;
-          finalizedMessages = finalizeStreamingMessages(messages);
-          return finalizedMessages;
+          var nextMessages = materializeAllJsonCardsInMessages(finalizeStreamingMessages(messages));
+          nextMessages = removeEmptyStreamingAssistants(nextMessages);
+          var consolidateTarget = (_ref3 = (_ref4 = pendingConfirm != null && pendingConfirm.approved ? confirmTarget : undefined) != null ? _ref4 : lastApprovedConfirmTargetRef.current) != null ? _ref3 : undefined;
+          if (consolidateTarget) {
+            var shouldConsolidate = Boolean(pendingConfirm == null ? void 0 : pendingConfirm.approved) || shouldConsolidateConfirmReply(nextMessages, consolidateTarget);
+            if (shouldConsolidate) {
+              nextMessages = consolidateConfirmReplyMessages(nextMessages, consolidateTarget);
+              lastApprovedConfirmTargetRef.current = null;
+            }
+          }
+          streamParserRef.current = null;
+          streamingMessageIdRef.current = null;
+          return nextMessages;
         });
-        var isConfirmRejectResponse = Boolean(pendingConfirmRef.current) && !pendingConfirmRef.current.approved;
+        var isConfirmRejectResponse = Boolean(pendingConfirm) && !pendingConfirm.approved;
         if (isConfirmRejectResponse) {
           finishPendingConfirmReject(wsMessage);
-        } else if ((_pendingConfirmRef$cu2 = pendingConfirmRef.current) != null && _pendingConfirmRef$cu2.approved) {
+        } else if (pendingConfirm != null && pendingConfirm.approved) {
           pendingConfirmRef.current = null;
+          lastApprovedConfirmTargetRef.current = null;
         }
         setIsLoading(false);
-        streamingMessageIdRef.current = null;
-        streamParserRef.current = null;
-        (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils/haptics").triggerLightHaptic)();
+        (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/haptics").triggerLightHaptic)();
         if (isConfirmRejectResponse || !hasUnresolvedConfirm(finalizedMessages)) {
-          setTimeout(function () {
-            _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.close();
-            setIsConnected(false);
-          }, 100);
+          scheduleSocketClose();
         }
       }
-    }, [appendStreamContent, finalizeStream, finishPendingConfirmReject]);
+    }, [appendStreamContent, commitMessages, finishPendingConfirmReject, scheduleSocketClose]);
     var connectChatWebSocket = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref = (0, _asyncToGenerator2.default)(function* (requestParams, afterConnect) {
+      var _ref5 = (0, _asyncToGenerator2.default)(function* (requestParams, afterConnect) {
+        clearScheduledClose();
+        var connectionEpoch = ++connectionEpochRef.current;
         try {
           var _optionsRef$current;
           var params = Object.assign({}, requestParams, (_optionsRef$current = optionsRef.current) == null ? void 0 : _optionsRef$current.extraParams);
-          if (conversationIdRef.current) {
-            params['conversationId'] = conversationIdRef.current;
-          }
-          if (sessionIdRef.current) {
-            params['sessionId'] = sessionIdRef.current;
-          }
+          if (conversationIdRef.current) params['conversationId'] = conversationIdRef.current;
+          if (sessionIdRef.current) params['sessionId'] = sessionIdRef.current;
           var res = yield (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/services/ai").getUserSessionKey)(params);
+          if (connectionEpoch !== connectionEpochRef.current) return false;
           if (!res.success || !res.data) {
             setIsLoading(false);
-            pendingConfirmRef.current = null;
-            (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            if (!pendingConfirmRef.current) {
+              abortActiveAssistantStream();
+            } else {
+              pendingConfirmRef.current = null;
+            }
+            (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: res.message || '获取会话失败',
               icon: 'none'
             });
             return false;
           }
-          chatKeyRef.current = res.data;
           var wsUrl = getWebSocketUrl();
-          console.log('wsUrl====', wsUrl);
-          _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.connect({
+          if (connectionEpoch !== connectionEpochRef.current) return false;
+          if (!wsUrl) {
+            setIsLoading(false);
+            if (!pendingConfirmRef.current) {
+              abortActiveAssistantStream();
+            } else {
+              pendingConfirmRef.current = null;
+            }
+            (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+              title: 'WebSocket 地址无效',
+              icon: 'none'
+            });
+            return false;
+          }
+          _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.connect({
             url: wsUrl,
             chatKey: res.data,
             onOpen: function onOpen() {
+              if (connectionEpoch !== connectionEpochRef.current) return;
               setIsConnected(true);
               afterConnect == null || afterConnect();
             },
             onClose: function onClose() {
+              if (connectionEpoch !== connectionEpochRef.current) return;
               setIsConnected(false);
               finalizeStream();
             },
             onError: function onError() {
+              if (connectionEpoch !== connectionEpochRef.current) return;
               setIsConnected(false);
               setIsLoading(false);
+              if (!pendingConfirmRef.current) {
+                abortActiveAssistantStream();
+              }
               pendingConfirmRef.current = null;
-              (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+              lastApprovedConfirmTargetRef.current = null;
+              (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
                 title: '连接失败，请重试',
                 icon: 'none'
               });
             },
-            onMessage: handleWSMessage
+            onMessage: function onMessage(wsMessage) {
+              if (connectionEpoch !== connectionEpochRef.current) return;
+              handleWSMessage(wsMessage);
+            }
           });
           return true;
         } catch (error) {
+          if (connectionEpoch !== connectionEpochRef.current) return false;
           console.error('初始化 WebSocket 失败:', error);
           setIsLoading(false);
-          pendingConfirmRef.current = null;
-          (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
-            title: '发送失败，请重试',
+          if (!pendingConfirmRef.current) {
+            abortActiveAssistantStream();
+          } else {
+            pendingConfirmRef.current = null;
+          }
+          lastApprovedConfirmTargetRef.current = null;
+          (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            title: getErrorMessage(error, '发送失败，请重试'),
             icon: 'none'
           });
           return false;
         }
       });
       return function (_x, _x2) {
-        return _ref.apply(this, arguments);
+        return _ref5.apply(this, arguments);
       };
-    }(), [handleWSMessage, finalizeStream]);
+    }(), [abortActiveAssistantStream, clearScheduledClose, finalizeStream, handleWSMessage]);
     var initWebSocket = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref2 = (0, _asyncToGenerator2.default)(function* (message, sessionId) {
+      var _ref6 = (0, _asyncToGenerator2.default)(function* (message, sessionId) {
         yield connectChatWebSocket(Object.assign({
           message: message
         }, sessionId ? {
@@ -268737,86 +279648,102 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         } : {}));
       });
       return function (_x3, _x4) {
-        return _ref2.apply(this, arguments);
+        return _ref6.apply(this, arguments);
       };
     }(), [connectChatWebSocket]);
     var sendMessage = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref3 = (0, _asyncToGenerator2.default)(function* (content) {
+      var _ref7 = (0, _asyncToGenerator2.default)(function* (content) {
         var text = content.trim();
         if (!text) return;
+        if (pendingConfirmRef.current) {
+          (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            title: '请等待当前操作完成',
+            icon: 'none'
+          });
+          return;
+        }
         var userMessage = {
           id: createMessageId(),
           role: 'user',
           type: 'text',
           content: text
         };
-        setMessages(function (prev) {
-          return [].concat((0, _toConsumableArray2.default)(prev), [userMessage]);
+        var streamId = createMessageId();
+        streamingMessageIdRef.current = streamId;
+        commitMessages(function (prev) {
+          var withUser = [].concat((0, _toConsumableArray2.default)(prev), [userMessage]);
+          var begun = beginAssistantStream(withUser, streamId);
+          streamParserRef.current = begun.state;
+          return begun.messages;
         });
         setIsLoading(true);
         try {
-          if (_$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.isConnected()) {
-            _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.close();
+          if (_$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.isConnected()) {
+            _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.close();
             setIsConnected(false);
           }
           yield initWebSocket(text);
         } catch (error) {
           console.error('发送消息失败:', error);
+          abortActiveAssistantStream();
           setIsLoading(false);
         }
       });
       return function (_x5) {
-        return _ref3.apply(this, arguments);
+        return _ref7.apply(this, arguments);
       };
-    }(), [initWebSocket]);
+    }(), [abortActiveAssistantStream, commitMessages, initWebSocket]);
     var sendVoiceMessage = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref4 = (0, _asyncToGenerator2.default)(function* (filePath) {
+      var _ref8 = (0, _asyncToGenerator2.default)(function* (filePath) {
         if (!filePath) {
-          (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: '录音文件无效',
             icon: 'none'
           });
           return;
         }
-        console.log('filePath====', filePath);
         try {
           var _log$data;
           var log = yield (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/services/ai").userVoiceToText)(filePath);
-          console.log('log====', log);
           if (!log.success) {
-            (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: log.message || log.msg || '识别失败',
               icon: 'none'
             });
             return;
           }
           if (!((_log$data = log.data) != null && _log$data.length)) {
-            (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: '未识别到语音内容',
               icon: 'none'
             });
             return;
           }
           yield sendMessage(log.data);
-        } catch (err) {
-          (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
-            title: (err == null ? void 0 : err.message) || '语音识别失败',
+        } catch (error) {
+          (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            title: getErrorMessage(error, '语音识别失败'),
             icon: 'none'
           });
         }
       });
       return function (_x6) {
-        return _ref4.apply(this, arguments);
+        return _ref8.apply(this, arguments);
       };
     }(), [sendMessage]);
     var confirmToolCall = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref5 = (0, _asyncToGenerator2.default)(function* (sessionId, params) {
+      var _ref9 = (0, _asyncToGenerator2.default)(function* (sessionId, params) {
+        if (pendingConfirmRef.current) return;
         var approved = (params == null ? void 0 : params.approved) !== false;
-        setMessages(function (prev) {
-          return applyConfirmSubmittedState(prev, sessionId, approved);
+        var target = {
+          sessionId: sessionId,
+          confirmMessageId: params == null ? void 0 : params.confirmMessageId
+        };
+        commitMessages(function (prev) {
+          return applyConfirmProcessingState(prev, target);
         });
         var sendConfirmPayload = function sendConfirmPayload() {
-          _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.send({
+          _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.send({
             sessionId: sessionId,
             approved: approved
           });
@@ -268824,10 +279751,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         try {
           pendingConfirmRef.current = {
             sessionId: sessionId,
-            approved: approved
+            approved: approved,
+            confirmMessageId: params == null ? void 0 : params.confirmMessageId
           };
+          lastApprovedConfirmTargetRef.current = approved ? target : null;
           setIsLoading(true);
-          if (_$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.isConnected()) {
+          if (_$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.isConnected()) {
             sendConfirmPayload();
             return;
           }
@@ -268837,37 +279766,55 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }, sendConfirmPayload);
           if (!connected) {
             pendingConfirmRef.current = null;
+            lastApprovedConfirmTargetRef.current = null;
             setIsLoading(false);
+            commitMessages(function (prev) {
+              return applyConfirmResetProcessingState(prev, target);
+            });
           }
-        } catch (err) {
+        } catch (error) {
           pendingConfirmRef.current = null;
+          lastApprovedConfirmTargetRef.current = null;
           setIsLoading(false);
-          (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
-            title: (err == null ? void 0 : err.message) || '操作失败',
+          commitMessages(function (prev) {
+            return applyConfirmResetProcessingState(prev, target);
+          });
+          (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            title: getErrorMessage(error, '操作失败'),
             icon: 'none'
           });
         }
       });
       return function (_x7, _x8) {
-        return _ref5.apply(this, arguments);
+        return _ref9.apply(this, arguments);
       };
-    }(), [connectChatWebSocket]);
+    }(), [commitMessages, connectChatWebSocket]);
     var disconnect = (0, _react.useCallback)(function () {
-      _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.close();
+      clearScheduledClose();
+      connectionEpochRef.current += 1;
+      _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.close();
       setIsConnected(false);
-      chatKeyRef.current = null;
+      setIsLoading(false);
       conversationIdRef.current = null;
+      sessionIdRef.current = null;
+      streamingMessageIdRef.current = null;
+      streamParserRef.current = null;
       pendingConfirmRef.current = null;
-    }, []);
+      lastApprovedConfirmTargetRef.current = null;
+    }, [clearScheduledClose]);
     var clearMessages = (0, _react.useCallback)(function () {
-      setMessages([]);
-      conversationIdRef.current = null;
-    }, []);
+      disconnect();
+      commitMessages(function () {
+        return [];
+      });
+    }, [commitMessages, disconnect]);
     (0, _react.useEffect)(function () {
       return function () {
-        disconnect();
+        clearScheduledClose();
+        connectionEpochRef.current += 1;
+        _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.close();
       };
-    }, [disconnect]);
+    }, [clearScheduledClose]);
     return {
       messages: messages,
       isConnected: isConnected,
@@ -268880,344 +279827,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       reconnect: initWebSocket
     };
   };
-},1689,[1,2,25,7,42,1007,1683,1190,1690,1697,1698],"src\\hooks\\useAIChat.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.triggerHoldToTalkTransitionHaptic = triggerHoldToTalkTransitionHaptic;
-  exports.triggerLightHaptic = triggerLightHaptic;
-  exports.triggerTransitionHaptic = triggerTransitionHaptic;
-  var _asyncToGenerator2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
-  var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
-  var HAPTIC_OPTIONS = {
-    enableVibrateFallback: true,
-    ignoreAndroidSystemSettings: false
-  };
-  var IOS_HAPTIC_TYPE_MAP = {
-    impactLight: 'light',
-    impactMedium: 'medium',
-    impactHeavy: 'heavy',
-    notificationWarning: 'warning',
-    notificationSuccess: 'success',
-    selection: 'selection'
-  };
-  var recordingHapticQueue = Promise.resolve();
-  function enqueueRecordingHaptic(task) {
-    recordingHapticQueue = recordingHapticQueue.then(task).catch(function () {});
-  }
-  function waitNextFrame() {
-    return new Promise(function (resolve) {
-      requestAnimationFrame(function () {
-        return resolve();
-      });
-    });
-  }
-  function vibrateFallback() {
-    if (_reactNative.Platform.OS === 'ios' || _reactNative.Platform.OS === 'android') {
-      _reactNative.Vibration.vibrate(20);
-    }
-  }
-  function hasNativeHapticModule() {
-    try {
-      return _reactNative.TurboModuleRegistry.get('RNHapticFeedback') != null || _reactNative.NativeModules.RNHapticFeedback != null;
-    } catch (_unused) {
-      return false;
-    }
-  }
-  function triggerUIKitHapticIOS(rnType) {
-    var _IOS_HAPTIC_TYPE_MAP$;
-    var appModule = _reactNative.NativeModules.AppModule;
-    var uiType = (_IOS_HAPTIC_TYPE_MAP$ = IOS_HAPTIC_TYPE_MAP[rnType]) != null ? _IOS_HAPTIC_TYPE_MAP$ : 'heavy';
-    if (appModule != null && appModule.triggerUIKitHaptic) {
-      appModule.triggerUIKitHaptic(uiType);
-      return;
-    }
-    vibrateFallback();
-  }
-  function triggerHeavyHapticDuringRecording() {
-    return _triggerHeavyHapticDuringRecording.apply(this, arguments);
-  }
-  function _triggerHeavyHapticDuringRecording() {
-    _triggerHeavyHapticDuringRecording = (0, _asyncToGenerator2.default)(function* () {
-      var recorder = _reactNative.NativeModules.RNAudioRecorderPlayer;
-      var appModule = _reactNative.NativeModules.AppModule;
-      var paused = false;
-      if (recorder != null && recorder.pauseRecorder) {
-        try {
-          yield recorder.pauseRecorder();
-          paused = true;
-        } catch (_unused2) {
-          // ignore
-        }
-      }
-      if (appModule != null && appModule.triggerUIKitHapticWithSessionRelease) {
-        appModule.triggerUIKitHapticWithSessionRelease('heavy');
-      } else {
-        triggerUIKitHapticIOS('impactHeavy');
-      }
-      yield waitNextFrame();
-      if (paused && recorder != null && recorder.resumeRecorder) {
-        try {
-          yield recorder.resumeRecorder();
-        } catch (_unused3) {
-          // ignore
-        }
-      }
-    });
-    return _triggerHeavyHapticDuringRecording.apply(this, arguments);
-  }
-  function triggerNative(type) {
-    if (_reactNative.Platform.OS === 'ios') {
-      triggerUIKitHapticIOS(type);
-      return;
-    }
-    if (_$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY) {
-      var _mod$trigger, _mod$default;
-      var _mod = _$$_REQUIRE(_dependencyMap[4], "@react-native-oh-tpl/react-native-haptic-feedback");
-      var trigger = (_mod$trigger = _mod.trigger) != null ? _mod$trigger : (_mod$default = _mod.default) == null ? void 0 : _mod$default.trigger;
-      if (trigger) {
-        trigger(type, HAPTIC_OPTIONS);
-        return;
-      }
-      vibrateFallback();
-      return;
-    }
-    if (!hasNativeHapticModule()) {
-      vibrateFallback();
-      return;
-    }
-    var mod = _$$_REQUIRE(_dependencyMap[5], "react-native-haptic-feedback");
-    mod.default.trigger(type, HAPTIC_OPTIONS);
-  }
-  function triggerLightHaptic() {
-    try {
-      triggerNative('impactHeavy');
-    } catch (error) {
-      console.warn('[haptics] trigger failed', error);
-      vibrateFallback();
-    }
-  }
-
-  /** 按住说话：移入/移出取消区时的震动 */
-  function triggerHoldToTalkTransitionHaptic(_toCancel) {
-    var recorderActive = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-    try {
-      if (_reactNative.Platform.OS === 'ios' && recorderActive) {
-        enqueueRecordingHaptic(triggerHeavyHapticDuringRecording);
-        return;
-      }
-      if (_reactNative.Platform.OS === 'ios') {
-        triggerUIKitHapticIOS('impactHeavy');
-        return;
-      }
-      triggerNative('impactHeavy');
-      _reactNative.Vibration.vibrate(25);
-    } catch (error) {
-      console.warn('[haptics] hold transition failed', error);
-      vibrateFallback();
-    }
-  }
-
-  /** @deprecated 请直接使用 triggerLightHaptic */
-  function triggerTransitionHaptic() {
-    triggerLightHaptic();
-  }
-},1690,[1,2,3,1186,1691,1694],"src\\utils\\haptics.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  var _exportNames = {
-    trigger: true
-  };
-  exports.trigger = exports.default = void 0;
-  var _createClass2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/createClass"));
-  var _classCallCheck2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/classCallCheck"));
-  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
-  Object.keys(_$$_REQUIRE(_dependencyMap[4], "./types")).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[4], "./types")[key]) return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return _$$_REQUIRE(_dependencyMap[4], "./types")[key];
-      }
-    });
-  });
-  var defaultOptions = {
-    enableVibrateFallback: false,
-    ignoreAndroidSystemSettings: false
-  };
-  var RNReactNativeHapticFeedback = /*#__PURE__*/(0, _createClass2.default)(function RNReactNativeHapticFeedback() {
-    (0, _classCallCheck2.default)(this, RNReactNativeHapticFeedback);
-  });
-  RNReactNativeHapticFeedback.trigger = function () {
-    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _$$_REQUIRE(_dependencyMap[4], "./types").HapticFeedbackTypes.selection;
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var triggerOptions = createTriggerOptions(options);
-    try {
-      var isTurboModuleEnabled = global.__turboModuleProxy != null;
-      var hapticFeedback = isTurboModuleEnabled ? _$$_REQUIRE(_dependencyMap[5], "./NativeHapticFeedback").default : _reactNative.NativeModules.RNHapticFeedback;
-      hapticFeedback.trigger(type, triggerOptions);
-    } catch (err) {
-      console.warn("RNReactNativeHapticFeedback is not available");
-    }
-  };
-  var createTriggerOptions = function createTriggerOptions(options) {
-    // if options is a boolean we're using an api <=1.6 and we should pass use it to set the enableVibrateFallback option
-    if (typeof options === "boolean") {
-      return Object.assign({}, defaultOptions, {
-        enableVibrateFallback: options
-      });
-    } else {
-      return Object.assign({}, defaultOptions, options);
-    }
-  };
-  var trigger = exports.trigger = RNReactNativeHapticFeedback.trigger;
-  var _default = exports.default = RNReactNativeHapticFeedback;
-},1691,[1,14,13,3,1692,1693],"node_modules\\@react-native-oh-tpl\\react-native-haptic-feedback\\src\\index.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.HapticFeedbackTypes = void 0;
-  var HapticFeedbackTypes = exports.HapticFeedbackTypes = /*#__PURE__*/function (HapticFeedbackTypes) {
-    HapticFeedbackTypes["selection"] = "selection";
-    HapticFeedbackTypes["impactLight"] = "impactLight";
-    HapticFeedbackTypes["impactMedium"] = "impactMedium";
-    HapticFeedbackTypes["impactHeavy"] = "impactHeavy";
-    HapticFeedbackTypes["rigid"] = "rigid";
-    HapticFeedbackTypes["soft"] = "soft";
-    HapticFeedbackTypes["notificationSuccess"] = "notificationSuccess";
-    HapticFeedbackTypes["notificationWarning"] = "notificationWarning";
-    HapticFeedbackTypes["notificationError"] = "notificationError";
-    HapticFeedbackTypes["clockTick"] = "clockTick";
-    HapticFeedbackTypes["contextClick"] = "contextClick";
-    HapticFeedbackTypes["keyboardPress"] = "keyboardPress";
-    HapticFeedbackTypes["keyboardRelease"] = "keyboardRelease";
-    HapticFeedbackTypes["keyboardTap"] = "keyboardTap";
-    HapticFeedbackTypes["longPress"] = "longPress";
-    HapticFeedbackTypes["textHandleMove"] = "textHandleMove";
-    HapticFeedbackTypes["virtualKey"] = "virtualKey";
-    HapticFeedbackTypes["virtualKeyRelease"] = "virtualKeyRelease";
-    HapticFeedbackTypes["effectClick"] = "effectClick";
-    HapticFeedbackTypes["effectDoubleClick"] = "effectDoubleClick";
-    HapticFeedbackTypes["effectHeavyClick"] = "effectHeavyClick";
-    HapticFeedbackTypes["effectTick"] = "effectTick";
-    return HapticFeedbackTypes;
-  }({});
-},1692,[],"node_modules\\@react-native-oh-tpl\\react-native-haptic-feedback\\src\\types.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = void 0;
-  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
-  var _default = exports.default = _reactNative.TurboModuleRegistry.get("HapticFeedbackNativeModule");
-},1693,[3],"node_modules\\@react-native-oh-tpl\\react-native-haptic-feedback\\src\\NativeHapticFeedback.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  "use strict";
-
-  var _createClass = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/createClass");
-  var _classCallCheck = _$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/classCallCheck");
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  var _exportNames = {
-    trigger: true
-  };
-  exports.trigger = exports.default = void 0;
-  var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
-  Object.keys(_$$_REQUIRE(_dependencyMap[3], "./types")).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[3], "./types")[key]) return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return _$$_REQUIRE(_dependencyMap[3], "./types")[key];
-      }
-    });
-  });
-  var defaultOptions = {
-    enableVibrateFallback: false,
-    ignoreAndroidSystemSettings: false
-  };
-  var RNReactNativeHapticFeedback = /*#__PURE__*/_createClass(function RNReactNativeHapticFeedback() {
-    _classCallCheck(this, RNReactNativeHapticFeedback);
-  });
-  RNReactNativeHapticFeedback.trigger = function () {
-    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _$$_REQUIRE(_dependencyMap[3], "./types").HapticFeedbackTypes.selection;
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var triggerOptions = createTriggerOptions(options);
-    try {
-      var isTurboModuleEnabled = global.__turboModuleProxy != null;
-      var hapticFeedback = isTurboModuleEnabled ? _$$_REQUIRE(_dependencyMap[4], "./NativeHapticFeedback").default : _reactNative.NativeModules.RNHapticFeedback;
-      hapticFeedback.trigger(type, triggerOptions);
-    } catch (err) {
-      console.warn("RNReactNativeHapticFeedback is not available");
-    }
-  };
-  var createTriggerOptions = function createTriggerOptions(options) {
-    // if options is a boolean we're using an api <=1.6 and we should pass use it to set the enableVibrateFallback option
-    if (typeof options === "boolean") {
-      return Object.assign({}, defaultOptions, {
-        enableVibrateFallback: options
-      });
-    } else {
-      return Object.assign({}, defaultOptions, options);
-    }
-  };
-  var trigger = exports.trigger = RNReactNativeHapticFeedback.trigger;
-  var _default = exports.default = RNReactNativeHapticFeedback;
-},1694,[14,13,3,1695,1696],"node_modules\\@react-native-oh-tpl\\react-native-haptic-feedback\\lib\\commonjs\\index.js");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  "use strict";
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.HapticFeedbackTypes = void 0;
-  var HapticFeedbackTypes = exports.HapticFeedbackTypes = /*#__PURE__*/function (HapticFeedbackTypes) {
-    HapticFeedbackTypes["selection"] = "selection";
-    HapticFeedbackTypes["impactLight"] = "impactLight";
-    HapticFeedbackTypes["impactMedium"] = "impactMedium";
-    HapticFeedbackTypes["impactHeavy"] = "impactHeavy";
-    HapticFeedbackTypes["rigid"] = "rigid";
-    HapticFeedbackTypes["soft"] = "soft";
-    HapticFeedbackTypes["notificationSuccess"] = "notificationSuccess";
-    HapticFeedbackTypes["notificationWarning"] = "notificationWarning";
-    HapticFeedbackTypes["notificationError"] = "notificationError";
-    HapticFeedbackTypes["clockTick"] = "clockTick";
-    HapticFeedbackTypes["contextClick"] = "contextClick";
-    HapticFeedbackTypes["keyboardPress"] = "keyboardPress";
-    HapticFeedbackTypes["keyboardRelease"] = "keyboardRelease";
-    HapticFeedbackTypes["keyboardTap"] = "keyboardTap";
-    HapticFeedbackTypes["longPress"] = "longPress";
-    HapticFeedbackTypes["textHandleMove"] = "textHandleMove";
-    HapticFeedbackTypes["virtualKey"] = "virtualKey";
-    HapticFeedbackTypes["virtualKeyRelease"] = "virtualKeyRelease";
-    HapticFeedbackTypes["effectClick"] = "effectClick";
-    HapticFeedbackTypes["effectDoubleClick"] = "effectDoubleClick";
-    HapticFeedbackTypes["effectHeavyClick"] = "effectHeavyClick";
-    HapticFeedbackTypes["effectTick"] = "effectTick";
-    return HapticFeedbackTypes;
-  }({});
-},1695,[],"node_modules\\@react-native-oh-tpl\\react-native-haptic-feedback\\lib\\commonjs\\types.js");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
-  "use strict";
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = void 0;
-  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
-  var _default = exports.default = _reactNative.TurboModuleRegistry.get("HapticFeedbackNativeModule");
-},1696,[3],"node_modules\\@react-native-oh-tpl\\react-native-haptic-feedback\\lib\\commonjs\\NativeHapticFeedback.js");
+},1793,[1,2,25,7,42,1007,1781,1794,1190,1795,1802],"src\\hooks\\useAIChat.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -269301,7 +279911,358 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }]);
   }();
   var aiWebSocketService = exports.aiWebSocketService = new AIWebSocketService();
-},1697,[1,13,14],"src\\services\\aiWebSocketService.ts");
+},1794,[1,13,14],"src\\services\\aiWebSocketService.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.triggerHoldToTalkTransitionHaptic = triggerHoldToTalkTransitionHaptic;
+  exports.triggerLightHaptic = triggerLightHaptic;
+  exports.triggerTransitionHaptic = triggerTransitionHaptic;
+  var _asyncToGenerator2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
+  var HAPTIC_OPTIONS = {
+    enableVibrateFallback: true,
+    ignoreAndroidSystemSettings: false
+  };
+  var IOS_HAPTIC_TYPE_MAP = {
+    impactLight: 'light',
+    impactMedium: 'medium',
+    impactHeavy: 'heavy',
+    notificationWarning: 'warning',
+    notificationSuccess: 'success',
+    selection: 'selection'
+  };
+  var recordingHapticQueue = Promise.resolve();
+  function enqueueRecordingHaptic(task) {
+    recordingHapticQueue = recordingHapticQueue.then(task).catch(function () {});
+  }
+  function waitNextFrame() {
+    return new Promise(function (resolve) {
+      requestAnimationFrame(function () {
+        return resolve();
+      });
+    });
+  }
+  function vibrateFallback() {
+    // 鸿蒙环境也完全支持调用基础的 Vibration.vibrate
+    if (_reactNative.Platform.OS === 'ios' || _reactNative.Platform.OS === 'android' || _$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY) {
+      _reactNative.Vibration.vibrate(20);
+    }
+  }
+  function hasNativeHapticModule() {
+    try {
+      return _reactNative.TurboModuleRegistry.get('RNHapticFeedback') != null || _reactNative.NativeModules.RNHapticFeedback != null || _reactNative.NativeModules.RNReactNativeHapticFeedback != null || _reactNative.TurboModuleRegistry.get('RNReactNativeHapticFeedback') != null;
+    } catch (_unused) {
+      return false;
+    }
+  }
+  function triggerUIKitHapticIOS(rnType) {
+    var _IOS_HAPTIC_TYPE_MAP$;
+    var appModule = _reactNative.NativeModules.AppModule;
+    var uiType = (_IOS_HAPTIC_TYPE_MAP$ = IOS_HAPTIC_TYPE_MAP[rnType]) != null ? _IOS_HAPTIC_TYPE_MAP$ : 'heavy';
+    if (appModule != null && appModule.triggerUIKitHaptic) {
+      appModule.triggerUIKitHaptic(uiType);
+      return;
+    }
+    vibrateFallback();
+  }
+  function triggerHeavyHapticDuringRecording() {
+    return _triggerHeavyHapticDuringRecording.apply(this, arguments);
+  }
+  function _triggerHeavyHapticDuringRecording() {
+    _triggerHeavyHapticDuringRecording = (0, _asyncToGenerator2.default)(function* () {
+      var recorder = _reactNative.NativeModules.RNAudioRecorderPlayer;
+      var appModule = _reactNative.NativeModules.AppModule;
+      var paused = false;
+      if (recorder != null && recorder.pauseRecorder) {
+        try {
+          yield recorder.pauseRecorder();
+          paused = true;
+        } catch (_unused3) {
+          // ignore
+        }
+      }
+      if (appModule != null && appModule.triggerUIKitHapticWithSessionRelease) {
+        appModule.triggerUIKitHapticWithSessionRelease('heavy');
+      } else {
+        triggerUIKitHapticIOS('impactHeavy');
+      }
+      yield waitNextFrame();
+      if (paused && recorder != null && recorder.resumeRecorder) {
+        try {
+          yield recorder.resumeRecorder();
+        } catch (_unused4) {
+          // ignore
+        }
+      }
+    });
+    return _triggerHeavyHapticDuringRecording.apply(this, arguments);
+  }
+  function triggerNative(type) {
+    if (_reactNative.Platform.OS === 'ios') {
+      triggerUIKitHapticIOS(type);
+      return;
+    }
+    if (_$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY) {
+      // 防止尚未链接原生模块时频繁报警告
+      if (!hasNativeHapticModule()) {
+        vibrateFallback();
+        return;
+      }
+      try {
+        var _mod$trigger, _mod$default;
+        var _mod = _$$_REQUIRE(_dependencyMap[4], "@react-native-oh-tpl/react-native-haptic-feedback");
+        var trigger = (_mod$trigger = _mod.trigger) != null ? _mod$trigger : (_mod$default = _mod.default) == null ? void 0 : _mod$default.trigger;
+        if (trigger) {
+          trigger(type, HAPTIC_OPTIONS);
+          return;
+        }
+      } catch (_unused2) {
+        // 鸿蒙环境如果没有安装该库，静默失败
+        vibrateFallback();
+        return;
+      }
+    }
+    if (!hasNativeHapticModule()) {
+      vibrateFallback();
+      return;
+    }
+    var mod = _$$_REQUIRE(_dependencyMap[5], "react-native-haptic-feedback");
+    mod.default.trigger(type, HAPTIC_OPTIONS);
+  }
+  function triggerLightHaptic() {
+    try {
+      triggerNative('impactHeavy');
+      if (_$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY) {
+        // 鸿蒙原生 haptic 可能未起效果，补充默认的轻震动作兜底
+        _reactNative.Vibration.vibrate(25);
+      }
+    } catch (error) {
+      console.warn('[haptics] trigger failed', error);
+      vibrateFallback();
+    }
+  }
+
+  /** 按住说话：移入/移出取消区时的震动 */
+  function triggerHoldToTalkTransitionHaptic(_toCancel) {
+    var recorderActive = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    try {
+      if (_reactNative.Platform.OS === 'ios' && recorderActive) {
+        enqueueRecordingHaptic(triggerHeavyHapticDuringRecording);
+        return;
+      }
+      if (_reactNative.Platform.OS === 'ios') {
+        triggerUIKitHapticIOS('impactHeavy');
+        return;
+      }
+      triggerNative('impactHeavy');
+      _reactNative.Vibration.vibrate(25);
+    } catch (error) {
+      console.warn('[haptics] hold transition failed', error);
+      vibrateFallback();
+    }
+  }
+
+  /** @deprecated 请直接使用 triggerLightHaptic */
+  function triggerTransitionHaptic() {
+    triggerLightHaptic();
+  }
+},1795,[1,2,3,1186,1796,1799],"src\\utils\\haptics.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  var _exportNames = {
+    trigger: true
+  };
+  exports.trigger = exports.default = void 0;
+  var _createClass2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/createClass"));
+  var _classCallCheck2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/classCallCheck"));
+  var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
+  Object.keys(_$$_REQUIRE(_dependencyMap[4], "./types")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[4], "./types")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[4], "./types")[key];
+      }
+    });
+  });
+  var defaultOptions = {
+    enableVibrateFallback: false,
+    ignoreAndroidSystemSettings: false
+  };
+  var RNReactNativeHapticFeedback = /*#__PURE__*/(0, _createClass2.default)(function RNReactNativeHapticFeedback() {
+    (0, _classCallCheck2.default)(this, RNReactNativeHapticFeedback);
+  });
+  RNReactNativeHapticFeedback.trigger = function () {
+    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _$$_REQUIRE(_dependencyMap[4], "./types").HapticFeedbackTypes.selection;
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var triggerOptions = createTriggerOptions(options);
+    try {
+      var isTurboModuleEnabled = global.__turboModuleProxy != null;
+      var hapticFeedback = isTurboModuleEnabled ? _$$_REQUIRE(_dependencyMap[5], "./NativeHapticFeedback").default : _reactNative.NativeModules.RNHapticFeedback;
+      hapticFeedback.trigger(type, triggerOptions);
+    } catch (err) {
+      console.warn("RNReactNativeHapticFeedback is not available");
+    }
+  };
+  var createTriggerOptions = function createTriggerOptions(options) {
+    // if options is a boolean we're using an api <=1.6 and we should pass use it to set the enableVibrateFallback option
+    if (typeof options === "boolean") {
+      return Object.assign({}, defaultOptions, {
+        enableVibrateFallback: options
+      });
+    } else {
+      return Object.assign({}, defaultOptions, options);
+    }
+  };
+  var trigger = exports.trigger = RNReactNativeHapticFeedback.trigger;
+  var _default = exports.default = RNReactNativeHapticFeedback;
+},1796,[1,14,13,3,1797,1798],"node_modules\\@react-native-oh-tpl\\react-native-haptic-feedback\\src\\index.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.HapticFeedbackTypes = void 0;
+  var HapticFeedbackTypes = exports.HapticFeedbackTypes = /*#__PURE__*/function (HapticFeedbackTypes) {
+    HapticFeedbackTypes["selection"] = "selection";
+    HapticFeedbackTypes["impactLight"] = "impactLight";
+    HapticFeedbackTypes["impactMedium"] = "impactMedium";
+    HapticFeedbackTypes["impactHeavy"] = "impactHeavy";
+    HapticFeedbackTypes["rigid"] = "rigid";
+    HapticFeedbackTypes["soft"] = "soft";
+    HapticFeedbackTypes["notificationSuccess"] = "notificationSuccess";
+    HapticFeedbackTypes["notificationWarning"] = "notificationWarning";
+    HapticFeedbackTypes["notificationError"] = "notificationError";
+    HapticFeedbackTypes["clockTick"] = "clockTick";
+    HapticFeedbackTypes["contextClick"] = "contextClick";
+    HapticFeedbackTypes["keyboardPress"] = "keyboardPress";
+    HapticFeedbackTypes["keyboardRelease"] = "keyboardRelease";
+    HapticFeedbackTypes["keyboardTap"] = "keyboardTap";
+    HapticFeedbackTypes["longPress"] = "longPress";
+    HapticFeedbackTypes["textHandleMove"] = "textHandleMove";
+    HapticFeedbackTypes["virtualKey"] = "virtualKey";
+    HapticFeedbackTypes["virtualKeyRelease"] = "virtualKeyRelease";
+    HapticFeedbackTypes["effectClick"] = "effectClick";
+    HapticFeedbackTypes["effectDoubleClick"] = "effectDoubleClick";
+    HapticFeedbackTypes["effectHeavyClick"] = "effectHeavyClick";
+    HapticFeedbackTypes["effectTick"] = "effectTick";
+    return HapticFeedbackTypes;
+  }({});
+},1797,[],"node_modules\\@react-native-oh-tpl\\react-native-haptic-feedback\\src\\types.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var _default = exports.default = _reactNative.TurboModuleRegistry.get("HapticFeedbackNativeModule");
+},1798,[3],"node_modules\\@react-native-oh-tpl\\react-native-haptic-feedback\\src\\NativeHapticFeedback.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  "use strict";
+
+  var _createClass = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/createClass");
+  var _classCallCheck = _$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/classCallCheck");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  var _exportNames = {
+    trigger: true
+  };
+  exports.trigger = exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
+  Object.keys(_$$_REQUIRE(_dependencyMap[3], "./types")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[3], "./types")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[3], "./types")[key];
+      }
+    });
+  });
+  var defaultOptions = {
+    enableVibrateFallback: false,
+    ignoreAndroidSystemSettings: false
+  };
+  var RNReactNativeHapticFeedback = /*#__PURE__*/_createClass(function RNReactNativeHapticFeedback() {
+    _classCallCheck(this, RNReactNativeHapticFeedback);
+  });
+  RNReactNativeHapticFeedback.trigger = function () {
+    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _$$_REQUIRE(_dependencyMap[3], "./types").HapticFeedbackTypes.selection;
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var triggerOptions = createTriggerOptions(options);
+    try {
+      var isTurboModuleEnabled = global.__turboModuleProxy != null;
+      var hapticFeedback = isTurboModuleEnabled ? _$$_REQUIRE(_dependencyMap[4], "./NativeHapticFeedback").default : _reactNative.NativeModules.RNHapticFeedback;
+      hapticFeedback.trigger(type, triggerOptions);
+    } catch (err) {
+      console.warn("RNReactNativeHapticFeedback is not available");
+    }
+  };
+  var createTriggerOptions = function createTriggerOptions(options) {
+    // if options is a boolean we're using an api <=1.6 and we should pass use it to set the enableVibrateFallback option
+    if (typeof options === "boolean") {
+      return Object.assign({}, defaultOptions, {
+        enableVibrateFallback: options
+      });
+    } else {
+      return Object.assign({}, defaultOptions, options);
+    }
+  };
+  var trigger = exports.trigger = RNReactNativeHapticFeedback.trigger;
+  var _default = exports.default = RNReactNativeHapticFeedback;
+},1799,[14,13,3,1800,1801],"node_modules\\@react-native-oh-tpl\\react-native-haptic-feedback\\lib\\commonjs\\index.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.HapticFeedbackTypes = void 0;
+  var HapticFeedbackTypes = exports.HapticFeedbackTypes = /*#__PURE__*/function (HapticFeedbackTypes) {
+    HapticFeedbackTypes["selection"] = "selection";
+    HapticFeedbackTypes["impactLight"] = "impactLight";
+    HapticFeedbackTypes["impactMedium"] = "impactMedium";
+    HapticFeedbackTypes["impactHeavy"] = "impactHeavy";
+    HapticFeedbackTypes["rigid"] = "rigid";
+    HapticFeedbackTypes["soft"] = "soft";
+    HapticFeedbackTypes["notificationSuccess"] = "notificationSuccess";
+    HapticFeedbackTypes["notificationWarning"] = "notificationWarning";
+    HapticFeedbackTypes["notificationError"] = "notificationError";
+    HapticFeedbackTypes["clockTick"] = "clockTick";
+    HapticFeedbackTypes["contextClick"] = "contextClick";
+    HapticFeedbackTypes["keyboardPress"] = "keyboardPress";
+    HapticFeedbackTypes["keyboardRelease"] = "keyboardRelease";
+    HapticFeedbackTypes["keyboardTap"] = "keyboardTap";
+    HapticFeedbackTypes["longPress"] = "longPress";
+    HapticFeedbackTypes["textHandleMove"] = "textHandleMove";
+    HapticFeedbackTypes["virtualKey"] = "virtualKey";
+    HapticFeedbackTypes["virtualKeyRelease"] = "virtualKeyRelease";
+    HapticFeedbackTypes["effectClick"] = "effectClick";
+    HapticFeedbackTypes["effectDoubleClick"] = "effectDoubleClick";
+    HapticFeedbackTypes["effectHeavyClick"] = "effectHeavyClick";
+    HapticFeedbackTypes["effectTick"] = "effectTick";
+    return HapticFeedbackTypes;
+  }({});
+},1800,[],"node_modules\\@react-native-oh-tpl\\react-native-haptic-feedback\\lib\\commonjs\\types.js");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var _default = exports.default = _reactNative.TurboModuleRegistry.get("HapticFeedbackNativeModule");
+},1801,[3],"node_modules\\@react-native-oh-tpl\\react-native-haptic-feedback\\lib\\commonjs\\NativeHapticFeedback.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -269322,7 +280283,15 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       if (!trimmed) {
         throw new Error('录音文件无效');
       }
+      var isHarmony = _reactNative.Platform.OS !== 'ios' && _reactNative.Platform.OS !== 'android';
       var fsPath = trimmed.replace(/^file:\/\//, '');
+      if (isHarmony) {
+        // 鸿蒙系统下，RNOH 的 XHR 会直接把 uri 传给 ohos.net.http 的 filePath
+        // ohos.net.http 文档明确写了支持“绝对路径”或 internal:// 协议。
+        // 但是跨目录或者协议转换极易在某些定制固件上抛出内部识别错误(从而引起 status 0 网络断开)。
+        // 所以直接返回原生的纯绝对路径最稳妥。
+        return fsPath;
+      }
       var RNFS = _$$_REQUIRE(_dependencyMap[4], "react-native-fs");
       var targetPath = fsPath;
       if (!(yield RNFS.exists(targetPath))) {
@@ -269368,14 +280337,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       });
       return (0, _$$_REQUIRE(_dependencyMap[5], "D:\\xqkj\\bokeapp\\src/utils/http").post)('/boke/user/ai/audio/text', formData, {
         headers: {
-          'content-type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data'
         }
       });
     });
     return _userVoiceToText.apply(this, arguments);
   }
   var userChat = exports.userChat = (0, _$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/utils/request").createFetch)('/boke/ai/user/chat', 'GET');
-},1698,[1,2,3,982,978,1013],"src\\services\\ai.ts");
+},1802,[1,2,3,982,978,1013],"src\\services\\ai.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -269394,44 +280363,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _VoiceRipple = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "./VoiceRipple"));
   var DEFAULT_HOLD_DELAY_MS = 100;
   var DEFAULT_MIN_DURATION_MS = 1000;
-  var DEFAULT_CANCEL_SLIDE_THRESHOLD = 120;
-  var DEFAULT_CANCEL_AREA_PADDING = 16;
-  var DEFAULT_MAX_DURATION_MS = 60 * 1000;
-  var EMPTY_BOUNDS = {
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0
-  };
+  var DEFAULT_CANCEL_SLIDE_THRESHOLD = 60;
+  var DEFAULT_MAX_DURATION_MS = 180 * 1000;
   function triggerHoldFeedback(toCancel, recorderActive) {
     (0, _$$_REQUIRE(_dependencyMap[5], "D:\\xqkj\\bokeapp\\src/utils/haptics").triggerHoldToTalkTransitionHaptic)(toCancel, recorderActive);
-  }
-  function measureViewBounds(viewRef) {
-    return new Promise(function (resolve) {
-      var _viewRef$current;
-      (_viewRef$current = viewRef.current) == null || _viewRef$current.measureInWindow(function (x, y, width, height) {
-        resolve({
-          x: x,
-          y: y,
-          width: width,
-          height: height
-        });
-      });
-    });
-  }
-  function isPointInsideBounds(pageX, pageY, bounds, padding) {
-    var x = bounds.x,
-      y = bounds.y,
-      width = bounds.width,
-      height = bounds.height;
-    if (width <= 0 || height <= 0) {
-      return true;
-    }
-    var left = x - padding;
-    var right = x + width + padding;
-    var top = y - padding;
-    var bottom = y + height + padding;
-    return pageX >= left && pageX <= right && pageY >= top && pageY <= bottom;
   }
   var useHoldToTalk = exports.useHoldToTalk = function useHoldToTalk(_ref) {
     var enabled = _ref.enabled,
@@ -269441,10 +280376,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       minDurationMs = _ref$minDurationMs === void 0 ? DEFAULT_MIN_DURATION_MS : _ref$minDurationMs,
       _ref$cancelSlideThres = _ref.cancelSlideThreshold,
       cancelSlideThreshold = _ref$cancelSlideThres === void 0 ? DEFAULT_CANCEL_SLIDE_THRESHOLD : _ref$cancelSlideThres,
-      _ref$cancelAreaPaddin = _ref.cancelAreaPadding,
-      cancelAreaPadding = _ref$cancelAreaPaddin === void 0 ? DEFAULT_CANCEL_AREA_PADDING : _ref$cancelAreaPaddin,
       _ref$maxDurationMs = _ref.maxDurationMs,
       maxDurationMs = _ref$maxDurationMs === void 0 ? DEFAULT_MAX_DURATION_MS : _ref$maxDurationMs,
+      _ref$skipPermissionCh = _ref.skipPermissionCheck,
+      skipPermissionCheck = _ref$skipPermissionCh === void 0 ? false : _ref$skipPermissionCh,
       _ref$startRecording = _ref.startRecording,
       startRecording = _ref$startRecording === void 0 ? _$$_REQUIRE(_dependencyMap[6], "D:\\xqkj\\bokeapp\\src/services/voiceRecorder").startVoiceRecording : _ref$startRecording,
       onResult = _ref.onResult,
@@ -269454,7 +280389,6 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       voiceStatus = _useState2[0],
       setVoiceStatus = _useState2[1];
     var voiceButtonRef = (0, _react.useRef)(null);
-    var cancelAreaRef = (0, _react.useRef)(null);
     var recordStartTimeRef = (0, _react.useRef)(0);
     var touchStartYRef = (0, _react.useRef)(0);
     var pressActiveRef = (0, _react.useRef)(false);
@@ -269464,11 +280398,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var holdTimerRef = (0, _react.useRef)(null);
     var maxDurationTimerRef = (0, _react.useRef)(null);
     var stopRecordingRef = (0, _react.useRef)(null);
-    var lastInsideInputRef = (0, _react.useRef)(true);
     var enabledRef = (0, _react.useRef)(enabled);
     var onVoiceFileRef = (0, _react.useRef)(onVoiceFile);
-    var voiceButtonBoundsRef = (0, _react.useRef)(Object.assign({}, EMPTY_BOUNDS));
-    var inputAreaBoundsRef = (0, _react.useRef)(Object.assign({}, EMPTY_BOUNDS));
     (0, _react.useEffect)(function () {
       enabledRef.current = enabled;
     }, [enabled]);
@@ -269492,38 +280423,18 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       stopRecordingRef.current = null;
       busyRef.current = false;
     }, [clearMaxDurationTimer]);
-    var refreshBounds = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
-      var _yield$Promise$all = yield Promise.all([measureViewBounds(voiceButtonRef), measureViewBounds(cancelAreaRef)]),
-        _yield$Promise$all2 = (0, _slicedToArray2.default)(_yield$Promise$all, 2),
-        voiceBounds = _yield$Promise$all2[0],
-        inputBounds = _yield$Promise$all2[1];
-      voiceButtonBoundsRef.current = voiceBounds;
-      inputAreaBoundsRef.current = inputBounds.width > 0 && inputBounds.height > 0 ? inputBounds : voiceBounds;
-    }), []);
-    var isTouchOnVoiceButton = (0, _react.useCallback)(function (pageX, pageY) {
-      var bounds = voiceButtonBoundsRef.current;
-      if (bounds.width <= 0 || bounds.height <= 0) {
-        return false;
-      }
-      return isPointInsideBounds(pageX, pageY, bounds, cancelAreaPadding);
-    }, [cancelAreaPadding]);
-    var isTouchInsideInputArea = (0, _react.useCallback)(function (pageX, pageY) {
-      return isPointInsideBounds(pageX, pageY, inputAreaBoundsRef.current, cancelAreaPadding);
-    }, [cancelAreaPadding]);
     var resetVoiceState = (0, _react.useCallback)(function () {
       pressActiveRef.current = false;
       hasStartedRef.current = false;
       cancelingRef.current = false;
-      lastInsideInputRef.current = true;
       clearHoldTimer();
       cleanupRecording();
       setVoiceStatus('idle');
     }, [clearHoldTimer, cleanupRecording]);
     var finishRecording = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref3 = (0, _asyncToGenerator2.default)(function* (isCancel) {
+      var _ref2 = (0, _asyncToGenerator2.default)(function* (isCancel) {
         hasStartedRef.current = false;
         cancelingRef.current = false;
-        lastInsideInputRef.current = true;
         clearMaxDurationTimer();
         var stopRecording = stopRecordingRef.current;
         stopRecordingRef.current = null;
@@ -269580,70 +280491,78 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       });
       return function (_x) {
-        return _ref3.apply(this, arguments);
+        return _ref2.apply(this, arguments);
       };
     }(), [clearMaxDurationTimer, minDurationMs, onResult]);
-    var updateCancelStateFromTouch = (0, _react.useCallback)(function (pageX, pageY, startY) {
+    var updateCancelStateFromTouch = (0, _react.useCallback)(function (pageY, startY) {
       if (!hasStartedRef.current) {
         return;
       }
-      var isInsideInput = isTouchInsideInputArea(pageX, pageY);
-      var inputAreaCrossed = isInsideInput !== lastInsideInputRef.current;
       var slideUpDistance = startY - pageY;
-      var recoverThreshold = cancelSlideThreshold * 0.7;
-      var shouldCancelBySlide = cancelingRef.current ? slideUpDistance > recoverThreshold : slideUpDistance > cancelSlideThreshold;
-      var shouldCancel = !isInsideInput || shouldCancelBySlide;
+      var shouldCancel = slideUpDistance > cancelSlideThreshold;
       var cancelStateChanged = shouldCancel !== cancelingRef.current;
       var recorderActive = !!stopRecordingRef.current;
-      if (inputAreaCrossed) {
-        lastInsideInputRef.current = isInsideInput;
-        triggerHoldFeedback(!isInsideInput, recorderActive);
-      } else if (cancelStateChanged) {
-        triggerHoldFeedback(shouldCancel, recorderActive);
-      }
       if (cancelStateChanged) {
+        triggerHoldFeedback(shouldCancel, recorderActive);
         cancelingRef.current = shouldCancel;
         setVoiceStatus(shouldCancel ? 'cancel' : 'recording');
       }
-    }, [cancelSlideThreshold, isTouchInsideInputArea]);
+    }, [cancelSlideThreshold]);
     var beginVoiceRecording = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       if (!pressActiveRef.current || hasStartedRef.current || busyRef.current || !enabledRef.current) {
         return;
       }
       busyRef.current = true;
-      hasStartedRef.current = true;
-      cancelingRef.current = false;
-      lastInsideInputRef.current = true;
-      recordStartTimeRef.current = Date.now();
-      setVoiceStatus('recording');
-      yield refreshBounds();
-      setTimeout(function () {
-        void refreshBounds();
-      }, 50);
-      var granted = yield (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/permissions").checkMicrophonePermission)();
-      if (!granted) {
-        hasStartedRef.current = false;
+      if (!skipPermissionCheck) {
+        var authStart = Date.now();
+        var granted = yield (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/permissions").checkMicrophonePermission)();
+        var authDuration = Date.now() - authStart;
+
+        // 如果发生了权限弹窗等待（耗时较长），在鸿蒙上触摸事件会被吞掉导致手势没被 release。
+        // 这种情况下，无论是否授权成功，都中断当前录音，要求用户重新按住。
+        if (!granted || !pressActiveRef.current || _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY && authDuration > 1500) {
+          busyRef.current = false;
+          setVoiceStatus('idle');
+          if (!granted) {
+            (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+              title: '请前往手机应用设置开启录音权限',
+              icon: 'none'
+            });
+          }
+          pressActiveRef.current = false;
+          if (holdTimerRef.current) clearTimeout(holdTimerRef.current);
+          return;
+        }
+      } else if (!pressActiveRef.current) {
         busyRef.current = false;
-        setVoiceStatus('idle');
+        console.log(1111);
         return;
       }
-      if (!pressActiveRef.current) {
-        hasStartedRef.current = false;
-        busyRef.current = false;
-        setVoiceStatus('idle');
-        return;
-      }
+      var reqStartTime = Date.now();
       try {
         var handler = yield startRecording();
-        if (!pressActiveRef.current || !hasStartedRef.current) {
+        var waitTime = Date.now() - reqStartTime;
+
+        // 如果在启动录音期间用户松开了手，终止录音
+        // 注意：由于在前面的跳出了弹窗检测（authDuration），这里如果 startRecording()
+        // 等待时间异常偏长（>1500ms），可能发生底层模块阻断。为防止误杀，将阈值放宽或直接去除鸿蒙硬拦截。
+        if (!pressActiveRef.current) {
           try {
             yield handler.stop();
           } catch (_unused4) {
             // ignore
           }
           busyRef.current = false;
+          setVoiceStatus('idle');
+          pressActiveRef.current = false;
+          if (holdTimerRef.current) clearTimeout(holdTimerRef.current);
           return;
         }
+        hasStartedRef.current = true;
+        cancelingRef.current = false;
+        recordStartTimeRef.current = Date.now();
+        (0, _$$_REQUIRE(_dependencyMap[5], "D:\\xqkj\\bokeapp\\src/utils/haptics").triggerLightHaptic)();
+        setVoiceStatus('recording');
         stopRecordingRef.current = handler.stop;
         maxDurationTimerRef.current = setTimeout(function () {
           finishRecording(cancelingRef.current);
@@ -269651,16 +280570,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       } catch (error) {
         hasStartedRef.current = false;
         cancelingRef.current = false;
-        lastInsideInputRef.current = true;
         busyRef.current = false;
         setVoiceStatus('idle');
         console.warn('[HoldToTalk] start recording failed', error);
-        (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
-          title: '录音启动失败，请重试',
-          icon: 'none'
-        });
+        if (pressActiveRef.current) {
+          (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            title: '录音启动失败，请重试',
+            icon: 'none'
+          });
+        }
       }
-    }), [finishRecording, maxDurationMs, refreshBounds, startRecording]);
+    }), [finishRecording, maxDurationMs, skipPermissionCheck, startRecording]);
     var resetVoicePressState = (0, _react.useCallback)(function () {
       pressActiveRef.current = false;
       clearHoldTimer();
@@ -269672,25 +280592,23 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       touchStartYRef.current = evt.nativeEvent.pageY;
       pressActiveRef.current = true;
       cancelingRef.current = false;
-      void refreshBounds();
       clearHoldTimer();
       holdTimerRef.current = setTimeout(function () {
-        (0, _$$_REQUIRE(_dependencyMap[5], "D:\\xqkj\\bokeapp\\src/utils/haptics").triggerLightHaptic)();
         void beginVoiceRecording();
       }, holdDelayMs);
-    }, [beginVoiceRecording, clearHoldTimer, holdDelayMs, refreshBounds]);
+    }, [beginVoiceRecording, clearHoldTimer, holdDelayMs]);
     var handleMove = (0, _react.useCallback)(function (evt) {
       if (!hasStartedRef.current) {
         return;
       }
-      updateCancelStateFromTouch(evt.nativeEvent.pageX, evt.nativeEvent.pageY, touchStartYRef.current);
+      updateCancelStateFromTouch(evt.nativeEvent.pageY, touchStartYRef.current);
     }, [updateCancelStateFromTouch]);
     var handleRelease = (0, _react.useCallback)(function (evt) {
       resetVoicePressState();
       if (!hasStartedRef.current) {
         return;
       }
-      updateCancelStateFromTouch(evt.nativeEvent.pageX, evt.nativeEvent.pageY, touchStartYRef.current);
+      updateCancelStateFromTouch(evt.nativeEvent.pageY, touchStartYRef.current);
       void finishRecording(cancelingRef.current);
     }, [finishRecording, resetVoicePressState, updateCancelStateFromTouch]);
     var handleTerminate = (0, _react.useCallback)(function () {
@@ -269700,19 +280618,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
       void finishRecording(true);
     }, [finishRecording, resetVoicePressState]);
-    var shouldCaptureTouch = (0, _react.useCallback)(function (evt) {
-      if (!enabledRef.current || pressActiveRef.current) {
-        return false;
-      }
-      return isTouchOnVoiceButton(evt.nativeEvent.pageX, evt.nativeEvent.pageY);
-    }, [isTouchOnVoiceButton]);
+    var shouldStartVoicePress = (0, _react.useCallback)(function () {
+      return enabledRef.current && !pressActiveRef.current;
+    }, []);
     var gestureCaptureProps = (0, _react.useMemo)(function () {
       return {
-        onStartShouldSetResponderCapture: shouldCaptureTouch,
+        onStartShouldSetResponderCapture: shouldStartVoicePress,
         onMoveShouldSetResponderCapture: function onMoveShouldSetResponderCapture() {
           return pressActiveRef.current || hasStartedRef.current;
         },
-        onStartShouldSetResponder: shouldCaptureTouch,
+        onStartShouldSetResponder: shouldStartVoicePress,
         onMoveShouldSetResponder: function onMoveShouldSetResponder() {
           return pressActiveRef.current || hasStartedRef.current;
         },
@@ -269724,21 +280639,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         onResponderRelease: handleRelease,
         onResponderTerminate: handleTerminate
       };
-    }, [handleGrant, handleMove, handleRelease, handleTerminate, shouldCaptureTouch]);
+    }, [handleGrant, handleMove, handleRelease, handleTerminate, shouldStartVoicePress]);
     (0, _react.useEffect)(function () {
       return function () {
         clearHoldTimer();
         clearMaxDurationTimer();
       };
     }, [clearHoldTimer, clearMaxDurationTimer]);
-    (0, _react.useEffect)(function () {
-      if (voiceStatus !== 'idle') {
-        requestAnimationFrame(function () {
-          void refreshBounds();
-        });
-      }
-    }, [voiceStatus, refreshBounds]);
-    (0, _$$_REQUIRE(_dependencyMap[10], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
+    (0, _$$_REQUIRE(_dependencyMap[11], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
       return function () {
         resetVoiceState();
       };
@@ -269747,13 +280655,11 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       voiceStatus: voiceStatus,
       isVoiceRecording: voiceStatus !== 'idle',
       voiceButtonRef: voiceButtonRef,
-      cancelAreaRef: cancelAreaRef,
       gestureCaptureProps: gestureCaptureProps,
-      refreshBounds: refreshBounds,
       resetVoiceState: resetVoiceState
     };
   };
-},1699,[1,2,25,42,1700,1690,1701,1190,1704,1197,1092],"src\\components\\HoldToTalk\\index.tsx");
+},1803,[1,2,25,42,1804,1795,1805,1190,1808,1197,1186,1092],"src\\components\\HoldToTalk\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -269843,7 +280749,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = VoiceRipple;
-},1700,[42,3,88,556],"src\\components\\HoldToTalk\\VoiceRipple.tsx");
+},1804,[42,3,88,556],"src\\components\\HoldToTalk\\VoiceRipple.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -269852,7 +280758,19 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.startVoiceRecording = startVoiceRecording;
   var _asyncToGenerator2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/asyncToGenerator"));
   var _reactNative = _$$_REQUIRE(_dependencyMap[2], "react-native");
+  var audioRecorderPlayerLib = _$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY ? _$$_REQUIRE(_dependencyMap[4], "@react-native-ohos/react-native-audio-recorder-player") : _$$_REQUIRE(_dependencyMap[5], "react-native-audio-recorder-player");
   var sharedRecorder = null;
+  var recorderOperationQueue = Promise.resolve();
+  function withRecorderLock(task) {
+    var run = recorderOperationQueue.then(task, task);
+    recorderOperationQueue = run.then(function () {
+      return undefined;
+    }, function () {
+      return undefined;
+    });
+    return run;
+  }
+  var RETRY_DELAY_MS = 80;
   function ensureNativeRecorderModule() {
     if (_$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY) {
       return;
@@ -269864,15 +280782,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   function getSharedRecorder() {
     if (!sharedRecorder) {
       ensureNativeRecorderModule();
-      var AudioRecorderPlayer = _$$_REQUIRE(_dependencyMap[4], "react-native-audio-recorder-player").default;
+      var AudioRecorderPlayer = audioRecorderPlayerLib.default;
       sharedRecorder = new AudioRecorderPlayer();
     }
     return sharedRecorder;
   }
   function getIosRecordingAttempts() {
-    var _require = _$$_REQUIRE(_dependencyMap[4], "react-native-audio-recorder-player"),
-      AVEncodingOption = _require.AVEncodingOption,
-      AVEncoderAudioQualityIOSType = _require.AVEncoderAudioQualityIOSType;
+    var AVEncodingOption = audioRecorderPlayerLib.AVEncodingOption,
+      AVEncoderAudioQualityIOSType = audioRecorderPlayerLib.AVEncoderAudioQualityIOSType;
     var fileName = `voice_${Date.now()}.m4a`;
     return [{
       filePath: 'DEFAULT',
@@ -269901,10 +280818,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var extension = _$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY || _reactNative.Platform.OS === 'ios' ? 'm4a' : 'mp4';
     var fileName = `voice_${Date.now()}.${extension}`;
     if (_$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/constants").IS_HARMONY) {
-      var _require2 = _$$_REQUIRE(_dependencyMap[4], "react-native-audio-recorder-player"),
-        AudioSourceHarmonyType = _require2.AudioSourceHarmonyType,
-        AudioMimeHarmonyType = _require2.AudioMimeHarmonyType,
-        AudioFormatHarmonyType = _require2.AudioFormatHarmonyType;
+      var AudioSourceHarmonyType = audioRecorderPlayerLib.AudioSourceHarmonyType,
+        AudioMimeHarmonyType = audioRecorderPlayerLib.AudioMimeHarmonyType,
+        AudioFormatHarmonyType = audioRecorderPlayerLib.AudioFormatHarmonyType;
       return [{
         filePath: fileName,
         audioSet: {
@@ -269921,13 +280837,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     if (_reactNative.Platform.OS === 'ios') {
       return getIosRecordingAttempts();
     }
-    var _require3 = _$$_REQUIRE(_dependencyMap[4], "react-native-audio-recorder-player"),
-      AudioEncoderAndroidType = _require3.AudioEncoderAndroidType,
-      AudioSourceAndroidType = _require3.AudioSourceAndroidType,
-      OutputFormatAndroidType = _require3.OutputFormatAndroidType;
+    var _require = _$$_REQUIRE(_dependencyMap[5], "react-native-audio-recorder-player"),
+      AudioEncoderAndroidType = _require.AudioEncoderAndroidType,
+      AudioSourceAndroidType = _require.AudioSourceAndroidType,
+      OutputFormatAndroidType = _require.OutputFormatAndroidType;
     var filePath = fileName;
     try {
-      var RNFS = _$$_REQUIRE(_dependencyMap[5], "react-native-fs");
+      var RNFS = _$$_REQUIRE(_dependencyMap[6], "react-native-fs");
       var directory = RNFS.CachesDirectoryPath || RNFS.DocumentDirectoryPath || RNFS.TemporaryDirectoryPath;
       if (directory) {
         filePath = `${directory}/${fileName}`;
@@ -270000,60 +280916,73 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   }
   function _startVoiceRecording() {
     _startVoiceRecording = (0, _asyncToGenerator2.default)(function* () {
-      var player = getSharedRecorder();
-      var attempts = getRecordingAttempts();
-      var lastError;
-      var _loop = function* _loop(attempt) {
-          try {
-            var startedUri = yield tryStartRecorder(player, attempt);
-            var resolvedPath = normalizeRecordingPath(startedUri, attempt.filePath);
-            return {
-              v: {
-                stop: function () {
-                  var _stop = (0, _asyncToGenerator2.default)(function* () {
-                    try {
-                      var result = yield player.stopRecorder();
-                      player.removeRecordBackListener();
-                      return normalizeRecordingPath(result, resolvedPath);
-                    } catch (error) {
-                      player.removeRecordBackListener();
-                      console.warn('[voiceRecorder] stop failed', error);
-                      return resolvedPath;
+      return withRecorderLock(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+        var player = getSharedRecorder();
+        var attempts = getRecordingAttempts();
+        var lastError;
+        var _loop = function* _loop() {
+            var attempt = attempts[index];
+            try {
+              var startedUri = yield tryStartRecorder(player, attempt);
+              var resolvedPath = normalizeRecordingPath(startedUri, attempt.filePath);
+              return {
+                v: {
+                  stop: function () {
+                    var _stop = (0, _asyncToGenerator2.default)(function* () {
+                      return withRecorderLock(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
+                        try {
+                          var result = yield player.stopRecorder();
+                          player.removeRecordBackListener();
+                          return normalizeRecordingPath(result, resolvedPath);
+                        } catch (error) {
+                          player.removeRecordBackListener();
+                          console.warn('[voiceRecorder] stop failed', error);
+                          setTimeout(function () {
+                            _$$_REQUIRE(_dependencyMap[7], "@ant-design/react-native").Toast.show('请检查是否已授予麦克风权限');
+                          }, 2000);
+                          return resolvedPath;
+                        }
+                      }));
+                    });
+                    function stop() {
+                      return _stop.apply(this, arguments);
                     }
-                  });
-                  function stop() {
-                    return _stop.apply(this, arguments);
+                    return stop;
+                  }(),
+                  onLevel: function onLevel(listener) {
+                    if (!attempt.meteringEnabled) {
+                      return function () {};
+                    }
+                    player.addRecordBackListener(function (event) {
+                      listener(normalizeMeteringLevel(event.currentMetering));
+                    });
+                    return function () {
+                      player.removeRecordBackListener();
+                    };
                   }
-                  return stop;
-                }(),
-                onLevel: function onLevel(listener) {
-                  if (!attempt.meteringEnabled) {
-                    return function () {};
-                  }
-                  player.addRecordBackListener(function (event) {
-                    listener(normalizeMeteringLevel(event.currentMetering));
-                  });
-                  return function () {
-                    player.removeRecordBackListener();
-                  };
                 }
+              };
+            } catch (error) {
+              lastError = error;
+              console.warn('[voiceRecorder] attempt failed', attempt.filePath, error);
+              if (index < attempts.length - 1) {
+                yield new Promise(function (resolve) {
+                  setTimeout(resolve, RETRY_DELAY_MS);
+                });
               }
-            };
-          } catch (error) {
-            lastError = error;
-            console.warn('[voiceRecorder] attempt failed', attempt.filePath, error);
-          }
-        },
-        _ret;
-      for (var attempt of attempts) {
-        _ret = yield* _loop(attempt);
-        if (_ret) return _ret.v;
-      }
-      throw lastError != null ? lastError : new Error('录音启动失败');
+            }
+          },
+          _ret;
+        for (var index = 0; index < attempts.length; index += 1) {
+          _ret = yield* _loop();
+          if (_ret) return _ret.v;
+        }
+        throw lastError != null ? lastError : new Error('录音启动失败');
+      }));
     });
     return _startVoiceRecording.apply(this, arguments);
   }
-},1701,[1,2,3,1186,1702,978],"src\\services\\voiceRecorder.ts");
+},1805,[1,2,3,1186,1806,1806,978,566],"src\\services\\voiceRecorder.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -270441,7 +281370,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }]);
   }();
   var _default = exports.default = AudioRecorderPlayer;
-},1702,[1,2,13,14,3,1703],"node_modules\\@react-native-ohos\\react-native-audio-recorder-player\\index.ts");
+},1806,[1,2,13,14,3,1807],"node_modules\\@react-native-ohos\\react-native-audio-recorder-player\\index.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -270454,7 +281383,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
    * found in the LICENSE file.
    */
   var _default = exports.default = _reactNative.TurboModuleRegistry.get('RNAudioRecorderPlayerTurboModule');
-},1703,[3],"node_modules\\@react-native-ohos\\react-native-audio-recorder-player\\src\\NativeAudioRecorderPlayerModule.ts");
+},1807,[3],"node_modules\\@react-native-ohos\\react-native-audio-recorder-player\\src\\NativeAudioRecorderPlayerModule.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -270481,7 +281410,451 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
     return _speechToText.apply(this, arguments);
   }
-},1704,[1,2],"src\\services\\speechToText.ts");
+},1808,[1,2],"src\\services\\speechToText.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  var _exportNames = {
+    AvoidSoftInput: true,
+    AvoidSoftInputView: true
+  };
+  Object.defineProperty(exports, "AvoidSoftInput", {
+    enumerable: true,
+    get: function get() {
+      return _$$_REQUIRE(_dependencyMap[0], "./AvoidSoftInput").AvoidSoftInput;
+    }
+  });
+  Object.defineProperty(exports, "AvoidSoftInputView", {
+    enumerable: true,
+    get: function get() {
+      return _$$_REQUIRE(_dependencyMap[1], "./AvoidSoftInputView").AvoidSoftInputView;
+    }
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[0], "./AvoidSoftInput")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[0], "./AvoidSoftInput")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[0], "./AvoidSoftInput")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[1], "./AvoidSoftInputView")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[1], "./AvoidSoftInputView")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[1], "./AvoidSoftInputView")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[2], "./hooks")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[2], "./hooks")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[2], "./hooks")[key];
+      }
+    });
+  });
+  Object.keys(_$$_REQUIRE(_dependencyMap[3], "./types")).forEach(function (key) {
+    if (key === "default" || key === "__esModule") return;
+    if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+    if (key in exports && exports[key] === _$$_REQUIRE(_dependencyMap[3], "./types")[key]) return;
+    Object.defineProperty(exports, key, {
+      enumerable: true,
+      get: function get() {
+        return _$$_REQUIRE(_dependencyMap[3], "./types")[key];
+      }
+    });
+  });
+},1809,[1810,1813,1816,1818],"node_modules\\react-native-avoid-softinput\\src\\index.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.AvoidSoftInput = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[1], "react-native");
+  var _AvoidSoftInputModule = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "./AvoidSoftInputModule"));
+  var eventEmitter = new _reactNative.NativeEventEmitter(_reactNative.Platform.OS !== 'ios' ? undefined : _AvoidSoftInputModule.default);
+
+  /**
+   * Fires event with current soft input height, when soft input is shown
+   */
+  function onSoftInputShown(listener) {
+    return eventEmitter.addListener('softInputShown', listener);
+  }
+
+  /**
+   * Fires event when soft input is hidden
+   */
+  function onSoftInputHidden(listener) {
+    return eventEmitter.addListener('softInputHidden', listener);
+  }
+
+  /**
+   * Fires event when soft input height changed
+   */
+  function onSoftInputAppliedOffsetChange(listener) {
+    return eventEmitter.addListener('softInputAppliedOffsetChanged', listener);
+  }
+
+  /**
+   * Fires event when soft input's height changes
+   */
+  function onSoftInputHeightChange(listener) {
+    return eventEmitter.addListener('softInputHeightChanged', listener);
+  }
+
+  /**
+   * Set whether module is enabled
+   */
+  function setEnabled(enabled) {
+    _AvoidSoftInputModule.default.setEnabled(enabled);
+  }
+
+  /**
+   * Set should mimic IOS ime behavior (true), or let Android OS handle (resize) window (false)
+   *
+   * @platform `Android`
+   */
+  function setShouldMimicIOSBehavior(shouldMimic) {
+    if (_reactNative.Platform.OS !== 'android') {
+      return;
+    }
+    _AvoidSoftInputModule.default.setShouldMimicIOSBehavior(shouldMimic);
+  }
+
+  /**
+   * Sets additional offset that will be added to value applied to root view/scroll view
+   *
+   * Can be negative (then final value will be smaller, so that some part of focused view will be covered by soft input frame)
+   */
+  function setAvoidOffset(offset) {
+    _AvoidSoftInputModule.default.setAvoidOffset(offset);
+  }
+
+  /**
+   * Sets easing function that will be applied to applied offset animation, default is `linear`
+   */
+  function setEasing(easing) {
+    _AvoidSoftInputModule.default.setEasing(easing);
+  }
+
+  /**
+   * Sets hide animation delay, takes value in milliseconds, if no value is provided, it will set default value which is `0` ms
+   */
+  function setHideAnimationDelay(delay) {
+    _AvoidSoftInputModule.default.setHideAnimationDelay(delay != null ? delay : 0);
+  }
+
+  /**
+   * Sets hide animation duration, takes value in milliseconds, if no value is provided, it will set default value which is `220` ms
+   */
+  function setHideAnimationDuration(duration) {
+    _AvoidSoftInputModule.default.setHideAnimationDuration(duration != null ? duration : 220);
+  }
+
+  /**
+   * Sets show animation delay, takes value in milliseconds, if no value is provided, it will set default value which is `300` ms on iOS and `0` ms on Android
+   */
+  function setShowAnimationDelay(delay) {
+    _AvoidSoftInputModule.default.setShowAnimationDelay(delay != null ? delay : _reactNative.Platform.select({
+      default: 0,
+      ios: 300
+    }));
+  }
+
+  /**
+   * Sets show animation duration, takes value in milliseconds, if no value is provided, it will set default value which is `660` ms
+   */
+  function setShowAnimationDuration(duration) {
+    _AvoidSoftInputModule.default.setShowAnimationDuration(duration != null ? duration : 660);
+  }
+
+  /**
+   * Sets `android:windowSoftInputMode` attribute to `adjustNothing`
+   *
+   * @platform `Android`
+   */
+  function setAdjustNothing() {
+    if (_reactNative.Platform.OS !== 'android') {
+      return;
+    }
+    _AvoidSoftInputModule.default.setAdjustNothing();
+  }
+
+  /**
+   * Sets `android:windowSoftInputMode` attribute to `adjustPan`
+   *
+   * @platform `Android`
+   */
+  function setAdjustPan() {
+    if (_reactNative.Platform.OS !== 'android') {
+      return;
+    }
+    _AvoidSoftInputModule.default.setAdjustPan();
+  }
+
+  /**
+   * Sets `android:windowSoftInputMode` attribute to `adjustResize`
+   *
+   * @platform `Android`
+   */
+  function setAdjustResize() {
+    if (_reactNative.Platform.OS !== 'android') {
+      return;
+    }
+    _AvoidSoftInputModule.default.setAdjustResize();
+  }
+
+  /**
+   * Sets `android:windowSoftInputMode` attribute to `adjustUnspecified`
+   *
+   * @platform `Android`
+   */
+  function setAdjustUnspecified() {
+    if (_reactNative.Platform.OS !== 'android') {
+      return;
+    }
+    _AvoidSoftInputModule.default.setAdjustUnspecified();
+  }
+
+  /**
+   * Sets `android:windowSoftInputMode` attribute to default value that is set in manifest
+   *
+   * @platform `Android`
+   */
+  function setDefaultAppSoftInputMode() {
+    if (_reactNative.Platform.OS !== 'android') {
+      return;
+    }
+    _AvoidSoftInputModule.default.setDefaultAppSoftInputMode();
+  }
+  var AvoidSoftInput = exports.AvoidSoftInput = {
+    onSoftInputAppliedOffsetChange: onSoftInputAppliedOffsetChange,
+    onSoftInputHeightChange: onSoftInputHeightChange,
+    onSoftInputHidden: onSoftInputHidden,
+    onSoftInputShown: onSoftInputShown,
+    setAdjustNothing: setAdjustNothing,
+    setAdjustPan: setAdjustPan,
+    setAdjustResize: setAdjustResize,
+    setAdjustUnspecified: setAdjustUnspecified,
+    setAvoidOffset: setAvoidOffset,
+    setDefaultAppSoftInputMode: setDefaultAppSoftInputMode,
+    setEasing: setEasing,
+    setEnabled: setEnabled,
+    setHideAnimationDelay: setHideAnimationDelay,
+    setHideAnimationDuration: setHideAnimationDuration,
+    setShouldMimicIOSBehavior: setShouldMimicIOSBehavior,
+    setShowAnimationDelay: setShowAnimationDelay,
+    setShowAnimationDuration: setShowAnimationDuration
+  };
+},1810,[1,3,1811],"node_modules\\react-native-avoid-softinput\\src\\AvoidSoftInput.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _default = exports.default = _$$_REQUIRE(_dependencyMap[0], "./NativeAvoidSoftInputModule").default;
+},1811,[1812],"node_modules\\react-native-avoid-softinput\\src\\AvoidSoftInputModule.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
+  var _default = exports.default = _reactNative.TurboModuleRegistry.get('AvoidSoftInput');
+},1812,[3],"node_modules\\react-native-avoid-softinput\\src\\NativeAvoidSoftInputModule.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.AvoidSoftInputView = void 0;
+  var _classCallCheck2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/classCallCheck"));
+  var _createClass2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[2], "@babel/runtime/helpers/createClass"));
+  var _possibleConstructorReturn2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[3], "@babel/runtime/helpers/possibleConstructorReturn"));
+  var _getPrototypeOf2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "@babel/runtime/helpers/getPrototypeOf"));
+  var _inherits2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "@babel/runtime/helpers/inherits"));
+  var React = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[6], "react"));
+  var _NativeAvoidSoftInputView = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[7], "./NativeAvoidSoftInputView"));
+  var _jsxRuntime = _$$_REQUIRE(_dependencyMap[8], "react/jsx-runtime");
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\node_modules\\react-native-avoid-softinput\\src\\AvoidSoftInputView.tsx";
+  function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+  function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+  function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+  /**
+   * Regular View component which is listening for soft input events and manages whether
+   * it should avoid soft input
+   */
+  var AvoidSoftInputView = exports.AvoidSoftInputView = /*#__PURE__*/function (_React$Component) {
+    function AvoidSoftInputView() {
+      (0, _classCallCheck2.default)(this, AvoidSoftInputView);
+      return _callSuper(this, AvoidSoftInputView, arguments);
+    }
+    (0, _inherits2.default)(AvoidSoftInputView, _React$Component);
+    return (0, _createClass2.default)(AvoidSoftInputView, [{
+      key: "render",
+      value: function render() {
+        return /*#__PURE__*/(0, _jsxRuntime.jsx)(_NativeAvoidSoftInputView.default, Object.assign({}, this.props));
+      }
+    }]);
+  }(React.Component);
+},1813,[1,13,14,50,52,53,42,1814,88],"node_modules\\react-native-avoid-softinput\\src\\AvoidSoftInputView.tsx");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+  var _default = exports.default = _$$_REQUIRE(_dependencyMap[0], "./AvoidSoftInputViewNativeComponent").default;
+},1814,[1815],"node_modules\\react-native-avoid-softinput\\src\\NativeAvoidSoftInputView.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = exports.__INTERNAL_VIEW_CONFIG = void 0;
+  var _codegenNativeComponent = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "react-native/Libraries/Utilities/codegenNativeComponent"));
+  var nativeComponentName = 'AvoidSoftInputView';
+  var __INTERNAL_VIEW_CONFIG = exports.__INTERNAL_VIEW_CONFIG = {
+    uiViewClassName: 'AvoidSoftInputView',
+    directEventTypes: {
+      topSoftInputAppliedOffsetChange: {
+        registrationName: 'onSoftInputAppliedOffsetChange'
+      },
+      topSoftInputHeightChange: {
+        registrationName: 'onSoftInputHeightChange'
+      },
+      topSoftInputHidden: {
+        registrationName: 'onSoftInputHidden'
+      },
+      topSoftInputShown: {
+        registrationName: 'onSoftInputShown'
+      }
+    },
+    validAttributes: Object.assign({
+      avoidOffset: true,
+      easing: true,
+      enabled: true,
+      hideAnimationDelay: true,
+      hideAnimationDuration: true,
+      showAnimationDelay: true,
+      showAnimationDuration: true
+    }, _$$_REQUIRE(_dependencyMap[2], "react-native/Libraries/NativeComponent/ViewConfigIgnore").ConditionallyIgnoredEventHandlers({
+      onSoftInputAppliedOffsetChange: true,
+      onSoftInputHeightChange: true,
+      onSoftInputHidden: true,
+      onSoftInputShown: true
+    }))
+  };
+  var _default = exports.default = _$$_REQUIRE(_dependencyMap[3], "react-native/Libraries/NativeComponent/NativeComponentRegistry").get(nativeComponentName, function () {
+    return __INTERNAL_VIEW_CONFIG;
+  });
+},1815,[1,269,254,228],"node_modules\\react-native-avoid-softinput\\src\\AvoidSoftInputViewNativeComponent.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.useSoftInputAppliedOffsetChanged = useSoftInputAppliedOffsetChanged;
+  exports.useSoftInputHeightChanged = useSoftInputHeightChanged;
+  exports.useSoftInputHidden = useSoftInputHidden;
+  exports.useSoftInputShown = useSoftInputShown;
+  exports.useSoftInputState = useSoftInputState;
+  var _slicedToArray2 = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "@babel/runtime/helpers/slicedToArray"));
+  var _react = _$$_REQUIRE(_dependencyMap[2], "react");
+  function useSoftInputAppliedOffsetChanged(callback) {
+    (0, _react.useEffect)(function () {
+      var unsubscribeAppliedOffsetChanged = _$$_REQUIRE(_dependencyMap[3], "./AvoidSoftInput").AvoidSoftInput.onSoftInputAppliedOffsetChange(callback);
+      return function () {
+        unsubscribeAppliedOffsetChanged.remove();
+      };
+    }, [callback]);
+  }
+  function useSoftInputHeightChanged(callback) {
+    (0, _react.useEffect)(function () {
+      var unsubscribeHeightChanged = _$$_REQUIRE(_dependencyMap[3], "./AvoidSoftInput").AvoidSoftInput.onSoftInputHeightChange(callback);
+      return function () {
+        unsubscribeHeightChanged.remove();
+      };
+    }, [callback]);
+  }
+  function useSoftInputHidden(callback) {
+    (0, _react.useEffect)(function () {
+      var unsubscribeHidden = _$$_REQUIRE(_dependencyMap[3], "./AvoidSoftInput").AvoidSoftInput.onSoftInputHidden(callback);
+      return function () {
+        unsubscribeHidden.remove();
+      };
+    }, [callback]);
+  }
+  function useSoftInputShown(callback) {
+    (0, _react.useEffect)(function () {
+      var unsubscribeShown = _$$_REQUIRE(_dependencyMap[3], "./AvoidSoftInput").AvoidSoftInput.onSoftInputShown(callback);
+      return function () {
+        unsubscribeShown.remove();
+      };
+    }, [callback]);
+  }
+  function useSoftInputState() {
+    var _useReducer = (0, _react.useReducer)(_$$_REQUIRE(_dependencyMap[4], "./stateReducer").reducer, _$$_REQUIRE(_dependencyMap[4], "./stateReducer").initialState),
+      _useReducer2 = (0, _slicedToArray2.default)(_useReducer, 2),
+      state = _useReducer2[0],
+      dispatch = _useReducer2[1];
+    useSoftInputHeightChanged(function (_ref) {
+      var softInputHeight = _ref.softInputHeight;
+      dispatch((0, _$$_REQUIRE(_dependencyMap[4], "./stateReducer").createAction)(softInputHeight));
+    });
+    return state;
+  }
+},1816,[1,25,42,1810,1817],"node_modules\\react-native-avoid-softinput\\src\\hooks.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.createAction = createAction;
+  exports.initialState = void 0;
+  exports.reducer = reducer;
+  function createAction(payload) {
+    return {
+      payload: payload
+    };
+  }
+  var initialState = exports.initialState = {
+    isSoftInputShown: false,
+    softInputHeight: 0
+  };
+  function reducer(state, action) {
+    if (action.payload === 0) {
+      return Object.assign({}, state, {
+        isSoftInputShown: false,
+        softInputHeight: action.payload
+      });
+    }
+    if (!state.isSoftInputShown) {
+      return Object.assign({}, state, {
+        isSoftInputShown: true,
+        softInputHeight: action.payload
+      });
+    }
+    return Object.assign({}, state, {
+      softInputHeight: action.payload
+    });
+  }
+},1817,[],"node_modules\\react-native-avoid-softinput\\src\\stateReducer.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+},1818,[],"node_modules\\react-native-avoid-softinput\\src\\types.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -270946,7 +282319,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1705,[1,2,25,42,3,1376,552,1377,1706,88,1087,1304,1052,1220,1190,1092,981,1053,556],"src\\pages\\mine\\index.tsx");
+},1819,[1,2,25,42,3,1376,552,1377,1820,88,1087,1304,1052,1220,1190,1092,981,1053,556],"src\\pages\\mine\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -271160,7 +282533,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1706,[3,556],"src\\pages\\mine\\styles.ts");
+},1820,[3,556],"src\\pages\\mine\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -271984,7 +283357,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, allowShowLoginContent ? 'content' : 'blank');
   };
   var _default = exports.default = Login;
-},1707,[1,2,25,42,3,1708,1710,1712,1377,968,552,88,1597,1190,1248,1219,1591,556,1053],"src\\pages\\login\\index.tsx");
+},1821,[1,2,25,42,3,1822,1824,1826,1377,968,552,88,1597,1190,1248,1219,1591,556,1053],"src\\pages\\login\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -272135,7 +283508,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Sms;
-},1708,[1,2,25,42,3,1709,88,1087,1190,1219,1186,1591],"src\\pages\\login\\com\\sms\\index.tsx");
+},1822,[1,2,25,42,3,1823,88,1087,1190,1219,1186,1591],"src\\pages\\login\\com\\sms\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -272225,7 +283598,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = loginStyles;
-},1709,[3,556],"src\\pages\\login\\com\\sms\\styles.ts");
+},1823,[3,556],"src\\pages\\login\\com\\sms\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -272422,7 +283795,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Password;
-},1710,[1,2,25,42,3,1711,88,1087,1190,981,1052,1591],"src\\pages\\login\\com\\password\\index.tsx");
+},1824,[1,2,25,42,3,1825,88,1087,1190,981,1052,1591],"src\\pages\\login\\com\\password\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -272508,7 +283881,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = passwordStyles;
-},1711,[3,556],"src\\pages\\login\\com\\password\\styles.ts");
+},1825,[3,556],"src\\pages\\login\\com\\password\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -272621,7 +283994,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1712,[3,556],"src\\pages\\login\\styles.ts");
+},1826,[3,556],"src\\pages\\login\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -272739,7 +284112,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = ForgetPassword;
-},1713,[1,7,2,25,42,3,1714,88,1087,1190,1219,1186,1591],"src\\pages\\forgetPassword\\index.tsx");
+},1827,[1,7,2,25,42,3,1828,88,1087,1190,1219,1186,1591],"src\\pages\\forgetPassword\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -272812,7 +284185,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = forgetPasswordStyles;
-},1714,[3,556],"src\\pages\\forgetPassword\\styles.ts");
+},1828,[3,556],"src\\pages\\forgetPassword\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -273007,7 +284380,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = WebViewScreen;
-},1715,[1,25,42,3,1376,88,1087,556,1716],"src\\pages\\webView\\index.tsx");
+},1829,[1,25,42,3,1376,88,1087,556,1830],"src\\pages\\webView\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -273022,7 +284395,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.default = void 0;
   var _WebView = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], "./WebView"));
   var _default = exports.default = _WebView.default;
-},1716,[1,1717],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\index.ts");
+},1830,[1,1831],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\index.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -273316,7 +284689,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     isFileUploadSupported: isFileUploadSupported
   });
   var _default = exports.default = WebView;
-},1717,[1,2,202,25,150,42,3,23,1718,1719,1720,88,1721],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\WebView.harmony.tsx");
+},1831,[1,2,202,25,150,42,3,23,1832,1833,1834,88,1835],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\WebView.harmony.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -273506,7 +284879,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       _$$_REQUIRE(_dependencyMap[5], "react-native/Libraries/ReactNative/RendererProxy").dispatchCommand(ref, "clearHistory", []);
     }
   };
-},1718,[1,269,257,254,228,38],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\RNCWebViewNativeComponent.ts");
+},1832,[1,269,257,254,228,38],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\RNCWebViewNativeComponent.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -273517,7 +284890,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   // Use of this source code is governed by a Apache-2.0 license that can be
   // found in the LICENSE file.
   var _default = exports.default = _reactNative.TurboModuleRegistry.getEnforcing('RNCWebViewModule');
-},1719,[3],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\NativeRNCWebViewModule.ts");
+},1833,[3],"node_modules\\@react-native-oh-tpl\\react-native-webview\\src\\NativeRNCWebViewModule.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -273562,7 +284935,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1720,[3],"node_modules\\@react-native-oh-tpl\\react-native-webview\\node_modules\\react-native-webview\\src\\WebView.styles.ts");
+},1834,[3],"node_modules\\@react-native-oh-tpl\\react-native-webview\\node_modules\\react-native-webview\\src\\WebView.styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -273756,7 +285129,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       lastErrorEvent: lastErrorEvent
     };
   };
-},1721,[1,25,7,1722,42,3,1720,88],"node_modules\\@react-native-oh-tpl\\react-native-webview\\node_modules\\react-native-webview\\src\\WebViewShared.tsx");
+},1835,[1,25,7,1836,42,3,1834,88],"node_modules\\@react-native-oh-tpl\\react-native-webview\\node_modules\\react-native-webview\\src\\WebViewShared.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -273767,7 +285140,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return string.replace(matchOperatorsRegex, '\\$&');
   };
-},1722,[],"node_modules\\escape-string-regexp\\index.js");
+},1836,[],"node_modules\\escape-string-regexp\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -274007,7 +285380,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = LoginSms;
-},1723,[1,2,25,42,3,1599,1377,553,1724,88,1087,1725,1186,1190,1220,981,1053,1086,1591,556],"src\\pages\\loginSms\\index.tsx");
+},1837,[1,2,25,42,3,1599,1377,553,1838,88,1087,1839,1186,1190,1220,981,1053,1086,1591,556],"src\\pages\\loginSms\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -274072,7 +285445,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = loginSmsStyles;
-},1724,[3,556],"src\\pages\\loginSms\\styles.ts");
+},1838,[3,556],"src\\pages\\loginSms\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -274135,7 +285508,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       reset: reset
     };
   }
-},1725,[1,25,42],"src\\hooks\\useCountDown.ts");
+},1839,[1,25,42],"src\\hooks\\useCountDown.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -274394,7 +285767,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = ForgetPasswordReset;
-},1726,[1,2,25,42,3,1377,968,1727,88,1087,1190,1052,1220,1086,1591,556],"src\\pages\\forgetPasswordReset\\index.tsx");
+},1840,[1,2,25,42,3,1377,968,1841,88,1087,1190,1052,1220,1086,1591,556],"src\\pages\\forgetPasswordReset\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -274461,7 +285834,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1727,[3,556],"src\\pages\\forgetPasswordReset\\styles.ts");
+},1841,[3,556],"src\\pages\\forgetPasswordReset\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -274667,7 +286040,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = MiniBind;
-},1728,[1,2,25,42,3,1729,88,1087,1725,1186,1190,981,1052,1086,1591],"src\\pages\\miniBind\\index.tsx");
+},1842,[1,2,25,42,3,1843,88,1087,1839,1186,1190,981,1052,1086,1591],"src\\pages\\miniBind\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -274731,7 +286104,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1729,[3,556],"src\\pages\\miniBind\\styles.ts");
+},1843,[3,556],"src\\pages\\miniBind\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -274866,7 +286239,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = BindPhone;
-},1730,[1,2,25,42,3,1731,88,1087,1190,981,1186,1591],"src\\pages\\bindPhone\\index.tsx");
+},1844,[1,2,25,42,3,1845,88,1087,1190,981,1186,1591],"src\\pages\\bindPhone\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -274940,7 +286313,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1731,[3,556],"src\\pages\\bindPhone\\styles.ts");
+},1845,[3,556],"src\\pages\\bindPhone\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -275322,7 +286695,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1732,[1,2,25,42,3,1377,1733,88,1190,1220,1197,1198,1734,1591,556],"src\\pages\\userInfo\\index.tsx");
+},1846,[1,2,25,42,3,1377,1847,88,1190,1220,1197,1198,1848,1591,556],"src\\pages\\userInfo\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -275425,7 +286798,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1733,[3,556],"src\\pages\\userInfo\\styles.ts");
+},1847,[3,556],"src\\pages\\userInfo\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -275454,8 +286827,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   function launchImageLibrary(options, callback) {
     return _reactNative.Platform.OS === 'web' ? (0, _$$_REQUIRE(_dependencyMap[2], "react-native-image-picker/src/platforms/web").imageLibrary)(options, callback) : (0, _$$_REQUIRE(_dependencyMap[3], "react-native-image-picker/src/platforms/native").imageLibrary)(options, callback);
   }
-},1734,[3,1735,1736,1737],"node_modules\\@react-native-ohos\\react-native-image-picker\\src\\index.ts");
-__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1735,[],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\types.ts");
+},1848,[3,1849,1850,1851],"node_modules\\@react-native-ohos\\react-native-image-picker\\src\\index.ts");
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {},1849,[],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\types.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -275581,7 +286954,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
     return (_webMediaTypes$mediaT = webMediaTypes[mediaType]) != null ? _webMediaTypes$mediaT : webMediaTypes.photo;
   }
-},1736,[1,2],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\platforms\\web.ts");
+},1850,[1,2],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\platforms\\web.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -275624,7 +286997,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       });
     });
   }
-},1737,[3,1738],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\platforms\\native.ts");
+},1851,[3,1852],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\platforms\\native.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -275632,7 +287005,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.default = void 0;
   var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
   var _default = exports.default = _reactNative.TurboModuleRegistry.get('ImagePicker');
-},1738,[3],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\platforms\\NativeImagePicker.ts");
+},1852,[3],"node_modules\\@react-native-ohos\\react-native-image-picker\\node_modules\\react-native-image-picker\\src\\platforms\\NativeImagePicker.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -277235,7 +288608,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = DeviceInfo;
-},1739,[1,2,25,3,1377,42,1615,1740,1741,1612,1742,1665,88,1087,1597,1052,1225,1190,1743,1219,1221,1591,556,1197,1744,566],"src\\pages\\deviceInfo\\index.tsx");
+},1853,[1,2,25,3,1377,42,1615,1854,1855,1612,1856,1665,88,1087,1597,1052,1225,1190,1857,1219,1221,1591,556,1197,1858,566],"src\\pages\\deviceInfo\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -277533,7 +288906,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = BeeBuzzingCollisionPop;
-},1740,[1,2,25,42,3,553,557,552,88,1591,556,1219,1190],"src\\pages\\deviceInfo\\components\\beeBuzzingCollisionPop\\index.tsx");
+},1854,[1,2,25,42,3,553,557,552,88,1591,556,1219,1190],"src\\pages\\deviceInfo\\components\\beeBuzzingCollisionPop\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -277724,7 +289097,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = LeaveRiseLockPop;
-},1741,[1,2,25,42,3,553,557,88,1591,556,1190],"src\\pages\\deviceInfo\\components\\leaveRiseLockPop\\index.tsx");
+},1855,[1,2,25,42,3,553,557,88,1591,556,1190],"src\\pages\\deviceInfo\\components\\leaveRiseLockPop\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -277780,7 +289153,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: (0, _$$_REQUIRE(_dependencyMap[3], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16)
     }
   });
-},1742,[42,3,88,556],"src\\components\\MyEmpty\\index.tsx");
+},1856,[42,3,88,556],"src\\components\\MyEmpty\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -278245,7 +289618,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: 'red'
     }
   });
-},1743,[3,556],"src\\pages\\deviceInfo\\style.ts");
+},1857,[3,556],"src\\pages\\deviceInfo\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -278384,7 +289757,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   });
-},1744,[1,25,42,3,1377,1656,88,1591,1745,556,1190],"src\\pages\\deviceInfo\\components\\batteryReminderPop\\index.tsx");
+},1858,[1,25,42,3,1377,1656,88,1591,1859,556,1190],"src\\pages\\deviceInfo\\components\\batteryReminderPop\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -278448,7 +289821,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       justifyContent: 'center'
     }
   });
-},1745,[3,556],"src\\pages\\deviceInfo\\components\\batteryReminderPop\\style.ts");
+},1859,[3,556],"src\\pages\\deviceInfo\\components\\batteryReminderPop\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -279015,7 +290388,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1746,[1,7,2,25,202,42,3,1376,553,1377,552,1747,88,1186,1087,1597,1219,1190,1749,556,1605],"src\\pages\\deviceList\\index.tsx");
+},1860,[1,7,2,25,202,42,3,1376,553,1377,552,1861,88,1186,1087,1597,1219,1190,1863,556,1605],"src\\pages\\deviceList\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -279060,7 +290433,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   }
   var _default = exports.default = (0, _react.memo)(Status);
-},1747,[1,202,42,3,553,1377,88,1186,1748,556],"src\\pages\\deviceList\\status\\index.tsx");
+},1861,[1,202,42,3,553,1377,88,1186,1862,556],"src\\pages\\deviceList\\status\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -279081,7 +290454,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginLeft: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(10)
     }
   });
-},1748,[3,556],"src\\pages\\deviceList\\status\\style.ts");
+},1862,[3,556],"src\\pages\\deviceList\\status\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -279220,7 +290593,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(14)
     }
   });
-},1749,[3,556],"src\\pages\\deviceList\\style.ts");
+},1863,[3,556],"src\\pages\\deviceList\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -279338,7 +290711,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1750,[1,2,25,42,3,1377,88,1597,1087,1227,1190,1591,1751,556],"src\\pages\\firmwareVersion\\index.tsx");
+},1864,[1,2,25,42,3,1377,88,1597,1087,1227,1190,1591,1865,556],"src\\pages\\firmwareVersion\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -279397,7 +290770,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20)
     }
   });
-},1751,[3,556],"src\\pages\\firmwareVersion\\style.ts");
+},1865,[3,556],"src\\pages\\firmwareVersion\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -279617,7 +290990,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1752,[1,2,25,7,42,3,1377,1742,88,1087,1052,1227,1190,1753,1591,556],"src\\pages\\versionHistory\\index.tsx");
+},1866,[1,2,25,7,42,3,1377,1856,88,1087,1052,1227,1190,1867,1591,556],"src\\pages\\versionHistory\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -279678,7 +291051,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       justifyContent: 'center'
     }
   });
-},1753,[3,556],"src\\pages\\versionHistory\\style.ts");
+},1867,[3,556],"src\\pages\\versionHistory\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -279834,7 +291207,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = DeviceLog;
-},1754,[1,2,7,25,42,3,88,1087,1221,556,1591,1755],"src\\pages\\deviceLog\\index.tsx");
+},1868,[1,2,7,25,42,3,88,1087,1221,556,1591,1869],"src\\pages\\deviceLog\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -279876,7 +291249,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       color: '#999'
     }
   });
-},1755,[3,556],"src\\pages\\deviceLog\\style.ts");
+},1869,[3,556],"src\\pages\\deviceLog\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -280148,7 +291521,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1756,[1,7,2,25,42,3,552,1377,1757,557,88,1087,1220,1190,556,1591],"src\\pages\\memberList\\index.tsx");
+},1870,[1,7,2,25,42,3,552,1377,1871,557,88,1087,1220,1190,556,1591],"src\\pages\\memberList\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -280228,7 +291601,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1757,[3,556],"src\\pages\\memberList\\styles.ts");
+},1871,[3,556],"src\\pages\\memberList\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -280623,7 +291996,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1758,[1,7,2,25,42,3,1759,557,1761,88,1087,1190,1220,556,1591],"src\\pages\\addMember\\index.tsx");
+},1872,[1,7,2,25,42,3,1873,557,1875,88,1087,1190,1220,556,1591],"src\\pages\\addMember\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -280814,7 +292187,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1759,[1,25,42,3,627,1377,1760,88,556,566],"src\\pages\\addMember\\com\\lockItem\\index.tsx");
+},1873,[1,25,42,3,627,1377,1874,88,556,566],"src\\pages\\addMember\\com\\lockItem\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -280944,7 +292317,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1760,[3,556],"src\\pages\\addMember\\com\\lockItem\\styles.ts");
+},1874,[3,556],"src\\pages\\addMember\\com\\lockItem\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -281067,7 +292440,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1761,[3,556],"src\\pages\\addMember\\styles.ts");
+},1875,[3,556],"src\\pages\\addMember\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -281309,7 +292682,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1762,[1,7,2,25,42,3,1377,1763,1767,88,556,1591,1087,1225,1190],"src\\pages\\shopping\\index.tsx");
+},1876,[1,7,2,25,42,3,1377,1877,1881,88,556,1591,1087,1225,1190],"src\\pages\\shopping\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -281509,7 +292882,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       children: content
     });
   }
-},1763,[1,7,2,25,42,3,1764,88,1087,1223,1190,1765,1591],"src\\pages\\order\\index.tsx");
+},1877,[1,7,2,25,42,3,1878,88,1087,1223,1190,1879,1591],"src\\pages\\order\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -281573,7 +292946,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16)
     }
   });
-},1764,[3,556],"src\\pages\\order\\styles.ts");
+},1878,[3,556],"src\\pages\\order\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -281693,7 +293066,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }) : null]
     });
   }
-},1765,[1,42,3,1377,1766,627,88,1186,1591,556],"src\\pages\\order\\com\\orderItem\\index.tsx");
+},1879,[1,42,3,1377,1880,627,88,1186,1591,556],"src\\pages\\order\\com\\orderItem\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -281769,7 +293142,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontWeight: 'bold'
     }
   });
-},1766,[3,556],"src\\pages\\order\\com\\orderItem\\styles.ts");
+},1880,[3,556],"src\\pages\\order\\com\\orderItem\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -281871,7 +293244,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1767,[3,556],"src\\pages\\shopping\\styles.ts");
+},1881,[3,556],"src\\pages\\shopping\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -282185,7 +293558,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1768,[1,7,2,25,42,3,557,1769,88,1087,1190,1225,981,1248,556,1591,566],"src\\pages\\goodsDetail\\index.tsx");
+},1882,[1,7,2,25,42,3,557,1883,88,1087,1190,1225,981,1248,556,1591,566],"src\\pages\\goodsDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -282353,7 +293726,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1769,[3,556],"src\\pages\\goodsDetail\\styles.ts");
+},1883,[3,556],"src\\pages\\goodsDetail\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -282703,7 +294076,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1770,[1,2,25,42,3,552,557,1377,1771,88,1087,1190,1225,1591,556],"src\\pages\\pickupCode\\index.tsx");
+},1884,[1,2,25,42,3,552,557,1377,1885,88,1087,1190,1225,1591,556],"src\\pages\\pickupCode\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -282859,7 +294232,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1771,[3,556],"src\\pages\\pickupCode\\styles.ts");
+},1885,[3,556],"src\\pages\\pickupCode\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -283070,7 +294443,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1772,[1,2,25,42,3,1773,88,1087,1632,1190,1591],"src\\pages\\scanPickupCode\\index.tsx");
+},1886,[1,2,25,42,3,1887,88,1087,1632,1190,1591],"src\\pages\\scanPickupCode\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -283128,7 +294501,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1773,[3,556],"src\\pages\\scanPickupCode\\styles.ts");
+},1887,[3,556],"src\\pages\\scanPickupCode\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -283373,7 +294746,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1774,[1,7,2,25,42,3,1775,88,1087,1225,1190,556,1591],"src\\pages\\pickupCodeRecordList\\index.tsx");
+},1888,[1,7,2,25,42,3,1889,88,1087,1225,1190,556,1591],"src\\pages\\pickupCodeRecordList\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -283460,7 +294833,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1775,[3,556],"src\\pages\\pickupCodeRecordList\\styles.ts");
+},1889,[3,556],"src\\pages\\pickupCodeRecordList\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -284048,7 +295421,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1776,[1,2,25,42,3,1377,1777,557,88,1087,1225,1190,1778,1591,556,566],"src\\pages\\pickupCodeRecordDetail\\index.tsx");
+},1890,[1,2,25,42,3,1377,1891,557,88,1087,1225,1190,1892,1591,556,566],"src\\pages\\pickupCodeRecordDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -284281,7 +295654,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1777,[3,556],"src\\pages\\pickupCodeRecordDetail\\styles.ts");
+},1891,[3,556],"src\\pages\\pickupCodeRecordDetail\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -284332,7 +295705,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     walk(data);
     return result;
   }
-},1778,[1779],"src\\utils\\regionData.ts");
+},1892,[1893],"src\\utils\\regionData.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -296982,7 +308355,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.pcaTextArr = b;
   exports.provinceAndCityData = t;
   exports.regionData = s;
-},1779,[25],"node_modules\\element-china-area-data\\dist\\element-china-area-data.cjs");
+},1893,[25],"node_modules\\element-china-area-data\\dist\\element-china-area-data.cjs");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -297496,7 +308869,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1780,[1,2,25,42,3,552,557,1377,1781,88,1087,1190,1225,566,1734,1591,556],"src\\pages\\pickupCodeDaily\\index.tsx");
+},1894,[1,2,25,42,3,552,557,1377,1895,88,1087,1190,1225,566,1848,1591,556],"src\\pages\\pickupCodeDaily\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -297657,7 +309030,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1781,[3,556],"src\\pages\\pickupCodeDaily\\styles.ts");
+},1895,[3,556],"src\\pages\\pickupCodeDaily\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -298220,7 +309593,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = ManageComposite;
-},1782,[1,7,2,25,42,3,553,1377,88,1087,1226,1190,1783,1591,556],"src\\pages\\composit\\manage.tsx");
+},1896,[1,7,2,25,42,3,553,1377,88,1087,1226,1190,1897,1591,556],"src\\pages\\composit\\manage.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -298394,7 +309767,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20)
     }
   });
-},1783,[3,556],"src\\pages\\composit\\manageStyle.ts");
+},1897,[3,556],"src\\pages\\composit\\manageStyle.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -298850,7 +310223,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1784,[1,7,2,25,3,42,1377,627,88,1597,1087,1226,1190,1785,1591,1786,556,566],"src\\pages\\composit\\member.tsx");
+},1898,[1,7,2,25,3,42,1377,627,88,1597,1087,1226,1190,1899,1591,1900,556,566],"src\\pages\\composit\\member.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -298871,7 +310244,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return `${key}=${encode ? encodeURIComponent(String(val)) : String(val)}`;
     }).join('&');
   }
-},1785,[],"src\\utils\\stringify.ts");
+},1899,[],"src\\utils\\stringify.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -299043,7 +310416,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textTransform: 'none'
     }
   });
-},1786,[3,556],"src\\pages\\composit\\memberStyle.ts");
+},1900,[3,556],"src\\pages\\composit\\memberStyle.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -299275,7 +310648,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1787,[1,2,25,42,3,1377,557,88,1087,1248,1190,1785,1007,1591,1788,556],"src\\pages\\composit\\share\\index.tsx");
+},1901,[1,2,25,42,3,1377,557,88,1087,1248,1190,1899,1007,1591,1902,556],"src\\pages\\composit\\share\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -299326,7 +310699,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(16)
     }
   });
-},1788,[3,556],"src\\pages\\composit\\share\\styles.ts");
+},1902,[3,556],"src\\pages\\composit\\share\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -299559,7 +310932,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1789,[1,2,25,42,3,1790,88,1087,1190,1223,1591,1186,556],"src\\pages\\order\\detail\\index.tsx");
+},1903,[1,2,25,42,3,1904,88,1087,1190,1223,1591,1186,556],"src\\pages\\order\\detail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -299623,7 +310996,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(8)
     }
   });
-},1790,[3,556],"src\\pages\\order\\detail\\styles.ts");
+},1904,[3,556],"src\\pages\\order\\detail\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -299961,7 +311334,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1791,[1,2,7,25,42,3,1377,1792,88,1087,1190,1734,1220,1591,556],"src\\pages\\maintain\\index.tsx");
+},1905,[1,2,7,25,42,3,1377,1906,88,1087,1190,1848,1220,1591,556],"src\\pages\\maintain\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -300103,7 +311476,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       color: '#FFFFFF'
     }
   });
-},1792,[3,556],"src\\pages\\maintain\\styles.ts");
+},1906,[3,556],"src\\pages\\maintain\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -300266,7 +311639,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1793,[1,7,2,25,42,3,1794,88,1087,1221,1190,556,1591],"src\\pages\\maintain\\lockChoose\\index.tsx");
+},1907,[1,7,2,25,42,3,1908,88,1087,1221,1190,556,1591],"src\\pages\\maintain\\lockChoose\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -300317,7 +311690,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16)
     }
   });
-},1794,[3,556],"src\\pages\\maintain\\lockChoose\\styles.ts");
+},1908,[3,556],"src\\pages\\maintain\\lockChoose\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -300507,7 +311880,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1795,[1,7,2,25,42,3,1377,1796,88,1087,1220,1190,1092,556,1591],"src\\pages\\maintain\\service\\index.tsx");
+},1909,[1,7,2,25,42,3,1377,1910,88,1087,1220,1190,1092,556,1591],"src\\pages\\maintain\\service\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -300570,7 +311943,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16)
     }
   });
-},1796,[3,556],"src\\pages\\maintain\\service\\styles.ts");
+},1910,[3,556],"src\\pages\\maintain\\service\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -300806,7 +312179,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1797,[1,7,2,25,42,3,1798,627,88,1087,1190,1220,1591,556],"src\\pages\\maintain\\serviceDetail\\index.tsx");
+},1911,[1,7,2,25,42,3,1912,627,88,1087,1190,1220,1591,556],"src\\pages\\maintain\\serviceDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -300887,7 +312260,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(4)
     }
   });
-},1798,[3,556],"src\\pages\\maintain\\serviceDetail\\styles.ts");
+},1912,[3,556],"src\\pages\\maintain\\serviceDetail\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -300905,31 +312278,57 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\pages\\account\\index.tsx";
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   function Account() {
-    var _detail$mobile;
+    var _route$params, _route$params2, _detail$mobile;
     var navigation = (0, _$$_REQUIRE(_dependencyMap[9], "@react-navigation/native").useNavigation)();
+    var route = (0, _$$_REQUIRE(_dependencyMap[9], "@react-navigation/native").useRoute)();
+    var pageType = (_route$params = route.params) == null ? void 0 : _route$params.pageType;
+    var autoOpenAt = (_route$params2 = route.params) == null ? void 0 : _route$params2._autoOpenAt;
     var _useState = (0, _react.useState)(null),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       detail = _useState2[0],
       setDetail = _useState2[1];
+    var _useState3 = (0, _react.useState)(false),
+      _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+      shouldOpenMobilePop = _useState4[0],
+      setShouldOpenMobilePop = _useState4[1];
+    var _useState5 = (0, _react.useState)(false),
+      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+      shouldOpenUnbindWechatPop = _useState6[0],
+      setShouldOpenUnbindWechatPop = _useState6[1];
     var popConfirmRef = (0, _react.useRef)(null);
     var unbindWechatRef = (0, _react.useRef)(null);
     var appStateSubRef = (0, _react.useRef)(null);
-    var loadAccount = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
-      try {
-        var _ref2, _data;
-        var res = yield (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/services/user").getAccountInfo)({});
-        var data = (_ref2 = (_data = res == null ? void 0 : res.data) != null ? _data : res) != null ? _ref2 : {};
-        setDetail(data);
-      } catch (e) {
-        (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
-          title: '获取账号信息失败',
-          icon: 'info'
-        });
-      }
-    }), []);
-    (0, _$$_REQUIRE(_dependencyMap[12], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
-      loadAccount();
-    }, [loadAccount]));
+    var lastConsumedAutoOpenAt = (0, _react.useRef)();
+    (0, _$$_REQUIRE(_dependencyMap[10], "@react-navigation/core").useFocusEffect)((0, _react.useCallback)(function () {
+      var active = true;
+      (0, _asyncToGenerator2.default)(function* () {
+        try {
+          var _ref2, _data;
+          var res = yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/services/user").getAccountInfo)({});
+          var data = (_ref2 = (_data = res == null ? void 0 : res.data) != null ? _data : res) != null ? _ref2 : {};
+          if (!active) return;
+          var isNewAutoOpen = autoOpenAt !== undefined && autoOpenAt !== lastConsumedAutoOpenAt.current;
+          var shouldOpen7 = isNewAutoOpen && String(pageType) === '7';
+          var shouldOpen14 = isNewAutoOpen && String(pageType) === '14';
+          if (shouldOpen7 || shouldOpen14) {
+            lastConsumedAutoOpenAt.current = autoOpenAt;
+          }
+          setDetail(data);
+          setShouldOpenMobilePop(shouldOpen7);
+          setShouldOpenUnbindWechatPop(shouldOpen14);
+        } catch (e) {
+          if (active) {
+            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+              title: '获取账号信息失败',
+              icon: 'info'
+            });
+          }
+        }
+      })();
+      return function () {
+        active = false;
+      };
+    }, [autoOpenAt, pageType]));
     var handleChangeMobile = function handleChangeMobile() {
       if (!(detail != null && detail.mobile)) return;
       // 这里仅保留占位，具体改号流程可按需要后续迁移
@@ -300943,13 +312342,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var goBindWechat = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       var isInstalledWeChat = yield (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/wechat").checkInstalledWeChat)();
       if (!isInstalledWeChat.result) {
-        (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: isInstalledWeChat.message || '请先安装微信',
           icon: 'info'
         });
         return;
       }
-      (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
+      (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
         title: '授权中...'
       });
       var resPromise = (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/wechat").wechatLogin)();
@@ -300970,28 +312369,28 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         r = yield Promise.race([resPromise, appStatePromise]);
         console.log('r', r);
         if ((_r = r) != null && _r.result) {
-          var thirdState = yield (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/services/user").getThirdState)({});
+          var thirdState = yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/services/user").getThirdState)({});
           var obj = {
             source: 1,
             code: r.code,
             state: thirdState.data
           };
           console.log('obj', obj);
-          var bindRes = yield (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/services/user").userThirdBind)(obj);
+          var bindRes = yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/services/user").userThirdBind)(obj);
           console.log('bindRes', bindRes);
           if (Number(bindRes.code) === 200) {
             var _ref4, _data2;
-            var accountRes = yield (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/services/user").getAccountInfo)({});
+            var accountRes = yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/services/user").getAccountInfo)({});
             var data = (_ref4 = (_data2 = accountRes == null ? void 0 : accountRes.data) != null ? _data2 : accountRes) != null ? _ref4 : {};
             setDetail(data);
-            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: '绑定成功',
               icon: 'success'
             });
           } else {
-            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: bindRes.msg || bindRes.message || '绑定失败',
               icon: 'error'
             });
@@ -301000,16 +312399,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           var _r2;
           if (((_r2 = r) == null ? void 0 : _r2.errCode) !== -998) {
             var _r3;
-            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-            (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: ((_r3 = r) == null ? void 0 : _r3.message) || '授权失败',
               icon: 'error'
             });
           }
         }
       } catch (e) {
-        (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
-        (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+        (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
           title: '授权异常，请重试',
           icon: 'info'
         });
@@ -301032,6 +312431,18 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         mobile: detail.mobile
       });
     };
+    (0, _react.useEffect)(function () {
+      var _popConfirmRef$curren;
+      if (!detail || !shouldOpenMobilePop) return;
+      (_popConfirmRef$curren = popConfirmRef.current) == null || _popConfirmRef$curren.open();
+      setShouldOpenMobilePop(false);
+    }, [detail, shouldOpenMobilePop]);
+    (0, _react.useEffect)(function () {
+      var _unbindWechatRef$curr;
+      if (!detail || !shouldOpenUnbindWechatPop) return;
+      (_unbindWechatRef$curr = unbindWechatRef.current) == null || _unbindWechatRef$curr.open();
+      setShouldOpenUnbindWechatPop(false);
+    }, [detail, shouldOpenUnbindWechatPop]);
     return /*#__PURE__*/(0, _jsxRuntime.jsxs)(_$$_REQUIRE(_dependencyMap[14], "D:\\xqkj\\bokeapp\\src/components").PageContainer, {
       backgroundColor: "#FFFFFF",
       statusBarStyle: "dark-content",
@@ -301146,8 +312557,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         title: detail != null && detail.bindWechatApp ? '确定要解除绑定吗？' : '确定要绑定当前登录的微信账号吗？',
         confirmText: detail != null && detail.bindWechatApp ? '解除' : '绑定',
         onConfirm: function onConfirm() {
-          var _unbindWechatRef$curr;
-          (_unbindWechatRef$curr = unbindWechatRef.current) == null || _unbindWechatRef$curr.close();
+          var _unbindWechatRef$curr2;
+          (_unbindWechatRef$curr2 = unbindWechatRef.current) == null || _unbindWechatRef$curr2.close();
           if (detail != null && detail.bindWechatApp) {
             navigation.navigate('WechatUnbind', {
               mobile: detail == null ? void 0 : detail.mobile
@@ -301159,7 +312570,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1799,[1,2,25,42,3,1377,1800,552,88,1087,1220,1190,1092,1248,1591,556],"src\\pages\\account\\index.tsx");
+},1913,[1,2,25,42,3,1377,1914,552,88,1087,1092,1220,1190,1248,1591,556],"src\\pages\\account\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -301231,7 +312642,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1800,[3,556],"src\\pages\\account\\styles.ts");
+},1914,[3,556],"src\\pages\\account\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -301748,7 +313159,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1801,[1,2,25,42,3,1802,88,1087,1190,1220,1591],"src\\pages\\changeMobile\\index.tsx");
+},1915,[1,2,25,42,3,1916,88,1087,1190,1220,1591],"src\\pages\\changeMobile\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -301846,7 +313257,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1802,[3,556],"src\\pages\\changeMobile\\styles.ts");
+},1916,[3,556],"src\\pages\\changeMobile\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -302087,7 +313498,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1803,[1,2,25,42,3,1804,88,1087,1190,1186,1220,1591],"src\\pages\\wechatUnbind\\index.tsx");
+},1917,[1,2,25,42,3,1918,88,1087,1190,1186,1220,1591],"src\\pages\\wechatUnbind\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -302186,7 +313597,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1804,[3,556],"src\\pages\\wechatUnbind\\styles.ts");
+},1918,[3,556],"src\\pages\\wechatUnbind\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -302575,7 +313986,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1805,[1,2,25,42,3,1377,1806,88,1087,1190,1186,1220,1591,556],"src\\pages\\passwordSet\\index.tsx");
+},1919,[1,2,25,42,3,1377,1920,88,1087,1190,1186,1220,1591,556],"src\\pages\\passwordSet\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -302675,7 +314086,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1806,[3,556],"src\\pages\\passwordSet\\styles.ts");
+},1920,[3,556],"src\\pages\\passwordSet\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -303069,7 +314480,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1807,[1,2,25,42,3,1377,1808,88,1087,1190,1186,1220,1052,1053,1086,1591,556],"src\\pages\\logoff\\index.tsx");
+},1921,[1,2,25,42,3,1377,1922,88,1087,1190,1186,1220,1052,1053,1086,1591,556],"src\\pages\\logoff\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -303272,7 +314683,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1808,[3,556],"src\\pages\\logoff\\styles.ts");
+},1922,[3,556],"src\\pages\\logoff\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -303339,7 +314750,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1809,[1,42,3,1377,1810,88,1087,1591,556],"src\\pages\\about\\index.tsx");
+},1923,[1,42,3,1377,1924,88,1087,1591,556],"src\\pages\\about\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -303376,7 +314787,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1810,[3,556],"src\\pages\\about\\styles.ts");
+},1924,[3,556],"src\\pages\\about\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -303736,7 +315147,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1811,[1,2,25,42,3,1377,1812,557,88,1087,1224,1190,1778,1591,556,566],"src\\pages\\addressCreate\\index.tsx");
+},1925,[1,2,25,42,3,1377,1926,557,88,1087,1224,1190,1892,1591,556,566],"src\\pages\\addressCreate\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -303831,7 +315242,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1812,[3,556],"src\\pages\\addressCreate\\styles.ts");
+},1926,[3,556],"src\\pages\\addressCreate\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -304070,7 +315481,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1813,[1,7,2,25,42,3,1377,552,1814,557,88,1087,1220,1190,1224,556,1591],"src\\pages\\address\\index.tsx");
+},1927,[1,7,2,25,42,3,1377,552,1928,557,88,1087,1220,1190,1224,556,1591],"src\\pages\\address\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -304166,7 +315577,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1814,[3,556],"src\\pages\\address\\styles.ts");
+},1928,[3,556],"src\\pages\\address\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -304496,7 +315907,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1815,[1,7,2,25,42,3,1377,1816,88,1087,1220,1190,1734,1591,556],"src\\pages\\feedback\\index.tsx");
+},1929,[1,7,2,25,42,3,1377,1930,88,1087,1220,1190,1848,1591,556],"src\\pages\\feedback\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -304621,7 +316032,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1816,[3,556],"src\\pages\\feedback\\styles.ts");
+},1930,[3,556],"src\\pages\\feedback\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -304828,7 +316239,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1817,[1,7,2,25,42,3,627,1377,1818,88,1087,1220,1190,1591,556],"src\\pages\\feedbackRecord\\index.tsx");
+},1931,[1,7,2,25,42,3,627,1377,1932,88,1087,1220,1190,1591,556],"src\\pages\\feedbackRecord\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -304934,7 +316345,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1818,[3,556],"src\\pages\\feedbackRecord\\styles.ts");
+},1932,[3,556],"src\\pages\\feedbackRecord\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -305181,7 +316592,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1819,[1,7,2,25,202,42,3,553,1820,88,1087,1228,1190,556,1591,566],"src\\pages\\testDevice\\index.tsx");
+},1933,[1,7,2,25,202,42,3,553,1934,88,1087,1228,1190,556,1591,566],"src\\pages\\testDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -305234,7 +316645,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1820,[3,556],"src\\pages\\testDevice\\styles.ts");
+},1934,[3,556],"src\\pages\\testDevice\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -307174,7 +318585,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1821,[1,2,25,42,3,553,1656,1822,1377,1615,1823,88,1597,1087,1228,1190,1205,1092,1591,556,566],"src\\pages\\testDeviceDetail\\index.tsx");
+},1935,[1,2,25,42,3,553,1656,1936,1377,1615,1937,88,1597,1087,1228,1190,1205,1092,1591,556,566],"src\\pages\\testDeviceDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -307412,7 +318823,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1822,[3,556],"src\\pages\\testDeviceDetail\\styles.ts");
+},1936,[3,556],"src\\pages\\testDeviceDetail\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -307517,7 +318928,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = UnqualifiedPop;
-},1823,[1,2,25,42,3,1822,88,1591,556],"src\\pages\\testDeviceDetail\\UnqualifiedPop.tsx");
+},1937,[1,2,25,42,3,1936,88,1591,556],"src\\pages\\testDeviceDetail\\UnqualifiedPop.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -307846,7 +319257,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1824,[1,2,25,42,3,627,1825,88,1087,1220,1190,1591,556],"src\\pages\\feedbackDetail\\index.tsx");
+},1938,[1,2,25,42,3,627,1939,88,1087,1220,1190,1591,556],"src\\pages\\feedbackDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -308046,7 +319457,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1825,[3,556],"src\\pages\\feedbackDetail\\styles.ts");
+},1939,[3,556],"src\\pages\\feedbackDetail\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -308193,7 +319604,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1826,[1,2,25,42,3,1827,88,1304,1220,1190,1591],"src\\pages\\skinPeeler\\index.tsx");
+},1940,[1,2,25,42,3,1941,88,1304,1220,1190,1591],"src\\pages\\skinPeeler\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -308261,7 +319672,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1827,[3,556],"src\\pages\\skinPeeler\\styles.ts");
+},1941,[3,556],"src\\pages\\skinPeeler\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -308697,7 +320108,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},1828,[1,2,25,42,3,970,977,1829,1377,968,1830,1831,88,1087,1190,1052,981,1591,556],"src\\pages\\setting\\index.tsx");
+},1942,[1,2,25,42,3,970,977,1943,1377,968,1944,1945,88,1087,1190,1052,981,1591,556],"src\\pages\\setting\\index.tsx");
 __d(function(global, require, _importDefaultUnused, _importAllUnused, module, exports, _dependencyMapUnused) {
   module.exports = {
   "name": "boklock",
@@ -308791,6 +320202,7 @@ __d(function(global, require, _importDefaultUnused, _importAllUnused, module, ex
     "react-native-amap-geolocation": "^1.2.3",
     "react-native-amap3d": "^3.2.4",
     "react-native-audio-recorder-player": "3.6.12",
+    "react-native-avoid-softinput": "4.0.2",
     "react-native-ble-plx": "3.5.0",
     "react-native-calendars": "^1.1314.0",
     "react-native-config": "1.5.1",
@@ -308808,6 +320220,7 @@ __d(function(global, require, _importDefaultUnused, _importAllUnused, module, ex
     "react-native-intent-launcher": "^0.2.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-linear-gradient": "^2.8.3",
+    "react-native-markdown-display": "^7.0.2",
     "react-native-permissions": "^3.8.0",
     "react-native-reanimated": "3.10.1",
     "react-native-reanimated-carousel": "^4.0.3",
@@ -308886,7 +320299,7 @@ __d(function(global, require, _importDefaultUnused, _importAllUnused, module, ex
   }
 }
 ;
-},1829,[],"package.json");
+},1943,[],"package.json");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -309382,7 +320795,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }()
     };
   };
-},1830,[1,2,3,970,1055,976,981,1007,1190,982],"src\\utils\\env\\rn\\appManager.ts");
+},1944,[1,2,3,970,1055,976,981,1007,1190,982],"src\\utils\\env\\rn\\appManager.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -309439,7 +320852,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1831,[3,556],"src\\pages\\setting\\styles.ts");
+},1945,[3,556],"src\\pages\\setting\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -309864,7 +321277,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1832,[1,2,7,25,42,3,1377,1833,552,88,978,1087,1220,1190,1734,1591,556],"src\\pages\\adDisplay\\index.tsx");
+},1946,[1,2,7,25,42,3,1377,1947,552,88,978,1087,1220,1190,1848,1591,556],"src\\pages\\adDisplay\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -310039,7 +321452,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       color: '#FFFFFF'
     }
   });
-},1833,[3,556],"src\\pages\\adDisplay\\styles.ts");
+},1947,[3,556],"src\\pages\\adDisplay\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -310450,7 +321863,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},1834,[1,7,2,25,42,3,1377,1835,88,1087,1609,1186,1197,1190,556,1591],"src\\pages\\deviceAddress\\index.tsx");
+},1948,[1,7,2,25,42,3,1377,1949,88,1087,1609,1186,1197,1190,556,1591],"src\\pages\\deviceAddress\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -310637,7 +322050,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},1835,[3,556],"src\\pages\\deviceAddress\\styles.ts");
+},1949,[3,556],"src\\pages\\deviceAddress\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -311783,7 +323196,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = VipPage;
-},1836,[1,7,2,25,42,3,553,1377,1601,1837,2072,627,88,1220,1087,1190,982,1248,2074,556,1785,1591,2078,1186,2079,2081],"src\\pages\\vip\\index.tsx");
+},1950,[1,7,2,25,42,3,553,1377,1601,1951,2186,627,88,1220,1087,1190,982,1248,2188,556,1899,1591,2192,1186,2193,2195],"src\\pages\\vip\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -312087,7 +323500,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = DateTimePickerPopup;
-},1837,[1,202,25,42,3,627,1838,553,1377,88,1252,1846,556],"src\\components\\CustomDateTimePickerPopup\\index.tsx");
+},1951,[1,202,25,42,3,627,1952,553,1377,88,1252,1960,556],"src\\components\\CustomDateTimePickerPopup\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -312178,7 +323591,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return 'Select date';
   };
   var _default2 = exports.default = _react.default.memo(DatePickerWrapper);
-},1838,[1,42,3,88,1839,1843,1844,1845],"node_modules\\react-native-date-picker\\src\\index.js");
+},1952,[1,42,3,88,1953,1957,1958,1959],"node_modules\\react-native-date-picker\\src\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -312292,7 +323705,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return new Date(timestamp);
   };
   var _default = exports.default = DatePickerAndroid;
-},1839,[42,3,88,1840,1842],"node_modules\\react-native-date-picker\\src\\DatePickerAndroid.js");
+},1953,[42,3,88,1954,1956],"node_modules\\react-native-date-picker\\src\\DatePickerAndroid.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -312331,7 +323744,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       throw Error((0, _$$_REQUIRE(_dependencyMap[1], "./installationError").getInstallationErrorMessage)());
     }
   };
-},1840,[3,1841],"node_modules\\react-native-date-picker\\src\\modules.js");
+},1954,[3,1955],"node_modules\\react-native-date-picker\\src\\modules.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -312362,7 +323775,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return messages[_reactNative.Platform.OS].nonExpo;
     }
   };
-},1841,[1,7,3],"node_modules\\react-native-date-picker\\src\\installationError.js");
+},1955,[1,7,3],"node_modules\\react-native-date-picker\\src\\installationError.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -312466,7 +323879,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       };
     }, [onCancel, onConfirm]);
   };
-},1842,[1,7,42,3,1840],"node_modules\\react-native-date-picker\\src\\modal.js");
+},1956,[1,7,42,3,1954],"node_modules\\react-native-date-picker\\src\\modal.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -312518,7 +323931,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       width: 310
     }
   });
-},1843,[42,3,88,1840,1842],"node_modules\\react-native-date-picker\\src\\DatePickerIOS.js");
+},1957,[42,3,88,1954,1956],"node_modules\\react-native-date-picker\\src\\DatePickerIOS.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -312571,7 +323984,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return props && props.theme && !['light', 'dark', 'auto'].includes(props.theme);
   }, "Invalid theme. Valid options: 'light', 'dark', 'auto'");
   var checks = [dateCheck, widthCheck, heightCheck, modeCheck, themeCheck];
-},1844,[1,14,13],"node_modules\\react-native-date-picker\\src\\propChecker.js");
+},1958,[1,14,13],"node_modules\\react-native-date-picker\\src\\propChecker.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -312819,7 +324232,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
     return colors[color.toLowerCase()];
   }
-},1845,[1,25],"node_modules\\react-native-date-picker\\src\\colorToHex.js");
+},1959,[1,25],"node_modules\\react-native-date-picker\\src\\colorToHex.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -312930,7 +324343,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _services = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[13], "./services"));
   var _xdate = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[14], "xdate"));
   var _Profiler = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[15], "./Profiler"));
-},1846,[1,1847,1973,1977,2012,2021,2030,2032,2028,2039,2043,2048,2068,1966,1848,2071],"node_modules\\react-native-calendars\\src\\index.ts");
+},1960,[1,1961,2087,2091,2126,2135,2144,2146,2142,2153,2157,2162,2182,2080,1962,2185],"node_modules\\react-native-calendars\\src\\index.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -313182,7 +324595,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     customHeader: _propTypes.default.any,
     allowSelectionOutOfRange: _propTypes.default.bool
   });
-},1847,[1,25,300,1848,1849,42,3,1850,1851,1852,1854,1871,1952,88,1868,1971,1867,1959,1972],"node_modules\\react-native-calendars\\src\\calendar\\index.js");
+},1961,[1,25,300,1962,1963,42,3,1964,1965,1966,1968,1985,2066,88,1982,2085,1981,2073,2086],"node_modules\\react-native-calendars\\src\\calendar\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * @preserve XDate v@VERSION
@@ -313868,7 +325281,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return XDate;
   }(Date, Math, Array);
-},1848,[],"node_modules\\xdate\\src\\xdate.js");
+},1962,[],"node_modules\\xdate\\src\\xdate.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** `Object#toString` result references. */
   var mapTag = '[object Map]',
@@ -313935,7 +325348,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return true;
   }
   module.exports = isEmpty;
-},1849,[726,654,675,706,728,655,733,732],"node_modules\\lodash\\isEmpty.js");
+},1963,[726,654,675,706,728,655,733,732],"node_modules\\lodash\\isEmpty.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -314083,7 +325496,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }]);
   }(_react.Component);
   var _default = exports.default = GestureRecognizer;
-},1850,[1,13,14,50,52,53,42,3,88],"node_modules\\react-native-swipe-gestures\\index.js");
+},1964,[1,13,14,50,52,53,42,3,88],"node_modules\\react-native-swipe-gestures\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -314113,7 +325526,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     isAndroidRTL: isAndroidRTL,
     isRN73: isRN73
   };
-},1851,[3],"node_modules\\react-native-calendars\\src\\commons\\constants.js");
+},1965,[3],"node_modules\\react-native-calendars\\src\\commons\\constants.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -314148,7 +325561,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }, theme['stylesheet.calendar.main'] || {}));
   }
-},1852,[3,1853],"node_modules\\react-native-calendars\\src\\calendar\\style.js");
+},1966,[3,1967],"node_modules\\react-native-calendars\\src\\calendar\\style.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -314205,7 +325618,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var todayButtonTextColor = exports.todayButtonTextColor = SECONDARY_TEXT_COLOR;
   var todayButtonPosition = exports.todayButtonPosition = undefined; // right' / 'left'(default)
   var weekVerticalMargin = exports.weekVerticalMargin = 7;
-},1853,[],"node_modules\\react-native-calendars\\src\\style.js");
+},1967,[],"node_modules\\react-native-calendars\\src\\style.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -314439,7 +325852,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     webAriaLevel: 1,
     arrowsHitSlop: 20
   };
-},1854,[1,1855,1848,42,3,1866,88,1867,1869,1870],"node_modules\\react-native-calendars\\src\\calendar\\header\\index.js");
+},1968,[1,1969,1962,42,3,1980,88,1981,1983,1984],"node_modules\\react-native-calendars\\src\\calendar\\header\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMax = Math.max;
@@ -314484,7 +325897,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[3], "./isString")(collection) ? fromIndex <= length && collection.indexOf(value, fromIndex) > -1 : !!length && _$$_REQUIRE(_dependencyMap[4], "./_baseIndexOf")(collection, value, fromIndex) > -1;
   }
   module.exports = includes;
-},1855,[726,1856,1859,1861,1862],"node_modules\\lodash\\includes.js");
+},1969,[726,1970,1973,1975,1976],"node_modules\\lodash\\includes.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates an array of the own enumerable string keyed property values of `object`.
@@ -314516,7 +325929,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return object == null ? [] : _$$_REQUIRE(_dependencyMap[0], "./_baseValues")(object, _$$_REQUIRE(_dependencyMap[1], "./keys")(object));
   }
   module.exports = values;
-},1856,[1857,725],"node_modules\\lodash\\values.js");
+},1970,[1971,725],"node_modules\\lodash\\values.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.values` and `_.valuesIn` which creates an
@@ -314534,7 +325947,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   }
   module.exports = baseValues;
-},1857,[1858],"node_modules\\lodash\\_baseValues.js");
+},1971,[1972],"node_modules\\lodash\\_baseValues.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * A specialized version of `_.map` for arrays without support for iteratee
@@ -314555,7 +325968,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = arrayMap;
-},1858,[],"node_modules\\lodash\\_arrayMap.js");
+},1972,[],"node_modules\\lodash\\_arrayMap.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Converts `value` to an integer.
@@ -314589,7 +326002,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result === result ? remainder ? result - remainder : result : 0;
   }
   module.exports = toInteger;
-},1859,[1860],"node_modules\\lodash\\toInteger.js");
+},1973,[1974],"node_modules\\lodash\\toInteger.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used as references for various `Number` constants. */
   var INFINITY = 1 / 0,
@@ -314630,7 +326043,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return value === value ? value : 0;
   }
   module.exports = toFinite;
-},1860,[886],"node_modules\\lodash\\toFinite.js");
+},1974,[886],"node_modules\\lodash\\toFinite.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** `Object#toString` result references. */
   var stringTag = '[object String]';
@@ -314656,7 +326069,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return typeof value == 'string' || !_$$_REQUIRE(_dependencyMap[0], "./isArray")(value) && _$$_REQUIRE(_dependencyMap[1], "./isObjectLike")(value) && _$$_REQUIRE(_dependencyMap[2], "./_baseGetTag")(value) == stringTag;
   }
   module.exports = isString;
-},1861,[654,652,667],"node_modules\\lodash\\isString.js");
+},1975,[654,652,667],"node_modules\\lodash\\isString.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
@@ -314671,7 +326084,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return value === value ? _$$_REQUIRE(_dependencyMap[0], "./_strictIndexOf")(array, value, fromIndex) : _$$_REQUIRE(_dependencyMap[1], "./_baseFindIndex")(array, _$$_REQUIRE(_dependencyMap[2], "./_baseIsNaN"), fromIndex);
   }
   module.exports = baseIndexOf;
-},1862,[1863,1864,1865],"node_modules\\lodash\\_baseIndexOf.js");
+},1976,[1977,1978,1979],"node_modules\\lodash\\_baseIndexOf.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * A specialized version of `_.indexOf` which performs strict equality
@@ -314694,7 +326107,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return -1;
   }
   module.exports = strictIndexOf;
-},1863,[],"node_modules\\lodash\\_strictIndexOf.js");
+},1977,[],"node_modules\\lodash\\_strictIndexOf.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.findIndex` and `_.findLastIndex` without
@@ -314718,7 +326131,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return -1;
   }
   module.exports = baseFindIndex;
-},1864,[],"node_modules\\lodash\\_baseFindIndex.js");
+},1978,[],"node_modules\\lodash\\_baseFindIndex.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.isNaN` without support for number objects.
@@ -314731,7 +326144,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return value !== value;
   }
   module.exports = baseIsNaN;
-},1865,[],"node_modules\\lodash\\_baseIsNaN.js");
+},1979,[],"node_modules\\lodash\\_baseIsNaN.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -314809,7 +326222,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }, theme['stylesheet.calendar.header'] || {}));
   }
-},1866,[1,3,1853,1851],"node_modules\\react-native-calendars\\src\\calendar\\header\\style.js");
+},1980,[1,3,1967,1965],"node_modules\\react-native-calendars\\src\\calendar\\header\\style.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -315019,7 +326432,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   function getLocale() {
     return _$$_REQUIRE(_dependencyMap[0], "xdate").locales[_$$_REQUIRE(_dependencyMap[0], "xdate").defaultLocale];
   }
-},1867,[1848,1868],"node_modules\\react-native-calendars\\src\\dateutils.js");
+},1981,[1962,1982],"node_modules\\react-native-calendars\\src\\dateutils.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -315077,7 +326490,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return 'Invalid Date';
   }
-},1868,[1848],"node_modules\\react-native-calendars\\src\\interface.js");
+},1982,[1962],"node_modules\\react-native-calendars\\src\\interface.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
     "__packager_asset": true,
@@ -315089,7 +326502,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     "name": "previous",
     "type": "png"
   });
-},1869,[442],"node_modules\\react-native-calendars\\src\\calendar\\img\\previous.png");
+},1983,[442],"node_modules\\react-native-calendars\\src\\calendar\\img\\previous.png");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
     "__packager_asset": true,
@@ -315101,7 +326514,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     "name": "next",
     "type": "png"
   });
-},1870,[442],"node_modules\\react-native-calendars\\src\\calendar\\img\\next.png");
+},1984,[442],"node_modules\\react-native-calendars\\src\\calendar\\img\\next.png");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -315183,7 +326596,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   }, areEqual);
   var _default = exports.default = Day;
   Day.displayName = 'Day';
-},1871,[1,1872,650,1930,1848,42,1952,1964,88,1867,1966,1868],"node_modules\\react-native-calendars\\src\\calendar\\day\\index.js");
+},1985,[1,1986,650,2044,1962,42,2066,2078,88,1981,2080,1982],"node_modules\\react-native-calendars\\src\\calendar\\day\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used to compose bitmasks for cloning. */
   var CLONE_DEEP_FLAG = 1,
@@ -315232,7 +326645,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   });
   module.exports = omit;
-},1872,[1873,1858,1885,1892,1895,1901,1922,1924],"node_modules\\lodash\\omit.js");
+},1986,[1987,1972,1999,2006,2009,2015,2036,2038],"node_modules\\lodash\\omit.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * A specialized version of `baseRest` which flattens the rest array.
@@ -315245,7 +326658,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[0], "./_setToString")(_$$_REQUIRE(_dependencyMap[1], "./_overRest")(func, undefined, _$$_REQUIRE(_dependencyMap[2], "./flatten")), func + '');
   }
   module.exports = flatRest;
-},1873,[1874,1880,1882],"node_modules\\lodash\\_flatRest.js");
+},1987,[1988,1994,1996],"node_modules\\lodash\\_flatRest.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Sets the `toString` method of `func` to return `string`.
@@ -315257,7 +326670,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
    */
   var setToString = _$$_REQUIRE(_dependencyMap[0], "./_shortOut")(_$$_REQUIRE(_dependencyMap[1], "./_baseSetToString"));
   module.exports = setToString;
-},1874,[1875,1876],"node_modules\\lodash\\_setToString.js");
+},1988,[1989,1990],"node_modules\\lodash\\_setToString.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used to detect hot functions by number of calls within a span of milliseconds. */
   var HOT_COUNT = 800,
@@ -315293,7 +326706,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   }
   module.exports = shortOut;
-},1875,[],"node_modules\\lodash\\_shortOut.js");
+},1989,[],"node_modules\\lodash\\_shortOut.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `setToString` without support for hot loop shorting.
@@ -315312,7 +326725,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   module.exports = baseSetToString;
-},1876,[1877,1878,1879],"node_modules\\lodash\\_baseSetToString.js");
+},1990,[1991,1992,1993],"node_modules\\lodash\\_baseSetToString.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var defineProperty = function () {
     try {
@@ -315322,7 +326735,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     } catch (e) {}
   }();
   module.exports = defineProperty;
-},1877,[658],"node_modules\\lodash\\_defineProperty.js");
+},1991,[658],"node_modules\\lodash\\_defineProperty.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * This method returns the first argument it receives.
@@ -315344,7 +326757,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return value;
   }
   module.exports = identity;
-},1878,[],"node_modules\\lodash\\identity.js");
+},1992,[],"node_modules\\lodash\\identity.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates a function that returns `value`.
@@ -315371,7 +326784,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   }
   module.exports = constant;
-},1879,[],"node_modules\\lodash\\constant.js");
+},1993,[],"node_modules\\lodash\\constant.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMax = Math.max;
@@ -315405,7 +326818,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   }
   module.exports = overRest;
-},1880,[1881],"node_modules\\lodash\\_overRest.js");
+},1994,[1995],"node_modules\\lodash\\_overRest.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * A faster alternative to `Function#apply`, this function invokes `func`
@@ -315431,7 +326844,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return func.apply(thisArg, args);
   }
   module.exports = apply;
-},1881,[],"node_modules\\lodash\\_apply.js");
+},1995,[],"node_modules\\lodash\\_apply.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Flattens `array` a single level deep.
@@ -315452,7 +326865,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return length ? _$$_REQUIRE(_dependencyMap[0], "./_baseFlatten")(array, 1) : [];
   }
   module.exports = flatten;
-},1882,[1883],"node_modules\\lodash\\flatten.js");
+},1996,[1997],"node_modules\\lodash\\flatten.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.flatten` with support for restricting flattening.
@@ -315486,7 +326899,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = baseFlatten;
-},1883,[1884,724],"node_modules\\lodash\\_baseFlatten.js");
+},1997,[1998,724],"node_modules\\lodash\\_baseFlatten.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Built-in value references. */
   var spreadableSymbol = _$$_REQUIRE(_dependencyMap[0], "./_Symbol") ? _$$_REQUIRE(_dependencyMap[0], "./_Symbol").isConcatSpreadable : undefined;
@@ -315502,7 +326915,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[1], "./isArray")(value) || _$$_REQUIRE(_dependencyMap[2], "./isArguments")(value) || !!(spreadableSymbol && value && value[spreadableSymbol]);
   }
   module.exports = isFlattenable;
-},1884,[668,654,728],"node_modules\\lodash\\_isFlattenable.js");
+},1998,[668,654,728],"node_modules\\lodash\\_isFlattenable.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Casts `value` to a path array if it's not one.
@@ -315519,7 +326932,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[1], "./_isKey")(value, object) ? [value] : _$$_REQUIRE(_dependencyMap[2], "./_stringToPath")(_$$_REQUIRE(_dependencyMap[3], "./toString")(value));
   }
   module.exports = castPath;
-},1885,[654,1886,1887,1890],"node_modules\\lodash\\_castPath.js");
+},1999,[654,2000,2001,2004],"node_modules\\lodash\\_castPath.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used to match property names within property paths. */
   var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
@@ -315544,7 +326957,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return reIsPlainProp.test(value) || !reIsDeepProp.test(value) || object != null && value in Object(object);
   }
   module.exports = isKey;
-},1886,[654,887],"node_modules\\lodash\\_isKey.js");
+},2000,[654,887],"node_modules\\lodash\\_isKey.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used to match property names within property paths. */
   var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
@@ -315570,7 +326983,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   });
   module.exports = stringToPath;
-},1887,[1888],"node_modules\\lodash\\_stringToPath.js");
+},2001,[2002],"node_modules\\lodash\\_stringToPath.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used as the maximum memoize cache size. */
   var MAX_MEMOIZE_SIZE = 500;
@@ -315594,7 +327007,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = memoizeCapped;
-},1888,[1889],"node_modules\\lodash\\_memoizeCapped.js");
+},2002,[2003],"node_modules\\lodash\\_memoizeCapped.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Error message constants. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -315665,7 +327078,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   // Expose `MapCache`.
   memoize.Cache = _$$_REQUIRE(_dependencyMap[0], "./_MapCache");
   module.exports = memoize;
-},1889,[691],"node_modules\\lodash\\memoize.js");
+},2003,[691],"node_modules\\lodash\\memoize.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Converts `value` to a string. An empty string is returned for `null`
@@ -315692,7 +327105,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return value == null ? '' : _$$_REQUIRE(_dependencyMap[0], "./_baseToString")(value);
   }
   module.exports = toString;
-},1890,[1891],"node_modules\\lodash\\toString.js");
+},2004,[2005],"node_modules\\lodash\\toString.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used as references for various `Number` constants. */
   var INFINITY = 1 / 0;
@@ -315725,7 +327138,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result == '0' && 1 / value == -INFINITY ? '-0' : result;
   }
   module.exports = baseToString;
-},1891,[668,654,1858,887],"node_modules\\lodash\\_baseToString.js");
+},2005,[668,654,1972,887],"node_modules\\lodash\\_baseToString.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Copies properties of `source` to `object`.
@@ -315757,7 +327170,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return object;
   }
   module.exports = copyObject;
-},1892,[1893,1894],"node_modules\\lodash\\_copyObject.js");
+},2006,[2007,2008],"node_modules\\lodash\\_copyObject.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `assignValue` and `assignMergeValue` without
@@ -315781,7 +327194,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   }
   module.exports = baseAssignValue;
-},1893,[1877],"node_modules\\lodash\\_baseAssignValue.js");
+},2007,[1991],"node_modules\\lodash\\_baseAssignValue.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -315806,7 +327219,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   }
   module.exports = assignValue;
-},1894,[682,1893],"node_modules\\lodash\\_assignValue.js");
+},2008,[682,2007],"node_modules\\lodash\\_assignValue.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates an array of own and inherited enumerable property names and
@@ -315820,7 +327233,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[0], "./_baseGetAllKeys")(object, _$$_REQUIRE(_dependencyMap[1], "./keysIn"), _$$_REQUIRE(_dependencyMap[2], "./_getSymbolsIn"));
   }
   module.exports = getAllKeysIn;
-},1895,[723,1896,1899],"node_modules\\lodash\\_getAllKeysIn.js");
+},2009,[723,2010,2013],"node_modules\\lodash\\_getAllKeysIn.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates an array of the own and inherited enumerable property names of `object`.
@@ -315849,7 +327262,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[0], "./isArrayLike")(object) ? _$$_REQUIRE(_dependencyMap[1], "./_arrayLikeKeys")(object, true) : _$$_REQUIRE(_dependencyMap[2], "./_baseKeysIn")(object);
   }
   module.exports = keysIn;
-},1896,[726,727,1897],"node_modules\\lodash\\keysIn.js");
+},2010,[726,727,2011],"node_modules\\lodash\\keysIn.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -315878,7 +327291,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = baseKeysIn;
-},1897,[661,1898,733],"node_modules\\lodash\\_baseKeysIn.js");
+},2011,[661,2012,733],"node_modules\\lodash\\_baseKeysIn.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * This function is like
@@ -315899,7 +327312,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = nativeKeysIn;
-},1898,[],"node_modules\\lodash\\_nativeKeysIn.js");
+},2012,[],"node_modules\\lodash\\_nativeKeysIn.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeGetSymbols = Object.getOwnPropertySymbols;
@@ -315920,12 +327333,12 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   };
   module.exports = getSymbolsIn;
-},1899,[737,724,736,1900],"node_modules\\lodash\\_getSymbolsIn.js");
+},2013,[737,724,736,2014],"node_modules\\lodash\\_getSymbolsIn.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Built-in value references. */
   var getPrototype = _$$_REQUIRE(_dependencyMap[0], "./_overArg")(Object.getPrototypeOf, Object);
   module.exports = getPrototype;
-},1900,[735],"node_modules\\lodash\\_getPrototype.js");
+},2014,[735],"node_modules\\lodash\\_getPrototype.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used to compose bitmasks for cloning. */
   var CLONE_DEEP_FLAG = 1,
@@ -316048,7 +327461,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = baseClone;
-},1901,[661,654,1902,1903,655,675,1904,1905,1907,1908,1909,1910,1911,677,1917,1919,1895,722,1896,725,1921,1894],"node_modules\\lodash\\_baseClone.js");
+},2015,[661,654,2016,2017,655,675,2018,2019,2021,2022,2023,2024,2025,677,2031,2033,2009,722,2010,725,2035,2008],"node_modules\\lodash\\_baseClone.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -316075,7 +327488,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = initCloneArray;
-},1902,[],"node_modules\\lodash\\_initCloneArray.js");
+},2016,[],"node_modules\\lodash\\_initCloneArray.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Copies the values of `source` to `array`.
@@ -316095,7 +327508,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return array;
   }
   module.exports = copyArray;
-},1903,[],"node_modules\\lodash\\_copyArray.js");
+},2017,[],"node_modules\\lodash\\_copyArray.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Detect free variable `exports`. */
   var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -316128,7 +327541,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = cloneBuffer;
-},1904,[664],"node_modules\\lodash\\_cloneBuffer.js");
+},2018,[664],"node_modules\\lodash\\_cloneBuffer.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Initializes an object clone.
@@ -316141,7 +327554,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return typeof object.constructor == 'function' && !_$$_REQUIRE(_dependencyMap[0], "./_isPrototype")(object) ? _$$_REQUIRE(_dependencyMap[1], "./_baseCreate")(_$$_REQUIRE(_dependencyMap[2], "./_getPrototype")(object)) : {};
   }
   module.exports = initCloneObject;
-},1905,[733,1906,1900],"node_modules\\lodash\\_initCloneObject.js");
+},2019,[733,2020,2014],"node_modules\\lodash\\_initCloneObject.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Built-in value references. */
   var objectCreate = Object.create;
@@ -316170,7 +327583,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   }();
   module.exports = baseCreate;
-},1906,[661],"node_modules\\lodash\\_baseCreate.js");
+},2020,[661],"node_modules\\lodash\\_baseCreate.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Copies own and inherited symbols of `source` to `object`.
@@ -316184,7 +327597,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[0], "./_copyObject")(source, _$$_REQUIRE(_dependencyMap[1], "./_getSymbolsIn")(source), object);
   }
   module.exports = copySymbolsIn;
-},1907,[1892,1899],"node_modules\\lodash\\_copySymbolsIn.js");
+},2021,[2006,2013],"node_modules\\lodash\\_copySymbolsIn.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.assignIn` without support for multiple sources
@@ -316199,7 +327612,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return object && _$$_REQUIRE(_dependencyMap[0], "./_copyObject")(source, _$$_REQUIRE(_dependencyMap[1], "./keysIn")(source), object);
   }
   module.exports = baseAssignIn;
-},1908,[1892,1896],"node_modules\\lodash\\_baseAssignIn.js");
+},2022,[2006,2010],"node_modules\\lodash\\_baseAssignIn.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Copies own symbols of `source` to `object`.
@@ -316213,7 +327626,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[0], "./_copyObject")(source, _$$_REQUIRE(_dependencyMap[1], "./_getSymbols")(source), object);
   }
   module.exports = copySymbols;
-},1909,[1892,736],"node_modules\\lodash\\_copySymbols.js");
+},2023,[2006,736],"node_modules\\lodash\\_copySymbols.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.assign` without support for multiple sources
@@ -316228,7 +327641,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return object && _$$_REQUIRE(_dependencyMap[0], "./_copyObject")(source, _$$_REQUIRE(_dependencyMap[1], "./keys")(source), object);
   }
   module.exports = baseAssign;
-},1910,[1892,725],"node_modules\\lodash\\_baseAssign.js");
+},2024,[2006,725],"node_modules\\lodash\\_baseAssign.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** `Object#toString` result references. */
   var boolTag = '[object Boolean]',
@@ -316297,7 +327710,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   }
   module.exports = initCloneByTag;
-},1911,[1912,1913,1914,1915,1916],"node_modules\\lodash\\_initCloneByTag.js");
+},2025,[2026,2027,2028,2029,2030],"node_modules\\lodash\\_initCloneByTag.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates a clone of `arrayBuffer`.
@@ -316312,7 +327725,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = cloneArrayBuffer;
-},1912,[718],"node_modules\\lodash\\_cloneArrayBuffer.js");
+},2026,[718],"node_modules\\lodash\\_cloneArrayBuffer.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates a clone of `dataView`.
@@ -316327,7 +327740,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return new dataView.constructor(buffer, dataView.byteOffset, dataView.byteLength);
   }
   module.exports = cloneDataView;
-},1913,[1912],"node_modules\\lodash\\_cloneDataView.js");
+},2027,[2026],"node_modules\\lodash\\_cloneDataView.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates a clone of `typedArray`.
@@ -316342,7 +327755,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
   }
   module.exports = cloneTypedArray;
-},1914,[1912],"node_modules\\lodash\\_cloneTypedArray.js");
+},2028,[2026],"node_modules\\lodash\\_cloneTypedArray.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used to match `RegExp` flags from their coerced string values. */
   var reFlags = /\w*$/;
@@ -316360,7 +327773,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = cloneRegExp;
-},1915,[],"node_modules\\lodash\\_cloneRegExp.js");
+},2029,[],"node_modules\\lodash\\_cloneRegExp.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used to convert symbols to primitives and strings. */
   var symbolProto = _$$_REQUIRE(_dependencyMap[0], "./_Symbol") ? _$$_REQUIRE(_dependencyMap[0], "./_Symbol").prototype : undefined,
@@ -316377,7 +327790,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return symbolValueOf ? Object(symbolValueOf.call(symbol)) : {};
   }
   module.exports = cloneSymbol;
-},1916,[668],"node_modules\\lodash\\_cloneSymbol.js");
+},2030,[668],"node_modules\\lodash\\_cloneSymbol.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /* Node.js helper references. */
   var nodeIsSet = _$$_REQUIRE(_dependencyMap[0], "./_nodeUtil") && _$$_REQUIRE(_dependencyMap[0], "./_nodeUtil").isSet;
@@ -316401,7 +327814,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
    */
   var isSet = nodeIsSet ? _$$_REQUIRE(_dependencyMap[1], "./_baseUnary")(nodeIsSet) : _$$_REQUIRE(_dependencyMap[2], "./_baseIsSet");
   module.exports = isSet;
-},1917,[707,708,1918],"node_modules\\lodash\\isSet.js");
+},2031,[707,708,2032],"node_modules\\lodash\\isSet.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** `Object#toString` result references. */
   var setTag = '[object Set]';
@@ -316417,7 +327830,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[0], "./isObjectLike")(value) && _$$_REQUIRE(_dependencyMap[1], "./_getTag")(value) == setTag;
   }
   module.exports = baseIsSet;
-},1918,[652,655],"node_modules\\lodash\\_baseIsSet.js");
+},2032,[652,655],"node_modules\\lodash\\_baseIsSet.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /* Node.js helper references. */
   var nodeIsMap = _$$_REQUIRE(_dependencyMap[0], "./_nodeUtil") && _$$_REQUIRE(_dependencyMap[0], "./_nodeUtil").isMap;
@@ -316441,7 +327854,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
    */
   var isMap = nodeIsMap ? _$$_REQUIRE(_dependencyMap[1], "./_baseUnary")(nodeIsMap) : _$$_REQUIRE(_dependencyMap[2], "./_baseIsMap");
   module.exports = isMap;
-},1919,[707,708,1920],"node_modules\\lodash\\isMap.js");
+},2033,[707,708,2034],"node_modules\\lodash\\isMap.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** `Object#toString` result references. */
   var mapTag = '[object Map]';
@@ -316457,7 +327870,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[0], "./isObjectLike")(value) && _$$_REQUIRE(_dependencyMap[1], "./_getTag")(value) == mapTag;
   }
   module.exports = baseIsMap;
-},1920,[652,655],"node_modules\\lodash\\_baseIsMap.js");
+},2034,[652,655],"node_modules\\lodash\\_baseIsMap.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * A specialized version of `_.forEach` for arrays without support for
@@ -316479,7 +327892,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return array;
   }
   module.exports = arrayEach;
-},1921,[],"node_modules\\lodash\\_arrayEach.js");
+},2035,[],"node_modules\\lodash\\_arrayEach.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Used by `_.omit` to customize its `_.cloneDeep` use to only clone plain
@@ -316494,7 +327907,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[0], "./isPlainObject")(value) ? undefined : value;
   }
   module.exports = customOmitClone;
-},1922,[1923],"node_modules\\lodash\\_customOmitClone.js");
+},2036,[2037],"node_modules\\lodash\\_customOmitClone.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** `Object#toString` result references. */
   var objectTag = '[object Object]';
@@ -316552,7 +327965,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return typeof Ctor == 'function' && Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString;
   }
   module.exports = isPlainObject;
-},1923,[652,667,1900],"node_modules\\lodash\\isPlainObject.js");
+},2037,[652,667,2014],"node_modules\\lodash\\isPlainObject.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -316604,7 +328017,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return obj == null || delete obj[_$$_REQUIRE(_dependencyMap[2], "./_toKey")(_$$_REQUIRE(_dependencyMap[3], "./last")(path))];
   }
   module.exports = baseUnset;
-},1924,[1885,1925,1927,1929],"node_modules\\lodash\\_baseUnset.js");
+},2038,[1999,2039,2041,2043],"node_modules\\lodash\\_baseUnset.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Gets the parent value at `path` of `object`.
@@ -316618,7 +328031,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return path.length < 2 ? object : _$$_REQUIRE(_dependencyMap[0], "./_baseGet")(object, _$$_REQUIRE(_dependencyMap[1], "./_baseSlice")(path, 0, -1));
   }
   module.exports = parent;
-},1925,[1926,1928],"node_modules\\lodash\\_parent.js");
+},2039,[2040,2042],"node_modules\\lodash\\_parent.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.get` without support for default values.
@@ -316638,7 +328051,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return index && index == length ? object : undefined;
   }
   module.exports = baseGet;
-},1926,[1885,1927],"node_modules\\lodash\\_baseGet.js");
+},2040,[1999,2041],"node_modules\\lodash\\_baseGet.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used as references for various `Number` constants. */
   var INFINITY = 1 / 0;
@@ -316658,7 +328071,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result == '0' && 1 / value == -INFINITY ? '-0' : result;
   }
   module.exports = toKey;
-},1927,[887],"node_modules\\lodash\\_toKey.js");
+},2041,[887],"node_modules\\lodash\\_toKey.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.slice` without an iteratee call guard.
@@ -316688,7 +328101,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = baseSlice;
-},1928,[],"node_modules\\lodash\\_baseSlice.js");
+},2042,[],"node_modules\\lodash\\_baseSlice.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Gets the last element of `array`.
@@ -316709,7 +328122,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return length ? array[length - 1] : undefined;
   }
   module.exports = last;
-},1929,[],"node_modules\\lodash\\last.js");
+},2043,[],"node_modules\\lodash\\last.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Checks if `predicate` returns truthy for **any** element of `collection`.
@@ -316755,7 +328168,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return func(collection, _$$_REQUIRE(_dependencyMap[4], "./_baseIteratee")(predicate, 3));
   }
   module.exports = some;
-},1930,[654,715,1931,1937,1938],"node_modules\\lodash\\some.js");
+},2044,[654,715,2045,2051,2052],"node_modules\\lodash\\some.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.some` without support for iteratee shorthands.
@@ -316775,7 +328188,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return !!result;
   }
   module.exports = baseSome;
-},1931,[1932],"node_modules\\lodash\\_baseSome.js");
+},2045,[2046],"node_modules\\lodash\\_baseSome.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.forEach` without support for iteratee shorthands.
@@ -316787,7 +328200,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
    */
   var baseEach = _$$_REQUIRE(_dependencyMap[0], "./_createBaseEach")(_$$_REQUIRE(_dependencyMap[1], "./_baseForOwn"));
   module.exports = baseEach;
-},1932,[1933,1934],"node_modules\\lodash\\_baseEach.js");
+},2046,[2047,2048],"node_modules\\lodash\\_baseEach.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates a `baseEach` or `baseEachRight` function.
@@ -316817,7 +328230,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   }
   module.exports = createBaseEach;
-},1933,[726],"node_modules\\lodash\\_createBaseEach.js");
+},2047,[726],"node_modules\\lodash\\_createBaseEach.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.forOwn` without support for iteratee shorthands.
@@ -316831,7 +328244,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return object && _$$_REQUIRE(_dependencyMap[0], "./_baseFor")(object, iteratee, _$$_REQUIRE(_dependencyMap[1], "./keys"));
   }
   module.exports = baseForOwn;
-},1934,[1935,725],"node_modules\\lodash\\_baseForOwn.js");
+},2048,[2049,725],"node_modules\\lodash\\_baseForOwn.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `baseForOwn` which iterates over `object`
@@ -316846,7 +328259,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
    */
   var baseFor = _$$_REQUIRE(_dependencyMap[0], "./_createBaseFor")();
   module.exports = baseFor;
-},1935,[1936],"node_modules\\lodash\\_baseFor.js");
+},2049,[2050],"node_modules\\lodash\\_baseFor.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates a base function for methods like `_.forIn` and `_.forOwn`.
@@ -316871,7 +328284,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   }
   module.exports = createBaseFor;
-},1936,[],"node_modules\\lodash\\_createBaseFor.js");
+},2050,[],"node_modules\\lodash\\_createBaseFor.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Checks if the given arguments are from an iteratee call.
@@ -316894,7 +328307,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return false;
   }
   module.exports = isIterateeCall;
-},1937,[661,726,731,682],"node_modules\\lodash\\_isIterateeCall.js");
+},2051,[661,726,731,682],"node_modules\\lodash\\_isIterateeCall.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.iteratee`.
@@ -316918,7 +328331,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[4], "./property")(value);
   }
   module.exports = baseIteratee;
-},1938,[1878,654,1939,1946,1949],"node_modules\\lodash\\_baseIteratee.js");
+},2052,[1992,654,2053,2060,2063],"node_modules\\lodash\\_baseIteratee.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used to compose bitmasks for value comparisons. */
   var COMPARE_PARTIAL_FLAG = 1,
@@ -316942,7 +328355,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   }
   module.exports = baseMatchesProperty;
-},1939,[1886,1940,1941,1927,1942,1943,651],"node_modules\\lodash\\_baseMatchesProperty.js");
+},2053,[2000,2054,2055,2041,2056,2057,651],"node_modules\\lodash\\_baseMatchesProperty.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.
@@ -316956,7 +328369,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return value === value && !_$$_REQUIRE(_dependencyMap[0], "./isObject")(value);
   }
   module.exports = isStrictComparable;
-},1940,[661],"node_modules\\lodash\\_isStrictComparable.js");
+},2054,[661],"node_modules\\lodash\\_isStrictComparable.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * A specialized version of `matchesProperty` for source values suitable
@@ -316976,7 +328389,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   }
   module.exports = matchesStrictComparable;
-},1941,[],"node_modules\\lodash\\_matchesStrictComparable.js");
+},2055,[],"node_modules\\lodash\\_matchesStrictComparable.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Gets the value at `path` of `object`. If the resolved value is
@@ -317008,7 +328421,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result === undefined ? defaultValue : result;
   }
   module.exports = get;
-},1942,[1926],"node_modules\\lodash\\get.js");
+},2056,[2040],"node_modules\\lodash\\get.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Checks if `path` is a direct or inherited property of `object`.
@@ -317040,7 +328453,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return object != null && _$$_REQUIRE(_dependencyMap[0], "./_hasPath")(object, path, _$$_REQUIRE(_dependencyMap[1], "./_baseHasIn"));
   }
   module.exports = hasIn;
-},1943,[1944,1945],"node_modules\\lodash\\hasIn.js");
+},2057,[2058,2059],"node_modules\\lodash\\hasIn.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Checks if `path` exists on `object`.
@@ -317070,7 +328483,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return !!length && _$$_REQUIRE(_dependencyMap[2], "./isLength")(length) && _$$_REQUIRE(_dependencyMap[3], "./_isIndex")(key, length) && (_$$_REQUIRE(_dependencyMap[4], "./isArray")(object) || _$$_REQUIRE(_dependencyMap[5], "./isArguments")(object));
   }
   module.exports = hasPath;
-},1944,[1885,1927,710,731,654,728],"node_modules\\lodash\\_hasPath.js");
+},2058,[1999,2041,710,731,654,728],"node_modules\\lodash\\_hasPath.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.hasIn` without support for deep paths.
@@ -317084,7 +328497,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return object != null && key in Object(object);
   }
   module.exports = baseHasIn;
-},1945,[],"node_modules\\lodash\\_baseHasIn.js");
+},2059,[],"node_modules\\lodash\\_baseHasIn.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.matches` which doesn't clone `source`.
@@ -317103,7 +328516,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   }
   module.exports = baseMatches;
-},1946,[1947,1941,1948],"node_modules\\lodash\\_baseMatches.js");
+},2060,[2061,2055,2062],"node_modules\\lodash\\_baseMatches.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Gets the property names, values, and compare flags of `object`.
@@ -317123,7 +328536,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = getMatchData;
-},1947,[725,1940],"node_modules\\lodash\\_getMatchData.js");
+},2061,[725,2054],"node_modules\\lodash\\_getMatchData.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used to compose bitmasks for value comparisons. */
   var COMPARE_PARTIAL_FLAG = 1,
@@ -317175,7 +328588,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return true;
   }
   module.exports = baseIsMatch;
-},1948,[677,651],"node_modules\\lodash\\_baseIsMatch.js");
+},2062,[677,651],"node_modules\\lodash\\_baseIsMatch.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates a function that returns the value at `path` of a given object.
@@ -317203,7 +328616,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[0], "./_isKey")(path) ? _$$_REQUIRE(_dependencyMap[1], "./_baseProperty")(_$$_REQUIRE(_dependencyMap[2], "./_toKey")(path)) : _$$_REQUIRE(_dependencyMap[3], "./_basePropertyDeep")(path);
   }
   module.exports = property;
-},1949,[1886,1950,1927,1951],"node_modules\\lodash\\property.js");
+},2063,[2000,2064,2041,2065],"node_modules\\lodash\\property.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.property` without support for deep paths.
@@ -317218,7 +328631,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   }
   module.exports = baseProperty;
-},1950,[],"node_modules\\lodash\\_baseProperty.js");
+},2064,[],"node_modules\\lodash\\_baseProperty.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * A specialized version of `baseProperty` which supports deep paths.
@@ -317233,7 +328646,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   }
   module.exports = basePropertyDeep;
-},1951,[1926],"node_modules\\lodash\\_basePropertyDeep.js");
+},2065,[2040],"node_modules\\lodash\\_basePropertyDeep.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -317392,7 +328805,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   var _default = exports.default = BasicDay;
   BasicDay.displayName = 'BasicDay';
-},1952,[1,42,3,1953,1963,88,1868],"node_modules\\react-native-calendars\\src\\calendar\\day\\basic\\index.js");
+},2066,[1,42,3,2067,2077,88,1982],"node_modules\\react-native-calendars\\src\\calendar\\day\\basic\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -317494,7 +328907,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _default = exports.default = Marking;
   Marking.displayName = 'Marking';
   Marking.markings = Markings;
-},1953,[1,1954,42,3,1956,1957,88,1959],"node_modules\\react-native-calendars\\src\\calendar\\day\\marking\\index.js");
+},2067,[1,2068,42,3,2070,2071,88,2073],"node_modules\\react-native-calendars\\src\\calendar\\day\\marking\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Iterates over elements of `collection`, returning an array of all elements
@@ -317542,7 +328955,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return func(collection, _$$_REQUIRE(_dependencyMap[3], "./_baseIteratee")(predicate, 3));
   }
   module.exports = filter;
-},1954,[654,738,1955,1938],"node_modules\\lodash\\filter.js");
+},2068,[654,738,2069,2052],"node_modules\\lodash\\filter.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.filter` without support for iteratee shorthands.
@@ -317562,7 +328975,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = baseFilter;
-},1955,[1932],"node_modules\\lodash\\_baseFilter.js");
+},2069,[2046],"node_modules\\lodash\\_baseFilter.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -317598,7 +329011,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }, theme['stylesheet.marking'] || {}));
   }
-},1956,[3,1852],"node_modules\\react-native-calendars\\src\\calendar\\day\\marking\\style.js");
+},2070,[3,1966],"node_modules\\react-native-calendars\\src\\calendar\\day\\marking\\style.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -317647,7 +329060,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = Dot;
-},1957,[1,42,3,1958,88],"node_modules\\react-native-calendars\\src\\calendar\\day\\dot\\index.js");
+},2071,[1,42,3,2072,88],"node_modules\\react-native-calendars\\src\\calendar\\day\\dot\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -317686,7 +329099,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }, theme['stylesheet.dot'] || {}));
   }
-},1958,[3,1853],"node_modules\\react-native-calendars\\src\\calendar\\day\\dot\\style.js");
+},2072,[3,1967],"node_modules\\react-native-calendars\\src\\calendar\\day\\dot\\style.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -317935,7 +329348,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
     return reservationProps;
   }
-},1959,[1,150,650,1942,1872,1960,1855],"node_modules\\react-native-calendars\\src\\componentUpdater.js");
+},2073,[1,150,650,2056,1986,2074,1969],"node_modules\\react-native-calendars\\src\\componentUpdater.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates an object composed of the `object` properties `predicate` returns
@@ -317968,7 +329381,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   }
   module.exports = pickBy;
-},1960,[1858,1895,1938,1961],"node_modules\\lodash\\pickBy.js");
+},2074,[1972,2009,2052,2075],"node_modules\\lodash\\pickBy.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of  `_.pickBy` without support for iteratee shorthands.
@@ -317993,7 +329406,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = basePickBy;
-},1961,[1926,1962,1885],"node_modules\\lodash\\_basePickBy.js");
+},2075,[2040,2076,1999],"node_modules\\lodash\\_basePickBy.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.set`.
@@ -318033,7 +329446,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return object;
   }
   module.exports = baseSet;
-},1962,[661,1885,1927,731,1894],"node_modules\\lodash\\_baseSet.js");
+},2076,[661,1999,2041,731,2008],"node_modules\\lodash\\_baseSet.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -318087,7 +329500,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }, theme['stylesheet.day.basic'] || {}));
   }
-},1963,[1,3,1853,1851],"node_modules\\react-native-calendars\\src\\calendar\\day\\basic\\style.js");
+},2077,[1,3,1967,1965],"node_modules\\react-native-calendars\\src\\calendar\\day\\basic\\style.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -318327,7 +329740,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     onLongPress: _propTypes.default.func,
     date: _propTypes.default.string
   };
-},1964,[1,300,42,3,1953,1965,88,1868],"node_modules\\react-native-calendars\\src\\calendar\\day\\period\\index.js");
+},2078,[1,300,42,3,2067,2079,88,1982],"node_modules\\react-native-calendars\\src\\calendar\\day\\period\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -318394,7 +329807,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }, theme['stylesheet.day.period'] || {}));
   }
-},1965,[3,1853],"node_modules\\react-native-calendars\\src\\calendar\\day\\period\\style.js");
+},2079,[3,1967],"node_modules\\react-native-calendars\\src\\calendar\\day\\period\\style.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -318428,7 +329841,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     getCalendarDateString: getCalendarDateString,
     getDefaultLocale: getDefaultLocale
   };
-},1966,[1,1967,1968,1861,1970,1848,1868,1867],"node_modules\\react-native-calendars\\src\\services\\index.js");
+},2080,[1,2081,2082,1975,2084,1962,1982,1981],"node_modules\\react-native-calendars\\src\\services\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Checks if `value` is `undefined`.
@@ -318451,7 +329864,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return value === undefined;
   }
   module.exports = isUndefined;
-},1967,[],"node_modules\\lodash\\isUndefined.js");
+},2081,[],"node_modules\\lodash\\isUndefined.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /* Node.js helper references. */
   var nodeIsDate = _$$_REQUIRE(_dependencyMap[0], "./_nodeUtil") && _$$_REQUIRE(_dependencyMap[0], "./_nodeUtil").isDate;
@@ -318475,7 +329888,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
    */
   var isDate = nodeIsDate ? _$$_REQUIRE(_dependencyMap[1], "./_baseUnary")(nodeIsDate) : _$$_REQUIRE(_dependencyMap[2], "./_baseIsDate");
   module.exports = isDate;
-},1968,[707,708,1969],"node_modules\\lodash\\isDate.js");
+},2082,[707,708,2083],"node_modules\\lodash\\isDate.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** `Object#toString` result references. */
   var dateTag = '[object Date]';
@@ -318491,7 +329904,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[0], "./isObjectLike")(value) && _$$_REQUIRE(_dependencyMap[1], "./_baseGetTag")(value) == dateTag;
   }
   module.exports = baseIsDate;
-},1969,[652,667],"node_modules\\lodash\\_baseIsDate.js");
+},2083,[652,667],"node_modules\\lodash\\_baseIsDate.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** `Object#toString` result references. */
   var numberTag = '[object Number]';
@@ -318526,7 +329939,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return typeof value == 'number' || _$$_REQUIRE(_dependencyMap[0], "./isObjectLike")(value) && _$$_REQUIRE(_dependencyMap[1], "./_baseGetTag")(value) == numberTag;
   }
   module.exports = isNumber;
-},1970,[652,667],"node_modules\\lodash\\isNumber.js");
+},2084,[652,667],"node_modules\\lodash\\isNumber.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -318567,7 +329980,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, [refs]);
     return targetRef;
   };
-},1971,[42],"node_modules\\react-native-calendars\\src\\hooks.js");
+},2085,[42],"node_modules\\react-native-calendars\\src\\hooks.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -318596,7 +330009,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return state;
   }
-},1972,[1868,1867],"node_modules\\react-native-calendars\\src\\day-state-manager.js");
+},2086,[1982,1981],"node_modules\\react-native-calendars\\src\\day-state-manager.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -318949,7 +330362,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     onEndReached: _propTypes.default.func,
     nestedScrollEnabled: _propTypes.default.bool
   });
-},1973,[1,25,1974,300,1848,42,3,1851,1975,1847,1976,1854,650,88,1959,1868,1971,1867],"node_modules\\react-native-calendars\\src\\calendar-list\\index.js");
+},2087,[1,25,2088,300,1962,42,3,1965,2089,1961,2090,1968,650,88,2073,1982,2085,1981],"node_modules\\react-native-calendars\\src\\calendar-list\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMax = Math.max;
@@ -319001,7 +330414,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[1], "./_baseFindIndex")(array, _$$_REQUIRE(_dependencyMap[2], "./_baseIteratee")(predicate, 3), index);
   }
   module.exports = findIndex;
-},1974,[1859,1864,1938],"node_modules\\lodash\\findIndex.js");
+},2088,[1973,1978,2052],"node_modules\\lodash\\findIndex.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -319044,7 +330457,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }, theme['stylesheet.calendar-list.main'] || {}));
   }
-},1975,[3,1853],"node_modules\\react-native-calendars\\src\\calendar-list\\style.js");
+},2089,[3,1967],"node_modules\\react-native-calendars\\src\\calendar-list\\style.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -319130,7 +330543,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   });
   var _default = exports.default = CalendarListItem;
   CalendarListItem.displayName = 'CalendarListItem';
-},1976,[1,42,3,1975,1847,88,1959,1868],"node_modules\\react-native-calendars\\src\\calendar-list\\item.js");
+},2090,[1,42,3,2089,1961,88,2073,1982],"node_modules\\react-native-calendars\\src\\calendar-list\\item.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -319340,7 +330753,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return array;
   }
-},1977,[1,7,25,1848,42,3,1851,1847,1854,1978,1975,88,1959,1868],"node_modules\\react-native-calendars\\src\\calendar-list\\new.js");
+},2091,[1,7,25,1962,42,3,1965,1961,1968,2092,2089,88,2073,1982],"node_modules\\react-native-calendars\\src\\calendar-list\\new.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -319503,7 +330916,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = (0, _react.forwardRef)(InfiniteList);
-},1978,[1,1979,885,1981,42,1851,88,1982,1971],"node_modules\\react-native-calendars\\src\\infinite-list\\index.js");
+},2092,[1,2093,885,2095,42,1965,88,2096,2085],"node_modules\\react-native-calendars\\src\\infinite-list\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Checks if `n` is between `start` and up to, but not including, `end`. If
@@ -319555,7 +330968,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[2], "./_baseInRange")(number, start, end);
   }
   module.exports = inRange;
-},1979,[1860,886,1980],"node_modules\\lodash\\inRange.js");
+},2093,[1974,886,2094],"node_modules\\lodash\\inRange.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMax = Math.max,
@@ -319574,7 +330987,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return number >= nativeMin(start, end) && number < nativeMax(start, end);
   }
   module.exports = baseInRange;
-},1980,[],"node_modules\\lodash\\_baseInRange.js");
+},2094,[],"node_modules\\lodash\\_baseInRange.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * This method returns `undefined`.
@@ -319592,7 +331005,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     // No operation performed.
   }
   module.exports = noop;
-},1981,[],"node_modules\\lodash\\noop.js");
+},2095,[],"node_modules\\lodash\\noop.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -319665,7 +331078,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return _$$_REQUIRE(_dependencyMap[11], "./utils/ComponentCompat").ComponentCompat;
     }
   });
-},1982,[1983,1984,1988,1991,1993,2009,1995,2010,1989,1992,2011,2008],"node_modules\\recyclerlistview\\dist\\reactnative\\index.js");
+},2096,[2097,2098,2102,2105,2107,2123,2109,2124,2103,2106,2125,2122],"node_modules\\recyclerlistview\\dist\\reactnative\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -319684,7 +331097,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return ContextProvider;
   }();
   exports.default = ContextProvider;
-},1983,[],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\dependencies\\ContextProvider.js");
+},2097,[],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\dependencies\\ContextProvider.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -319789,7 +331202,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return DataProvider;
   }(BaseDataProvider);
   exports.default = DataProvider;
-},1984,[1985],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\dependencies\\DataProvider.js");
+},2098,[2099],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\dependencies\\DataProvider.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -319798,7 +331211,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   });
   exports.ObjectUtil = _$$_REQUIRE(_dependencyMap[0], "./ObjectUtil").ObjectUtil;
   exports.Default = _$$_REQUIRE(_dependencyMap[1], "./Default").Default;
-},1985,[1986,1987],"node_modules\\ts-object-utils\\dist\\index.js");
+},2099,[2100,2101],"node_modules\\ts-object-utils\\dist\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -319829,7 +331242,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return ObjectUtil;
   }();
   exports.ObjectUtil = ObjectUtil;
-},1986,[],"node_modules\\ts-object-utils\\dist\\ObjectUtil.js");
+},2100,[],"node_modules\\ts-object-utils\\dist\\ObjectUtil.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -319844,7 +331257,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return Default;
   }();
   exports.Default = Default;
-},1987,[1986],"node_modules\\ts-object-utils\\dist\\Default.js");
+},2101,[2100],"node_modules\\ts-object-utils\\dist\\Default.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -319937,7 +331350,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return LayoutProvider;
   }(BaseLayoutProvider);
   exports.LayoutProvider = LayoutProvider;
-},1988,[1989],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\dependencies\\LayoutProvider.js");
+},2102,[2103],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\dependencies\\LayoutProvider.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -320173,7 +331586,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return WrapGridLayoutManager;
   }(LayoutManager);
   exports.WrapGridLayoutManager = WrapGridLayoutManager;
-},1989,[1990],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\layoutmanager\\LayoutManager.js");
+},2103,[2104],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\layoutmanager\\LayoutManager.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -320210,7 +331623,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return CustomError;
   }(Error);
   exports.default = CustomError;
-},1990,[],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\exceptions\\CustomError.js");
+},2104,[],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\exceptions\\CustomError.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -320278,7 +331691,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return GridLayoutProvider;
   }(_$$_REQUIRE(_dependencyMap[1], "./LayoutProvider").LayoutProvider);
   exports.GridLayoutProvider = GridLayoutProvider;
-},1991,[1992,1988],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\dependencies\\GridLayoutProvider.js");
+},2105,[2106,2102],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\dependencies\\GridLayoutProvider.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -320364,7 +331777,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return GridLayoutManager;
   }(_$$_REQUIRE(_dependencyMap[0], "./LayoutManager").WrapGridLayoutManager);
   exports.GridLayoutManager = GridLayoutManager;
-},1992,[1989],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\layoutmanager\\GridLayoutManager.js");
+},2106,[2103],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\layoutmanager\\GridLayoutManager.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -321157,7 +332570,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     //Used to specify is window correction config and whether it should be applied to some scroll events
     windowCorrectionConfig: _$$_REQUIRE(_dependencyMap[13], "prop-types").object
   };
-},1993,[42,3,1994,1995,1990,1996,1997,2002,2003,2004,1985,2006,2008,300,1988,1984,1983],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\RecyclerListView.js");
+},2107,[42,3,2108,2109,2104,2110,2111,2116,2117,2118,2099,2120,2122,300,2102,2098,2097],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\RecyclerListView.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * lodash (Custom Build) <https://lodash.com/>
@@ -321517,7 +332930,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return isBinary || reIsOctal.test(value) ? freeParseInt(value.slice(2), isBinary ? 2 : 8) : reIsBadHex.test(value) ? NAN : +value;
   }
   module.exports = debounce;
-},1994,[],"node_modules\\lodash.debounce\\index.js");
+},2108,[],"node_modules\\lodash.debounce\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -321546,7 +332959,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return BaseItemAnimator;
   }();
   exports.BaseItemAnimator = BaseItemAnimator;
-},1995,[],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\ItemAnimator.js");
+},2109,[],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\ItemAnimator.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -321596,7 +333009,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   };
   exports.default = RecyclerListViewExceptions;
-},1996,[],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\exceptions\\RecyclerListViewExceptions.js");
+},2110,[],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\exceptions\\RecyclerListViewExceptions.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -321949,7 +333362,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return VirtualRenderer;
   }();
   exports.default = VirtualRenderer;
-},1997,[1998,1985,1999,2000,1990,1996],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\VirtualRenderer.js");
+},2111,[2112,2099,2113,2114,2104,2110],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\VirtualRenderer.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -321964,7 +333377,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return TSCast;
   }();
   exports.default = TSCast;
-},1998,[],"node_modules\\recyclerlistview\\dist\\reactnative\\utils\\TSCast.js");
+},2112,[],"node_modules\\recyclerlistview\\dist\\reactnative\\utils\\TSCast.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -322033,7 +333446,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return RecycleItemPool;
   }();
   exports.default = RecycleItemPool;
-},1999,[],"node_modules\\recyclerlistview\\dist\\reactnative\\utils\\RecycleItemPool.js");
+},2113,[],"node_modules\\recyclerlistview\\dist\\reactnative\\utils\\RecycleItemPool.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -322332,7 +333745,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return ViewabilityTracker;
   }();
   exports.default = ViewabilityTracker;
-},2000,[2001],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\ViewabilityTracker.js");
+},2114,[2115],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\ViewabilityTracker.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -322478,7 +333891,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return BinarySearch;
   }();
   exports.default = BinarySearch;
-},2001,[1990],"node_modules\\recyclerlistview\\dist\\reactnative\\utils\\BinarySearch.js");
+},2115,[2104],"node_modules\\recyclerlistview\\dist\\reactnative\\utils\\BinarySearch.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -322490,7 +333903,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     CONTEXT_PROVIDER_OFFSET_KEY_SUFFIX: "_offset",
     CONTEXT_PROVIDER_LAYOUT_KEY_SUFFIX: "_layouts"
   };
-},2002,[],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\constants\\Constants.js");
+},2116,[],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\constants\\Constants.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -322504,7 +333917,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     VISIBLE_INDEXES_CHANGED_DEPRECATED: "onVisibleIndexesChanged deprecated. Please use onVisibleIndicesChanged instead.",
     ANIMATION_ON_PAGINATION: "Looks like you're trying to use RecyclerListView's layout animation render while doing pagination. " + "This operation will be ignored to avoid creation of too many items due to developer error."
   };
-},2003,[],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\constants\\Messages.js");
+},2117,[],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\constants\\Messages.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -322652,7 +334065,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return ScrollComponent;
   }(_$$_REQUIRE(_dependencyMap[3], "../../../core/scrollcomponent/BaseScrollComponent").default);
   exports.default = ScrollComponent;
-},2004,[42,3,1998,2005],"node_modules\\recyclerlistview\\dist\\reactnative\\platform\\reactnative\\scrollcomponent\\ScrollComponent.js");
+},2118,[42,3,2112,2119],"node_modules\\recyclerlistview\\dist\\reactnative\\platform\\reactnative\\scrollcomponent\\ScrollComponent.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -322696,7 +334109,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return BaseScrollComponent;
   }(React.Component);
   exports.default = BaseScrollComponent;
-},2005,[42],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\scrollcomponent\\BaseScrollComponent.js");
+},2119,[42],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\scrollcomponent\\BaseScrollComponent.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -322833,7 +334246,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return ViewRenderer;
   }(_$$_REQUIRE(_dependencyMap[2], "../../../core/viewrenderer/BaseViewRenderer").default);
   exports.default = ViewRenderer;
-},2006,[42,3,2007],"node_modules\\recyclerlistview\\dist\\reactnative\\platform\\reactnative\\viewrenderer\\ViewRenderer.js");
+},2120,[42,3,2121],"node_modules\\recyclerlistview\\dist\\reactnative\\platform\\reactnative\\viewrenderer\\ViewRenderer.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -322901,7 +334314,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return BaseViewRenderer;
   }(_$$_REQUIRE(_dependencyMap[0], "../../utils/ComponentCompat").ComponentCompat);
   exports.default = BaseViewRenderer;
-},2007,[2008],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\viewrenderer\\BaseViewRenderer.js");
+},2121,[2122],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\viewrenderer\\BaseViewRenderer.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -322975,7 +334388,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return ComponentCompat;
   }(React.Component);
   exports.ComponentCompat = ComponentCompat;
-},2008,[42],"node_modules\\recyclerlistview\\dist\\reactnative\\utils\\ComponentCompat.js");
+},2122,[42],"node_modules\\recyclerlistview\\dist\\reactnative\\utils\\ComponentCompat.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -323011,7 +334424,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return BaseScrollView;
   }(React.Component);
   exports.default = BaseScrollView;
-},2009,[42],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\scrollcomponent\\BaseScrollView.js");
+},2123,[42],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\scrollcomponent\\BaseScrollView.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -323053,7 +334466,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return AutoScroll;
   }();
   exports.AutoScroll = AutoScroll;
-},2010,[],"node_modules\\recyclerlistview\\dist\\reactnative\\utils\\AutoScroll.js");
+},2124,[],"node_modules\\recyclerlistview\\dist\\reactnative\\utils\\AutoScroll.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   "use strict";
 
@@ -323172,7 +334585,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return ProgressiveListView;
   }(_$$_REQUIRE(_dependencyMap[0], "./RecyclerListView").default);
   exports.default = ProgressiveListView;
-},2011,[1993],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\ProgressiveListView.js");
+},2125,[2107],"node_modules\\recyclerlistview\\dist\\reactnative\\core\\ProgressiveListView.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -323664,7 +335077,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     showClosingKnob: _propTypes.default.bool
   });
   var _default = exports.default = Agenda;
-},2012,[1,59,202,13,14,50,52,53,666,300,1848,382,42,3,2013,2015,1973,2016,88,1868,1867,2020,1959,1966,2019],"node_modules\\react-native-calendars\\src\\agenda\\index.js");
+},2126,[1,59,202,13,14,50,52,53,666,300,1962,382,42,3,2127,2129,2087,2130,88,1982,1981,2134,2073,2080,2133],"node_modules\\react-native-calendars\\src\\agenda\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -323728,7 +335141,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }, theme['stylesheet.agenda.main'] || {}));
   }
-},2013,[1,3,1853,2014],"node_modules\\react-native-calendars\\src\\agenda\\style.js");
+},2127,[1,3,1967,2128],"node_modules\\react-native-calendars\\src\\agenda\\style.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -323758,7 +335171,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     };
   }
-},2014,[],"node_modules\\react-native-calendars\\src\\agenda\\platform-style.js");
+},2128,[],"node_modules\\react-native-calendars\\src\\agenda\\platform-style.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -323785,7 +335198,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = WeekDaysNames;
-},2015,[1,42,3,88,1867],"node_modules\\react-native-calendars\\src\\commons\\WeekDaysNames.js");
+},2129,[1,42,3,88,1981],"node_modules\\react-native-calendars\\src\\commons\\WeekDaysNames.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -324061,7 +335474,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     selectedDay: new _xdate.default(true)
   };
   var _default = exports.default = ReservationList;
-},2016,[1,13,14,50,52,53,666,300,1848,42,3,2017,2018,88,1867,1959,1868],"node_modules\\react-native-calendars\\src\\agenda\\reservation-list\\index.js");
+},2130,[1,13,14,50,52,53,666,300,1962,42,3,2131,2132,88,1981,2073,1982],"node_modules\\react-native-calendars\\src\\agenda\\reservation-list\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -324108,7 +335521,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }, theme['stylesheet.agenda.list'] || {}));
   }
-},2017,[3,1853],"node_modules\\react-native-calendars\\src\\agenda\\reservation-list\\style.js");
+},2131,[3,1967],"node_modules\\react-native-calendars\\src\\agenda\\reservation-list\\style.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -324233,7 +335646,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     renderEmptyDate: _propTypes.default.func
   };
   var _default = exports.default = Reservation;
-},2018,[1,13,14,50,52,53,666,300,42,3,2017,88,1867,1966,2019],"node_modules\\react-native-calendars\\src\\agenda\\reservation-list\\reservation.js");
+},2132,[1,13,14,50,52,53,666,300,42,3,2131,88,1981,2080,2133],"node_modules\\react-native-calendars\\src\\agenda\\reservation-list\\reservation.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var PREFIX = 'native.calendar';
   module.exports = {
@@ -324249,7 +335662,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     WEEK_NUMBER: `${PREFIX}.WEEK_NUMBER`,
     HEADER_LOADING_INDICATOR: `${PREFIX}.HEADER_LOADING_INDICATOR`
   };
-},2019,[],"node_modules\\react-native-calendars\\src\\testIDs.js");
+},2133,[],"node_modules\\react-native-calendars\\src\\testIDs.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -324296,7 +335709,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }]);
   }();
-},2020,[1,13,14],"node_modules\\react-native-calendars\\src\\velocityTracker.js");
+},2134,[1,13,14],"node_modules\\react-native-calendars\\src\\velocityTracker.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -324898,10 +336311,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       closeOnDayPress: true
     }
   });
-},2021,[1,2,25,150,2022,666,1970,2024,1848,42,3,2025,2015,1847,1973,2026,2027,2028,1851,88,1869,1870,1867,2029,1868],"node_modules\\react-native-calendars\\src\\expandableCalendar\\index.js");
+},2135,[1,2,25,150,2136,666,2084,2138,1962,42,3,2139,2129,1961,2087,2140,2141,2142,1965,88,1983,1984,1981,2143,1982],"node_modules\\react-native-calendars\\src\\expandableCalendar\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   module.exports = _$$_REQUIRE(_dependencyMap[0], "./head");
-},2022,[2023],"node_modules\\lodash\\first.js");
+},2136,[2137],"node_modules\\lodash\\first.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Gets the first element of `array`.
@@ -324925,7 +336338,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return array && array.length ? array[0] : undefined;
   }
   module.exports = head;
-},2023,[],"node_modules\\lodash\\head.js");
+},2137,[],"node_modules\\lodash\\head.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Error message constants. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -324991,7 +336404,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   }
   module.exports = throttle;
-},2024,[661,885],"node_modules\\lodash\\throttle.js");
+},2138,[661,885],"node_modules\\lodash\\throttle.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -325174,7 +336587,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }, (theme == null || (_theme$stylesheet = theme.stylesheet) == null || (_theme$stylesheet = _theme$stylesheet.expandable) == null ? void 0 : _theme$stylesheet.main) || {}));
   }
-},2025,[1,3,1853,1851],"node_modules\\react-native-calendars\\src\\expandableCalendar\\style.js");
+},2139,[1,3,1967,1965],"node_modules\\react-native-calendars\\src\\expandableCalendar\\style.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -325283,7 +336696,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   }, arePropsEqual);
   var _default = exports.default = Week;
   Week.displayName = 'Week';
-},2026,[1,150,1848,42,3,650,2025,1871,88,1867,1959,1868,1972],"node_modules\\react-native-calendars\\src\\expandableCalendar\\week.js");
+},2140,[1,150,1962,42,3,650,2139,1985,88,1981,2073,1982,2086],"node_modules\\react-native-calendars\\src\\expandableCalendar\\week.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -325560,7 +336973,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   }
   WeekCalendar.displayName = 'WeekCalendar';
   var _default = exports.default = WeekCalendar;
-},2027,[1,7,202,25,150,1848,42,3,2025,2015,2026,1851,2028,88,1959,1971,2029,1867,1868],"node_modules\\react-native-calendars\\src\\expandableCalendar\\WeekCalendar\\index.js");
+},2141,[1,7,202,25,150,1962,42,3,2139,2129,2140,1965,2142,88,2073,2085,2143,1981,1982],"node_modules\\react-native-calendars\\src\\expandableCalendar\\WeekCalendar\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -325571,7 +336984,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   // @ts-expect-error
   var CalendarContext = _react.default.createContext({});
   var _default = exports.default = CalendarContext;
-},2028,[1,42],"node_modules\\react-native-calendars\\src\\expandableCalendar\\Context\\index.js");
+},2142,[1,42],"node_modules\\react-native-calendars\\src\\expandableCalendar\\Context\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -325599,7 +337012,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     CalendarNavigationTypes["WEEK_ARROWS"] = "weekArrowPress";
     CalendarNavigationTypes["TODAY_PRESS"] = "todayPress";
   })(CalendarNavigationTypes || (exports.CalendarNavigationTypes = CalendarNavigationTypes = {}));
-},2029,[],"node_modules\\react-native-calendars\\src\\expandableCalendar\\commons.js");
+},2143,[],"node_modules\\react-native-calendars\\src\\expandableCalendar\\commons.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -325758,13 +337171,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return array;
   }
-},2030,[1,2031,150,25,42,3,1848,1978,2026,2015,2028,2025,1851,88,2029,1867,1959,1868],"node_modules\\react-native-calendars\\src\\expandableCalendar\\WeekCalendar\\new.js");
+},2144,[1,2145,150,25,42,3,1962,2092,2140,2129,2142,2139,1965,88,2143,1981,2073,1982],"node_modules\\react-native-calendars\\src\\expandableCalendar\\WeekCalendar\\new.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   function _objectDestructuringEmpty(t) {
     if (null == t) throw new TypeError("Cannot destructure " + t);
   }
   module.exports = _objectDestructuringEmpty, module.exports.__esModule = true, module.exports["default"] = module.exports;
-},2031,[],"node_modules\\@babel\\runtime\\helpers\\objectDestructuringEmpty.js");
+},2145,[],"node_modules\\@babel\\runtime\\helpers\\objectDestructuringEmpty.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -326003,7 +337416,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     sectionStyle: _propTypes.default.oneOfType([_propTypes.default.object, _propTypes.default.number, _propTypes.default.array]),
     avoidDateUpdates: _propTypes.default.bool
   };
-},2032,[1,300,1942,2033,666,1967,885,1848,42,3,1851,2025,2028,2035,88,1971,2029,1868,1867,2036,1966,2038],"node_modules\\react-native-calendars\\src\\expandableCalendar\\AgendaList\\agendaList.js");
+},2146,[1,300,2056,2147,666,2081,885,1962,42,3,1965,2139,2142,2149,88,2085,2143,1982,1981,2150,2080,2152],"node_modules\\react-native-calendars\\src\\expandableCalendar\\AgendaList\\agendaList.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates an array of values by running each element in `collection` thru
@@ -326052,7 +337465,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return func(collection, _$$_REQUIRE(_dependencyMap[3], "./_baseIteratee")(iteratee, 3));
   }
   module.exports = map;
-},2033,[654,1858,2034,1938],"node_modules\\lodash\\map.js");
+},2147,[654,1972,2148,2052],"node_modules\\lodash\\map.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.map` without support for iteratee shorthands.
@@ -326071,7 +337484,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = baseMap;
-},2034,[726,1932],"node_modules\\lodash\\_baseMap.js");
+},2148,[726,2046],"node_modules\\lodash\\_baseMap.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -326338,7 +337751,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     sectionStyle: _propTypes.default.oneOfType([_propTypes.default.object, _propTypes.default.number, _propTypes.default.array]),
     avoidDateUpdates: _propTypes.default.bool
   };
-},2035,[1,7,25,150,300,1967,885,1978,1848,42,2025,2028,1851,88,1971,2029,1868,1867,2036,1966,1988,2038],"node_modules\\react-native-calendars\\src\\expandableCalendar\\AgendaList\\infiniteAgendaList.js");
+},2149,[1,7,25,150,300,2081,885,2092,1962,42,2139,2142,1965,88,2085,2143,1982,1981,2150,2080,2102,2152],"node_modules\\react-native-calendars\\src\\expandableCalendar\\AgendaList\\infiniteAgendaList.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -326356,7 +337769,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return moment;
   };
-},2036,[2037],"node_modules\\react-native-calendars\\src\\momentResolver.js");
+},2150,[2151],"node_modules\\react-native-calendars\\src\\momentResolver.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   //! moment.js
   //! version : 2.30.1
@@ -330895,7 +342308,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
     return hooks;
   });
-},2037,[],"node_modules\\moment\\moment.js");
+},2151,[],"node_modules\\moment\\moment.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -330919,7 +342332,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       children: props.title
     });
   }, areTextPropsEqual);
-},2038,[1,650,42,3,88],"node_modules\\react-native-calendars\\src\\expandableCalendar\\AgendaList\\commons.js");
+},2152,[1,650,42,3,88],"node_modules\\react-native-calendars\\src\\expandableCalendar\\AgendaList\\commons.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -331039,7 +342452,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   };
   var _default = exports.default = CalendarProvider;
   CalendarProvider.displayName = 'CalendarProvider';
-},2039,[1,25,1848,42,3,2025,2028,2040,88,2029,1971,1075,1867,1868],"node_modules\\react-native-calendars\\src\\expandableCalendar\\Context\\Provider.js");
+},2153,[1,25,1962,42,3,2139,2142,2154,88,2143,2085,1075,1981,1982],"node_modules\\react-native-calendars\\src\\expandableCalendar\\Context\\Provider.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -331175,7 +342588,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = (0, _react.forwardRef)(TodayButton);
-},2040,[1,25,1848,42,3,2025,2028,88,1867,1966,2029,2041,2042,1868],"node_modules\\react-native-calendars\\src\\expandableCalendar\\Context\\todayButton.js");
+},2154,[1,25,1962,42,3,2139,2142,88,1981,2080,2143,2155,2156,1982],"node_modules\\react-native-calendars\\src\\expandableCalendar\\Context\\todayButton.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
     "__packager_asset": true,
@@ -331187,7 +342600,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     "name": "up",
     "type": "png"
   });
-},2041,[442],"node_modules\\react-native-calendars\\src\\img\\up.png");
+},2155,[442],"node_modules\\react-native-calendars\\src\\img\\up.png");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   module.exports = _$$_REQUIRE(_dependencyMap[0], "react-native/Libraries/Image/AssetRegistry").registerAsset({
     "__packager_asset": true,
@@ -331199,7 +342612,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     "name": "down",
     "type": "png"
   });
-},2042,[442],"node_modules\\react-native-calendars\\src\\img\\down.png");
+},2156,[442],"node_modules\\react-native-calendars\\src\\img\\down.png");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -331253,7 +342666,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return CalendarConsumer;
   }
   var _default = exports.default = asCalendarConsumer;
-},2043,[1,13,14,50,52,53,42,2044,2028,88],"node_modules\\react-native-calendars\\src\\expandableCalendar\\Context\\asCalendarConsumer.js");
+},2157,[1,13,14,50,52,53,42,2158,2142,88],"node_modules\\react-native-calendars\\src\\expandableCalendar\\Context\\asCalendarConsumer.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -331344,7 +342757,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return targetComponent;
   }
   module.exports = hoistNonReactStatics;
-},2044,[2045],"node_modules\\hoist-non-react-statics\\dist\\hoist-non-react-statics.cjs.js");
+},2158,[2159],"node_modules\\hoist-non-react-statics\\dist\\hoist-non-react-statics.cjs.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   'use strict';
 
@@ -331353,7 +342766,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   } else {
     module.exports = _$$_REQUIRE(_dependencyMap[1], "./cjs/react-is.development.js");
   }
-},2045,[2046,2047],"node_modules\\hoist-non-react-statics\\node_modules\\react-is\\index.js");
+},2159,[2160,2161],"node_modules\\hoist-non-react-statics\\node_modules\\react-is\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** @license React v16.13.1
    * react-is.production.min.js
@@ -331472,7 +342885,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return "string" === typeof a || "function" === typeof a || a === e || a === m || a === g || a === f || a === p || a === q || "object" === typeof a && null !== a && (a.$$typeof === t || a.$$typeof === r || a.$$typeof === h || a.$$typeof === k || a.$$typeof === n || a.$$typeof === w || a.$$typeof === x || a.$$typeof === y || a.$$typeof === v);
   };
   exports.typeOf = z;
-},2046,[],"node_modules\\hoist-non-react-statics\\node_modules\\react-is\\cjs\\react-is.production.min.js");
+},2160,[],"node_modules\\hoist-non-react-statics\\node_modules\\react-is\\cjs\\react-is.production.min.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** @license React v16.13.1
    * react-is.development.js
@@ -331642,7 +343055,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       exports.typeOf = typeOf;
     })();
   }
-},2047,[],"node_modules\\hoist-non-react-statics\\node_modules\\react-is\\cjs\\react-is.development.js");
+},2161,[],"node_modules\\hoist-non-react-statics\\node_modules\\react-is\\cjs\\react-is.development.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -331825,7 +343238,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }));
   };
   var _default = exports.default = _react.default.memo(Timeline);
-},2048,[1,2049,2033,2052,2054,42,3,1851,2058,2059,2065,2066,2067,88,1966,2063,2064,1867],"node_modules\\react-native-calendars\\src\\timeline\\Timeline.js");
+},2162,[1,2163,2147,2166,2168,42,3,1965,2172,2173,2179,2180,2181,88,2080,2177,2178,1981],"node_modules\\react-native-calendars\\src\\timeline\\Timeline.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Computes the minimum value of `array`. If `array` is empty or falsey,
@@ -331849,7 +343262,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return array && array.length ? _$$_REQUIRE(_dependencyMap[0], "./_baseExtremum")(array, _$$_REQUIRE(_dependencyMap[1], "./identity"), _$$_REQUIRE(_dependencyMap[2], "./_baseLt")) : undefined;
   }
   module.exports = min;
-},2049,[2050,1878,2051],"node_modules\\lodash\\min.js");
+},2163,[2164,1992,2165],"node_modules\\lodash\\min.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of methods like `_.max` and `_.min` which accepts a
@@ -331875,7 +343288,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = baseExtremum;
-},2050,[887],"node_modules\\lodash\\_baseExtremum.js");
+},2164,[887],"node_modules\\lodash\\_baseExtremum.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * The base implementation of `_.lt` which doesn't coerce arguments.
@@ -331890,7 +343303,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return value < other;
   }
   module.exports = baseLt;
-},2051,[],"node_modules\\lodash\\_baseLt.js");
+},2165,[],"node_modules\\lodash\\_baseLt.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used as references for various `Number` constants. */
   var MAX_SAFE_INTEGER = 9007199254740991;
@@ -331936,7 +343349,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = times;
-},2052,[1859,2053,730],"node_modules\\lodash\\times.js");
+},2166,[1973,2167,730],"node_modules\\lodash\\times.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Casts `value` to `identity` if it's not a function.
@@ -331949,7 +343362,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return typeof value == 'function' ? value : _$$_REQUIRE(_dependencyMap[0], "./identity");
   }
   module.exports = castFunction;
-},2053,[1878],"node_modules\\lodash\\_castFunction.js");
+},2167,[1992],"node_modules\\lodash\\_castFunction.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -331988,7 +343401,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   module.exports = groupBy;
-},2054,[2055,1893],"node_modules\\lodash\\groupBy.js");
+},2168,[2169,2007],"node_modules\\lodash\\groupBy.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates a function like `_.groupBy`.
@@ -332006,7 +343419,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   }
   module.exports = createAggregator;
-},2055,[654,2056,2057,1938],"node_modules\\lodash\\_createAggregator.js");
+},2169,[654,2170,2171,2052],"node_modules\\lodash\\_createAggregator.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * A specialized version of `baseAggregator` for arrays.
@@ -332028,7 +343441,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return accumulator;
   }
   module.exports = arrayAggregator;
-},2056,[],"node_modules\\lodash\\_arrayAggregator.js");
+},2170,[],"node_modules\\lodash\\_arrayAggregator.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Aggregates elements of `collection` on `accumulator` with keys transformed
@@ -332048,7 +343461,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return accumulator;
   }
   module.exports = baseAggregator;
-},2057,[1932],"node_modules\\lodash\\_baseAggregator.js");
+},2171,[2046],"node_modules\\lodash\\_baseAggregator.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -332169,7 +343582,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     });
   }
-},2058,[1,3,1853,1851],"node_modules\\react-native-calendars\\src\\timeline\\style.js");
+},2172,[1,3,1967,1965],"node_modules\\react-native-calendars\\src\\timeline\\style.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -332309,7 +343722,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = _react.default.memo(TimelineHours);
-},2059,[1,2060,2052,42,3,1851,88,2063,2064],"node_modules\\react-native-calendars\\src\\timeline\\TimelineHours.js");
+},2173,[1,2174,2166,42,3,1965,88,2177,2178],"node_modules\\react-native-calendars\\src\\timeline\\TimelineHours.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates an array of numbers (positive and/or negative) progressing from
@@ -332354,7 +343767,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
    */
   var range = _$$_REQUIRE(_dependencyMap[0], "./_createRange")();
   module.exports = range;
-},2060,[2061],"node_modules\\lodash\\range.js");
+},2174,[2175],"node_modules\\lodash\\range.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates a `_.range` or `_.rangeRight` function.
@@ -332381,7 +343794,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   }
   module.exports = createRange;
-},2061,[1937,1860,2062],"node_modules\\lodash\\_createRange.js");
+},2175,[2051,1974,2176],"node_modules\\lodash\\_createRange.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeCeil = Math.ceil,
@@ -332409,7 +343822,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return result;
   }
   module.exports = baseRange;
-},2062,[],"node_modules\\lodash\\_baseRange.js");
+},2176,[],"node_modules\\lodash\\_baseRange.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -332552,7 +343965,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     // Note: this filter falsy values (undefined blocks)
     .filter(Boolean);
   }
-},2063,[1,1979,1848,1851],"node_modules\\react-native-calendars\\src\\timeline\\Packer.js");
+},2177,[1,2093,1962,1965],"node_modules\\react-native-calendars\\src\\timeline\\Packer.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -332594,7 +344007,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var m = minutes != null ? minutes : now.getMinutes();
     return (h + m / 60) * hourBlockHeight;
   }
-},2064,[1,1848,1851,1867],"node_modules\\react-native-calendars\\src\\timeline\\helpers\\presenter.js");
+},2178,[1,1962,1965,1981],"node_modules\\react-native-calendars\\src\\timeline\\helpers\\presenter.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -332656,7 +344069,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = EventBlock;
-},2065,[1,1848,42,3,88],"node_modules\\react-native-calendars\\src\\timeline\\EventBlock.js");
+},2179,[1,1962,42,3,88],"node_modules\\react-native-calendars\\src\\timeline\\EventBlock.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -332691,7 +344104,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = NowIndicator;
-},2066,[42,3,88,2064,2063],"node_modules\\react-native-calendars\\src\\timeline\\NowIndicator.js");
+},2180,[42,3,88,2178,2177],"node_modules\\react-native-calendars\\src\\timeline\\NowIndicator.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -332731,7 +344144,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     };
   };
-},2067,[42],"node_modules\\react-native-calendars\\src\\timeline\\useTimelineOffset.js");
+},2181,[42],"node_modules\\react-native-calendars\\src\\timeline\\useTimelineOffset.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -332883,7 +344296,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = TimelineList;
-},2068,[1,25,2024,1882,2069,42,1978,2028,2048,2070,1851,88,2029,1867],"node_modules\\react-native-calendars\\src\\timeline-list\\index.js");
+},2182,[1,25,2138,1996,2183,42,2092,2142,2162,2184,1965,88,2143,1981],"node_modules\\react-native-calendars\\src\\timeline-list\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   /**
    * Creates a slice of `array` with `n` elements dropped from the end.
@@ -332920,7 +344333,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     return _$$_REQUIRE(_dependencyMap[1], "./_baseSlice")(array, 0, n < 0 ? 0 : n);
   }
   module.exports = dropRight;
-},2069,[1859,1928],"node_modules\\lodash\\dropRight.js");
+},2183,[1973,2042],"node_modules\\lodash\\dropRight.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -332999,7 +344412,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
   };
   var _default = exports.default = UseTimelinePages;
-},2070,[1,25,42,1979,2052,885,1851,1867],"node_modules\\react-native-calendars\\src\\timeline-list\\useTimelinePages.js");
+},2184,[1,25,42,2093,2166,885,1965,1981],"node_modules\\react-native-calendars\\src\\timeline-list\\useTimelinePages.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -333099,7 +344512,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     // });
     console.groupEnd();
   };
-},2071,[1,25,13,14,50,52,53,42,88],"node_modules\\react-native-calendars\\src\\Profiler.js");
+},2185,[1,25,13,14,50,52,53,42,88],"node_modules\\react-native-calendars\\src\\Profiler.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -333435,7 +344848,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = UseCountPop;
-},2072,[1,25,1377,42,3,553,88,1252,556,2073,566,1591],"src\\pages\\vip\\com\\useCountPop\\index.tsx");
+},2186,[1,25,1377,42,3,553,88,1252,556,2187,566,1591],"src\\pages\\vip\\com\\useCountPop\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -333531,7 +344944,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       borderStyle: 'solid'
     }
   });
-},2073,[3,556],"src\\pages\\vip\\com\\useCountPop\\indexStyle.ts");
+},2187,[3,556],"src\\pages\\vip\\com\\useCountPop\\indexStyle.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -333645,7 +345058,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return _ref3.apply(this, arguments);
     };
   }();
-},2074,[1,2,3,2075,1190,1248,1007],"src\\utils\\shareImage.ts");
+},2188,[1,2,3,2189,1190,1248,1007],"src\\utils\\shareImage.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -333882,7 +345295,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   }(_react.Component);
   ViewShot.captureRef = captureRef;
   ViewShot.releaseCapture = releaseCapture;
-},2075,[1,13,14,50,52,53,42,3,2076,88],"node_modules\\@react-native-oh-tpl\\react-native-view-shot\\src\\index.js");
+},2189,[1,13,14,50,52,53,42,3,2190,88],"node_modules\\@react-native-oh-tpl\\react-native-view-shot\\src\\index.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -333892,7 +345305,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var isTurboModuleEnabled = global.__turboModuleProxy != null;
   var RNViewShot = isTurboModuleEnabled ? _$$_REQUIRE(_dependencyMap[1], "./NativeViewShot").default : _reactNative.NativeModules.RNViewShot;
   var _default = exports.default = RNViewShot;
-},2076,[3,2077],"node_modules\\@react-native-oh-tpl\\react-native-view-shot\\src\\NativeModule.js");
+},2190,[3,2191],"node_modules\\@react-native-oh-tpl\\react-native-view-shot\\src\\NativeModule.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -333900,7 +345313,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   exports.default = void 0;
   var _reactNative = _$$_REQUIRE(_dependencyMap[0], "react-native");
   var _default = exports.default = _reactNative.TurboModuleRegistry.getEnforcing('ViewShotTurboModule');
-},2077,[3],"node_modules\\@react-native-oh-tpl\\react-native-view-shot\\src\\NativeViewShot.js");
+},2191,[3],"node_modules\\@react-native-oh-tpl\\react-native-view-shot\\src\\NativeViewShot.js");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -334425,7 +345838,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textTransform: 'none'
     }
   });
-},2078,[3,556],"src\\pages\\vip\\style.ts");
+},2192,[3,556],"src\\pages\\vip\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -334544,7 +345957,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }) : null]
     });
   };
-},2079,[1,1377,42,3,553,88,2080,1186,556],"src\\pages\\vip\\com\\deviceItem\\index.tsx");
+},2193,[1,1377,42,3,553,88,2194,1186,556],"src\\pages\\vip\\com\\deviceItem\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -334643,7 +346056,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(9)
     }
   });
-},2080,[3,556],"src\\pages\\vip\\com\\deviceItem\\indexStyle.ts");
+},2194,[3,556],"src\\pages\\vip\\com\\deviceItem\\indexStyle.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -334758,7 +346171,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   };
-},2081,[1,1377,42,3,627,553,88,556,2082,1186],"src\\pages\\vip\\com\\weChatCoverImage.tsx");
+},2195,[1,1377,42,3,627,553,88,556,2196,1186],"src\\pages\\vip\\com\\weChatCoverImage.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -335038,7 +346451,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(12)
     }
   });
-},2082,[3,556],"src\\pages\\vip\\recordStyle.ts");
+},2196,[3,556],"src\\pages\\vip\\recordStyle.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -335420,7 +346833,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},2083,[1,7,2,25,42,3,1377,88,1220,1591,2084,556],"src\\pages\\vip\\info.tsx");
+},2197,[1,7,2,25,42,3,1377,88,1220,1591,2198,556],"src\\pages\\vip\\info.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -335662,7 +347075,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: '#333333'
     }
   });
-},2084,[3,556],"src\\pages\\vip\\infoStyle.ts");
+},2198,[3,556],"src\\pages\\vip\\infoStyle.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -336065,7 +347478,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},2085,[1,7,2,25,42,3,627,1377,2086,88,1087,982,1190,1220,2074,1248,2082,1591,556,2081],"src\\pages\\vip\\record.tsx");
+},2199,[1,7,2,25,42,3,627,1377,2200,88,1087,982,1190,1220,2188,1248,2196,1591,556,2195],"src\\pages\\vip\\record.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -336380,7 +347793,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = InviteCodePop;
-},2086,[1,25,42,3,627,553,1377,88,556,1591,1186],"src\\pages\\vip\\com\\InviteCodePop.tsx");
+},2200,[1,25,42,3,627,553,1377,88,556,1591,1186],"src\\pages\\vip\\com\\InviteCodePop.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -337051,7 +348464,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},2087,[1,2,7,25,1377,42,3,627,1837,2072,88,1087,1220,1190,1591,556,2078,1186,2079],"src\\pages\\vip\\editRecord.tsx");
+},2201,[1,2,7,25,1377,42,3,627,1951,2186,88,1087,1220,1190,1591,556,2192,1186,2193],"src\\pages\\vip\\editRecord.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -337432,7 +348845,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   };
   var _default = exports.default = BinDevice;
-},2088,[1,2,25,42,3,2089,88,1087,1632,1197,1092,1190,1229,1186,2090,1591,556],"src\\pages\\bindDevice\\index.tsx");
+},2202,[1,2,25,42,3,2203,88,1087,1632,1197,1092,1190,1229,1186,2204,1591,556],"src\\pages\\bindDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -337528,7 +348941,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},2089,[3,556],"src\\pages\\bindDevice\\styles.ts");
+},2203,[3,556],"src\\pages\\bindDevice\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -337555,7 +348968,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return _ref.apply(this, arguments);
     };
   }();
-},2090,[1,2,3,1186],"src\\harmony\\harmony-scan.ts");
+},2204,[1,2,3,1186],"src\\harmony\\harmony-scan.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -338883,7 +350296,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }
     }));
   }
-},2091,[1,2,25,42,3,627,1377,2092,2093,1186,1190,1205,1219,1591,556],"src\\pages\\findDevice\\index.tsx");
+},2205,[1,2,25,42,3,627,1377,2206,2207,1186,1190,1205,1219,1591,556],"src\\pages\\findDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -338975,7 +350388,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = PowerIndicatorPop;
-},2092,[1,25,42,3,553,1601,88,556],"src\\components\\powerIndicatorPop\\index.tsx");
+},2206,[1,25,42,3,553,1601,88,556],"src\\components\\powerIndicatorPop\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -339252,7 +350665,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},2093,[3,556],"src\\pages\\findDevice\\styles.ts");
+},2207,[3,556],"src\\pages\\findDevice\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -339741,7 +351154,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16)
     }
   });
-},2094,[1,7,2,25,42,3,1377,88,1597,1087,1219,1190,556,1591],"src\\pages\\combineDevice\\index.tsx");
+},2208,[1,7,2,25,42,3,1377,88,1597,1087,1219,1190,556,1591],"src\\pages\\combineDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -339942,7 +351355,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2095,[1,2,25,42,3,88,1087,1597,1219,1190,1591,2096],"src\\pages\\handOver\\index.tsx");
+},2209,[1,2,25,42,3,88,1087,1597,1219,1190,1591,2210],"src\\pages\\handOver\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -340011,7 +351424,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textAlign: 'center'
     }
   });
-},2096,[3,556],"src\\pages\\handOver\\style.ts");
+},2210,[3,556],"src\\pages\\handOver\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -340242,7 +351655,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2097,[1,7,2,25,42,3,88,1087,1597,1219,1190,2098,1591,556],"src\\pages\\handOver\\handOverDevice\\index.tsx");
+},2211,[1,7,2,25,42,3,88,1087,1597,1219,1190,2212,1591,556],"src\\pages\\handOver\\handOverDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -340345,7 +351758,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16)
     }
   });
-},2098,[3,556],"src\\pages\\handOver\\handOverDevice\\style.ts");
+},2212,[3,556],"src\\pages\\handOver\\handOverDevice\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -340525,7 +351938,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2099,[1,2,25,42,3,2100,88,1087,1597,1725,1219,1190,1591,2102],"src\\pages\\handOver\\handOverVerify\\index.tsx");
+},2213,[1,2,25,42,3,2214,88,1087,1597,1839,1219,1190,1591,2216],"src\\pages\\handOver\\handOverVerify\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -340647,7 +352060,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = InputCode;
-},2100,[1,25,42,3,88,2101],"src\\pages\\handOver\\com\\inputCode\\index.tsx");
+},2214,[1,25,42,3,88,2215],"src\\pages\\handOver\\com\\inputCode\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -340694,7 +352107,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       opacity: 0
     }
   });
-},2101,[3,556],"src\\pages\\handOver\\com\\inputCode\\style.ts");
+},2215,[3,556],"src\\pages\\handOver\\com\\inputCode\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -340790,7 +352203,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textAlign: 'center'
     }
   });
-},2102,[3,556],"src\\pages\\handOver\\handOverVerify\\style.ts");
+},2216,[3,556],"src\\pages\\handOver\\handOverVerify\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -341129,7 +352542,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2103,[1,2,25,42,3,2104,88,1087,1597,1725,1190,1219,1205,1591,2106],"src\\pages\\handOver\\handOverVerifyNew\\index.tsx");
+},2217,[1,2,25,42,3,2218,88,1087,1597,1839,1190,1219,1205,1591,2220],"src\\pages\\handOver\\handOverVerifyNew\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -341186,7 +352599,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},2104,[1,25,42,3,88,1597,1190,2105],"src\\pages\\handOver\\com\\success\\index.tsx");
+},2218,[1,25,42,3,88,1597,1190,2219],"src\\pages\\handOver\\com\\success\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -341231,7 +352644,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textAlign: 'center'
     }
   });
-},2105,[3,556],"src\\pages\\handOver\\com\\success\\style.ts");
+},2219,[3,556],"src\\pages\\handOver\\com\\success\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -341349,7 +352762,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textAlign: 'center'
     }
   });
-},2106,[3,556],"src\\pages\\handOver\\handOverVerifyNew\\style.ts");
+},2220,[3,556],"src\\pages\\handOver\\handOverVerifyNew\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -341458,7 +352871,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2107,[1,25,42,3,88,1087,1597,1190,1591,2108,556,1186],"src\\pages\\bluetooth\\linkSuccess\\index.tsx");
+},2221,[1,25,42,3,88,1087,1597,1190,1591,2222,556,1186],"src\\pages\\bluetooth\\linkSuccess\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -341503,7 +352916,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       lineHeight: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(22)
     }
   });
-},2108,[3,556],"src\\pages\\bluetooth\\linkSuccess\\style.ts");
+},2222,[3,556],"src\\pages\\bluetooth\\linkSuccess\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -341682,7 +353095,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2109,[1,2,25,42,3,1376,552,88,1087,1597,1190,1219,2110],"src\\pages\\unbind\\index.tsx");
+},2223,[1,2,25,42,3,1376,552,88,1087,1597,1190,1219,2224],"src\\pages\\unbind\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -341757,7 +353170,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       marginTop: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(24)
     }
   });
-},2110,[3,556],"src\\pages\\unbind\\style.ts");
+},2224,[3,556],"src\\pages\\unbind\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -342149,7 +353562,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2111,[1,2,25,42,3,1376,1599,88,1087,1597,1725,1190,1227,1219,1205,1205,2112],"src\\pages\\unbind\\unbindDevice.tsx");
+},2225,[1,2,25,42,3,1376,1599,88,1087,1597,1839,1190,1227,1219,1205,1205,2226],"src\\pages\\unbind\\unbindDevice.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -342234,7 +353647,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       textAlign: 'center'
     }
   });
-},2112,[3,556],"src\\pages\\unbind\\unbindDeviceStyle.ts");
+},2226,[3,556],"src\\pages\\unbind\\unbindDeviceStyle.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -342440,7 +353853,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2113,[1,2,25,42,3,2114,88,1087,1205,1190,1591,556],"src\\pages\\unBindSuccess\\index.tsx");
+},2227,[1,2,25,42,3,2228,88,1087,1205,1190,1591,556],"src\\pages\\unBindSuccess\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -342500,7 +353913,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},2114,[3,556],"src\\pages\\unBindSuccess\\styles.ts");
+},2228,[3,556],"src\\pages\\unBindSuccess\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -343181,7 +354594,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},2115,[1,150,2,25,42,3,1612,2116,1377,88,1087,1597,1190,1205,1219,1591,2118,556,1186],"src\\pages\\bluetooth\\control\\index.tsx");
+},2229,[1,150,2,25,42,3,1612,2230,1377,88,1087,1597,1190,1205,1219,1591,2232,556,1186],"src\\pages\\bluetooth\\control\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -343313,7 +354726,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   });
   var _default = exports.default = SettingPin;
-},2116,[1,25,42,3,553,1615,88,556,2117],"src\\pages\\bluetooth\\component\\SettingPin.tsx");
+},2230,[1,25,42,3,553,1615,88,556,2231],"src\\pages\\bluetooth\\component\\SettingPin.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -343410,7 +354823,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontWeight: '700'
     }
   });
-},2117,[3,556],"src\\pages\\bluetooth\\component\\style.ts");
+},2231,[3,556],"src\\pages\\bluetooth\\component\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -343606,7 +355019,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       gap: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(4)
     }
   });
-},2118,[3,556],"src\\pages\\bluetooth\\control\\style.ts");
+},2232,[3,556],"src\\pages\\bluetooth\\control\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -343962,7 +355375,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2119,[1,2,25,7,42,3,1377,1742,88,1597,1190,1220,1186,2120,556,1591],"src\\pages\\message\\index.tsx");
+},2233,[1,2,25,7,42,3,1377,1856,88,1597,1190,1220,1186,2234,556,1591],"src\\pages\\message\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -344065,7 +355478,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       height: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(20)
     }
   });
-},2120,[3,556],"src\\pages\\message\\style.ts");
+},2234,[3,556],"src\\pages\\message\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -344295,7 +355708,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2121,[1,2,25,42,3,557,88,1087,1220,1190,1591,2122,556],"src\\pages\\messageDetail\\index.tsx");
+},2235,[1,2,25,42,3,557,88,1087,1220,1190,1591,2236,556],"src\\pages\\messageDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -344374,7 +355787,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       color: '#FFFFFF'
     }
   });
-},2122,[3,556],"src\\pages\\messageDetail\\style.ts");
+},2236,[3,556],"src\\pages\\messageDetail\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -345292,7 +356705,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},2123,[1,7,2,25,3,42,1377,2124,1742,88,1087,1190,1052,1190,1221,1227,1225,556,1591,1621],"src\\pages\\myDevice\\index.tsx");
+},2237,[1,7,2,25,3,42,1377,2238,1856,88,1087,1190,1052,1190,1221,1227,1225,556,1591,1621],"src\\pages\\myDevice\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -345657,7 +357070,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},2124,[3,556],"src\\pages\\myDevice\\styles.ts");
+},2238,[3,556],"src\\pages\\myDevice\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -345953,7 +357366,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2125,[1,7,2,25,3,42,1742,2126,88,1087,1221,1190,1092,1591],"src\\pages\\apply\\applyRecord\\index.tsx");
+},2239,[1,7,2,25,3,42,1856,2240,88,1087,1221,1190,1092,1591],"src\\pages\\apply\\applyRecord\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -346042,7 +357455,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},2126,[3,556],"src\\pages\\apply\\applyRecord\\styles.ts");
+},2240,[3,556],"src\\pages\\apply\\applyRecord\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -346372,7 +357785,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2127,[1,2,25,3,42,2128,627,88,1087,1092,1221,1190,1591],"src\\pages\\apply\\applyRecord\\detail\\index.tsx");
+},2241,[1,2,25,3,42,2242,627,88,1087,1092,1221,1190,1591],"src\\pages\\apply\\applyRecord\\detail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -346472,7 +357885,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},2128,[3,556],"src\\pages\\apply\\applyRecord\\detail\\styles.ts");
+},2242,[3,556],"src\\pages\\apply\\applyRecord\\detail\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -346771,7 +358184,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2129,[1,2,25,3,42,1377,2130,88,1087,1092,1220,1190,1221,1591,556],"src\\pages\\apply\\userScan\\index.tsx");
+},2243,[1,2,25,3,42,1377,2244,88,1087,1092,1220,1190,1221,1591,556],"src\\pages\\apply\\userScan\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -346896,7 +358309,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},2130,[3,556],"src\\pages\\apply\\userScan\\styles.ts");
+},2244,[3,556],"src\\pages\\apply\\userScan\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -347225,7 +358638,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2131,[1,2,25,42,3,1656,1376,1377,88,1087,1597,1725,1190,1227,1219,2132,556],"src\\pages\\remoteKeyUnbind\\index.tsx");
+},2245,[1,2,25,42,3,1656,1376,1377,88,1087,1597,1839,1190,1227,1219,2246,556],"src\\pages\\remoteKeyUnbind\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -347329,7 +358742,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: '#999999'
     }
   });
-},2132,[3,556],"src\\pages\\remoteKeyUnbind\\style.ts");
+},2246,[3,556],"src\\pages\\remoteKeyUnbind\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -347730,7 +359143,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2133,[1,2,25,42,3,1656,1376,1377,552,88,1087,1597,1725,1190,1227,2134,556],"src\\pages\\remoteKeyPairingVideo\\index.tsx");
+},2247,[1,2,25,42,3,1656,1376,1377,552,88,1087,1597,1839,1190,1227,2248,556],"src\\pages\\remoteKeyPairingVideo\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -347834,7 +359247,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       backgroundColor: '#999999'
     }
   });
-},2134,[3,556],"src\\pages\\remoteKeyPairingVideo\\style.ts");
+},2248,[3,556],"src\\pages\\remoteKeyPairingVideo\\style.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -347939,7 +359352,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       }) : /*#__PURE__*/(0, _jsxRuntime.jsx)(_jsxRuntime.Fragment, {})
     });
   }
-},2135,[1,2,25,42,3,2136,1377,88,1087,1220,1092,1591,556],"src\\pages\\rcvPayment\\index.tsx");
+},2249,[1,2,25,42,3,2250,1377,88,1087,1220,1092,1591,556],"src\\pages\\rcvPayment\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -348086,7 +359499,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},2136,[3,556],"src\\pages\\rcvPayment\\styles.ts");
+},2250,[3,556],"src\\pages\\rcvPayment\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -348365,7 +359778,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2137,[1,7,2,25,42,3,2138,1377,557,1742,88,1087,1190,1225,556,1591],"src\\pages\\rcvPayment\\rcvPaymentRule\\index.tsx");
+},2251,[1,7,2,25,42,3,2252,1377,557,1856,88,1087,1190,1225,556,1591],"src\\pages\\rcvPayment\\rcvPaymentRule\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -348463,7 +359876,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},2138,[3,556],"src\\pages\\rcvPayment\\rcvPaymentRule\\styles.ts");
+},2252,[3,556],"src\\pages\\rcvPayment\\rcvPaymentRule\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -349437,7 +360850,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},2139,[1,2,25,42,3,1377,557,2140,88,556,1087,1190,1225,1591,566],"src\\pages\\rcvPayment\\rcvPaymentRule\\edit.tsx");
+},2253,[1,2,25,42,3,1377,557,2254,88,556,1087,1190,1225,1591,566],"src\\pages\\rcvPayment\\rcvPaymentRule\\edit.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -349782,7 +361195,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},2140,[3,556],"src\\pages\\rcvPayment\\rcvPaymentRule\\editStyles.ts");
+},2254,[3,556],"src\\pages\\rcvPayment\\rcvPaymentRule\\editStyles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -351127,7 +362540,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2141,[1,7,2,25,42,3,1377,2142,1665,88,1087,1725,2143,1220,1190,1734,1197,1198,566,556,1591],"src\\pages\\rcvPayment\\changeBank\\index.tsx");
+},2255,[1,7,2,25,42,3,1377,2256,1665,88,1087,1839,2257,1220,1190,1848,1197,1198,566,556,1591],"src\\pages\\rcvPayment\\changeBank\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -351535,7 +362948,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontWeight: '500'
     }
   });
-},2142,[3,556],"src\\pages\\rcvPayment\\changeBank\\styles.ts");
+},2256,[3,556],"src\\pages\\rcvPayment\\changeBank\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -351575,7 +362988,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     3: 'https://g.18qjz.cn/img/boklock/wallet/withdraw_fail.png',
     4: 'https://g.18qjz.cn/img/boklock/wallet/withdraw_pendding.png'
   };
-},2143,[],"src\\pages\\balanceWallet\\constants.ts");
+},2257,[],"src\\pages\\balanceWallet\\constants.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -351835,7 +363248,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2144,[1,2,25,42,3,1376,1377,2145,553,627,1742,88,1087,1052,1220,1190,1092,556,1591,2143],"src\\pages\\balanceWallet\\index.tsx");
+},2258,[1,2,25,42,3,1376,1377,2259,553,627,1856,88,1087,1052,1220,1190,1092,556,1591,2257],"src\\pages\\balanceWallet\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -351945,7 +363358,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},2145,[3,556],"src\\pages\\balanceWallet\\styles.ts");
+},2259,[3,556],"src\\pages\\balanceWallet\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -352116,7 +363529,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2146,[1,2,25,42,3,627,1376,553,2147,88,1087,1220,1190,1591,2143,556],"src\\pages\\balanceWallet\\detail\\index.tsx");
+},2260,[1,2,25,42,3,627,1376,553,2261,88,1087,1220,1190,1591,2257,556],"src\\pages\\balanceWallet\\detail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -352217,7 +363630,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},2147,[3,556],"src\\pages\\balanceWallet\\detail\\styles.ts");
+},2261,[3,556],"src\\pages\\balanceWallet\\detail\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -352792,7 +364205,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2148,[1,2,25,42,3,1376,1377,1601,1599,2149,553,88,1087,1725,1220,1190,1092,2143,1190,1052,1591,556],"src\\pages\\balanceWallet\\extract\\index.tsx");
+},2262,[1,2,25,42,3,1376,1377,1601,1599,2263,553,88,1087,1839,1220,1190,1092,2257,1190,1052,1591,556],"src\\pages\\balanceWallet\\extract\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -353098,7 +364511,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
   });
   var _default = exports.default = styles;
-},2149,[3,556],"src\\pages\\balanceWallet\\extract\\styles.ts");
+},2263,[3,556],"src\\pages\\balanceWallet\\extract\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -353473,7 +364886,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},2150,[1,7,2,25,42,3,2151,627,1377,553,1742,88,1087,1223,1092,556,1591],"src\\pages\\myOrder\\index.tsx");
+},2264,[1,7,2,25,42,3,2265,627,1377,553,1856,88,1087,1223,1092,556,1591],"src\\pages\\myOrder\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -353652,7 +365065,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       zIndex: 9999
     }
   });
-},2151,[3,556],"src\\pages\\myOrder\\styles.ts");
+},2265,[3,556],"src\\pages\\myOrder\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -354409,7 +365822,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })]
     });
   }
-},2152,[1,7,2,25,42,3,627,1742,88,1087,1223,1190,981,1248,1591,2153,556,1591],"src\\pages\\myOrder\\detail\\index.tsx");
+},2266,[1,7,2,25,42,3,627,1856,88,1087,1223,1190,981,1248,1591,2267,556,1591],"src\\pages\\myOrder\\detail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -354612,7 +366025,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(16)
     }
   });
-},2153,[3,556],"src\\pages\\myOrder\\detail\\styles.ts");
+},2267,[3,556],"src\\pages\\myOrder\\detail\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -354756,7 +366169,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   }
-},2154,[1,2,25,42,3,627,2155,88,1087,1223,1190,1591],"src\\pages\\myOrder\\refundDetail\\index.tsx");
+},2268,[1,2,25,42,3,627,2269,88,1087,1223,1190,1591],"src\\pages\\myOrder\\refundDetail\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -354804,7 +366217,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       fontSize: (0, _$$_REQUIRE(_dependencyMap[1], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(14)
     }
   });
-},2155,[3,556],"src\\pages\\myOrder\\refundDetail\\styles.ts");
+},2269,[3,556],"src\\pages\\myOrder\\refundDetail\\styles.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -354816,12 +366229,24 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _reactNative = _$$_REQUIRE(_dependencyMap[3], "react-native");
   var _appManager = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "D:\\xqkj\\bokeapp\\src/utils/env/rn/appManager"));
   var _jsxRuntime = _$$_REQUIRE(_dependencyMap[5], "react/jsx-runtime");
-  var _this = this,
-    _jsxFileName = "D:\\xqkj\\bokeapp\\src\\navigation\\MainTabNavigator.tsx";
+  var _jsxFileName = "D:\\xqkj\\bokeapp\\src\\navigation\\MainTabNavigator.tsx",
+    _this = this;
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   var Tab = (0, _$$_REQUIRE(_dependencyMap[6], "@react-navigation/bottom-tabs").createBottomTabNavigator)();
+  function MeasuredTabBar(props) {
+    var setTabBarHeight = (0, _$$_REQUIRE(_dependencyMap[7], "jotai").useSetAtom)(_$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/store/store").tabBarHeightStore);
+    return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.View, {
+      onLayout: function onLayout(event) {
+        var height = event.nativeEvent.layout.height;
+        if (height > 0) {
+          setTabBarHeight(height);
+        }
+      },
+      children: /*#__PURE__*/(0, _jsxRuntime.jsx)(_$$_REQUIRE(_dependencyMap[6], "@react-navigation/bottom-tabs").BottomTabBar, Object.assign({}, props))
+    });
+  }
   var MainTabNavigator = exports.MainTabNavigator = function MainTabNavigator() {
-    var insets = (0, _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/libs/safeAreaContext").useSafeAreaInsets)();
+    var insets = (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/libs/safeAreaContext").useSafeAreaInsets)();
     var lastCheckTimeRef = (0, _react.useRef)(0);
     var handleCheckUpdateSilent = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(function* () {
       var now = Date.now();
@@ -354838,7 +366263,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 
         // 无感检测如果有更新且不是最新版才弹窗
         if (info && !info.isLast) {
-          (0, _$$_REQUIRE(_dependencyMap[8], "D:\\xqkj\\bokeapp\\src/components").showAppUpdateDialog)({
+          (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/components").showAppUpdateDialog)({
             id: info.id,
             version: info.version,
             content: info.content,
@@ -354858,16 +366283,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return {
         backgroundColor: '#ffffff',
         // 对齐 Taro 样式：上内边距 10，底部使用安全区
-        paddingTop: (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(5),
-        paddingHorizontal: (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
+        paddingTop: (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(5),
+        paddingHorizontal: (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(16),
         borderTopWidth: 1,
         borderTopColor: 'rgba(0,0,0,0.05)',
-        height: (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(60 + Math.max(insets.bottom, 20)),
-        paddingBottom: (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(Math.max(insets.bottom, 20))
+        height: (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils/tabBarHeight").getTabBarHeightFallback)(insets.bottom),
+        paddingBottom: (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(Math.max(insets.bottom, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils/tabBarHeight").TAB_BAR_MIN_BOTTOM_INSET))
       };
     }, [insets]);
     var getTabBarIcon = function getTabBarIcon(route, focused, color, size) {
-      var routeConfig = _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/routes").routes.tabs.find(function (tab) {
+      var routeConfig = _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/routes").routes.tabs.find(function (tab) {
         return tab.name === route.name;
       });
       if (!routeConfig) return null;
@@ -354876,8 +366301,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       // const isCenter = route.name === 'Index';
       // const iconSize = isCenter ? px(50) : px(30);
       // const marginBottom = isCenter ? 0 : px(3);
-      var iconSize = (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(30);
-      var marginBottom = (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(3);
+      var iconSize = (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(30);
+      var marginBottom = (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/ui").px)(3);
       return /*#__PURE__*/(0, _jsxRuntime.jsx)(_reactNative.Image, {
         source: {
           uri: iconUri
@@ -354892,6 +366317,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     };
     return /*#__PURE__*/(0, _jsxRuntime.jsx)(Tab.Navigator, {
       initialRouteName: "Index",
+      tabBar: function tabBar(props) {
+        return /*#__PURE__*/(0, _jsxRuntime.jsx)(MeasuredTabBar, Object.assign({}, props));
+      },
       screenListeners: {
         state: handleCheckUpdateSilent
       },
@@ -354910,7 +366338,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           tabBarStyle: tabBarStyle,
           tabBarHideOnKeyboard: false,
           tabBarLabelStyle: {
-            fontSize: (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(11),
+            fontSize: (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/utils/ui").fontSize)(11),
             fontWeight: '400'
           },
           // 每个 Tab 外层加红色边框，Index 固定宽度 50，其它平均铺满
@@ -354922,7 +366350,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           headerShown: false
         };
       },
-      children: _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/routes").routes.tabs.map(function (route) {
+      children: _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/routes").routes.tabs.map(function (route) {
         // const isCenter = route.name === 'Index';
         return /*#__PURE__*/(0, _jsxRuntime.jsx)(Tab.Screen, {
           name: route.name,
@@ -354939,7 +366367,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       })
     });
   };
-},2156,[1,2,42,3,1830,88,2157,1251,1591,556,1374],"src\\navigation\\MainTabNavigator.tsx");
+},2270,[1,2,42,3,1944,88,2271,1300,1617,1251,1591,556,1792,1374],"src\\navigation\\MainTabNavigator.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -354987,7 +366415,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var _BottomTabBarHeightCallbackContext = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[4], "./utils/BottomTabBarHeightCallbackContext"));
   var _BottomTabBarHeightContext = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[5], "./utils/BottomTabBarHeightContext"));
   var _useBottomTabBarHeight = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[6], "./utils/useBottomTabBarHeight"));
-},2157,[1,2158,2162,2159,2160,2161,2168],"node_modules\\@react-navigation\\bottom-tabs\\src\\index.tsx");
+},2271,[1,2272,2276,2273,2274,2275,2282],"node_modules\\@react-navigation\\bottom-tabs\\src\\index.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -355069,7 +366497,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     });
   }
   var _default = exports.default = (0, _$$_REQUIRE(_dependencyMap[6], "@react-navigation/native").createNavigatorFactory)(BottomTabNavigator);
-},2158,[1,150,42,1315,2159,88,1087],"node_modules\\@react-navigation\\bottom-tabs\\src\\navigators\\createBottomTabNavigator.tsx");
+},2272,[1,150,42,1315,2273,88,1087],"node_modules\\@react-navigation\\bottom-tabs\\src\\navigators\\createBottomTabNavigator.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -355216,7 +366644,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       overflow: 'hidden'
     }
   });
-},2159,[1,7,25,42,3,2160,2161,2162,88,1323,1252,2167],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabView.tsx");
+},2273,[1,7,25,42,3,2274,2275,2276,88,1323,1252,2281],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabView.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -355225,7 +366653,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var React = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[0], "react"));
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   var _default = exports.default = React.createContext(undefined);
-},2160,[42],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\BottomTabBarHeightCallbackContext.tsx");
+},2274,[42],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\BottomTabBarHeightCallbackContext.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -355234,7 +366662,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
   var React = _interopRequireWildcard(_$$_REQUIRE(_dependencyMap[0], "react"));
   function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
   var _default = exports.default = React.createContext(undefined);
-},2161,[42],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\BottomTabBarHeightContext.tsx");
+},2275,[42],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\BottomTabBarHeightContext.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -355539,7 +366967,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       flexDirection: 'row'
     }
   });
-},2162,[1,25,150,42,3,2160,2163,2164,88,1087,1252,1323],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabBar.tsx");
+},2276,[1,25,150,42,3,2274,2277,2278,88,1087,1252,1323],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabBar.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -355576,7 +367004,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, []);
     return isKeyboardShown;
   }
-},2163,[1,25,42,3],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\useIsKeyboardShown.tsx");
+},2277,[1,25,42,3],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\useIsKeyboardShown.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -355759,7 +367187,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       display: 'flex'
     }
   });
-},2164,[1,150,1346,42,3,2165,88,1087],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabItem.tsx");
+},2278,[1,150,1346,42,3,2279,88,1087],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\BottomTabItem.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -355846,7 +367274,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       top: 7
     }
   });
-},2165,[1,42,3,2166,88],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\TabBarIcon.tsx");
+},2279,[1,42,3,2280,88],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\TabBarIcon.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -355945,7 +367373,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       overflow: 'hidden'
     }
   });
-},2166,[1,25,150,1346,42,3,88,1087],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\Badge.tsx");
+},2280,[1,25,150,1346,42,3,88,1087],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\Badge.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -355997,7 +367425,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       children: children
     }));
   }
-},2167,[1,150,42,3,88,1361,1323],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\ScreenFallback.tsx");
+},2281,[1,150,42,3,88,1361,1323],"node_modules\\@react-navigation\\bottom-tabs\\src\\views\\ScreenFallback.tsx");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -356014,13 +367442,13 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }
     return height;
   }
-},2168,[1,42,2161],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\useBottomTabBarHeight.tsx");
+},2282,[1,42,2275],"node_modules\\@react-navigation\\bottom-tabs\\src\\utils\\useBottomTabBarHeight.tsx");
 __d(function(global, require, _importDefaultUnused, _importAllUnused, module, exports, _dependencyMapUnused) {
   module.exports = {
   "name": "boklock",
   "displayName": "boklock"
 }
 ;
-},2169,[],"app.json");
+},2283,[],"app.json");
 __r(46);
 __r(0);

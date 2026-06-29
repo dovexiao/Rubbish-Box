@@ -12,6 +12,7 @@ import {
   startVoiceRecording,
   VoiceRecordingHandler,
 } from '@/services/voiceRecorder';
+import { IS_HARMONY } from '@/constants';
 
 export type VoiceStatus = 'idle' | 'recording' | 'cancel';
 
@@ -194,21 +195,42 @@ export const useHoldToTalk = ({
     busyRef.current = true;
 
     if (!skipPermissionCheck) {
+      const authStart = Date.now();
       const granted = await checkMicrophonePermission();
-      if (!granted || !pressActiveRef.current) {
+      const authDuration = Date.now() - authStart;
+
+      // 如果发生了权限弹窗等待（耗时较长），在鸿蒙上触摸事件会被吞掉导致手势没被 release。
+      // 这种情况下，无论是否授权成功，都中断当前录音，要求用户重新按住。
+      if (
+        !granted ||
+        !pressActiveRef.current ||
+        (IS_HARMONY && authDuration > 1500)
+      ) {
         busyRef.current = false;
         setVoiceStatus('idle');
+
+        if (!granted) {
+          showToast({ title: '请前往手机应用设置开启录音权限', icon: 'none' });
+        }
+
+        pressActiveRef.current = false;
+        if (holdTimerRef.current) clearTimeout(holdTimerRef.current);
         return;
       }
     } else if (!pressActiveRef.current) {
       busyRef.current = false;
+      console.log(1111);
       return;
     }
 
+    const reqStartTime = Date.now();
     try {
       const handler = await startRecording();
+      const waitTime = Date.now() - reqStartTime;
 
-      // 如果在请求权限或者启动录音期间，用户已经松开了手
+      // 如果在启动录音期间用户松开了手，终止录音
+      // 注意：由于在前面的跳出了弹窗检测（authDuration），这里如果 startRecording()
+      // 等待时间异常偏长（>1500ms），可能发生底层模块阻断。为防止误杀，将阈值放宽或直接去除鸿蒙硬拦截。
       if (!pressActiveRef.current) {
         try {
           await handler.stop();
@@ -216,6 +238,9 @@ export const useHoldToTalk = ({
           // ignore
         }
         busyRef.current = false;
+        setVoiceStatus('idle');
+        pressActiveRef.current = false;
+        if (holdTimerRef.current) clearTimeout(holdTimerRef.current);
         return;
       }
 
@@ -223,6 +248,7 @@ export const useHoldToTalk = ({
       cancelingRef.current = false;
       recordStartTimeRef.current = Date.now();
 
+      triggerLightHaptic();
       setVoiceStatus('recording');
 
       stopRecordingRef.current = handler.stop;
@@ -256,7 +282,6 @@ export const useHoldToTalk = ({
       touchStartYRef.current = evt.nativeEvent.pageY;
       pressActiveRef.current = true;
       cancelingRef.current = false;
-      triggerLightHaptic();
       clearHoldTimer();
 
       holdTimerRef.current = setTimeout(() => {
@@ -272,10 +297,7 @@ export const useHoldToTalk = ({
         return;
       }
 
-      updateCancelStateFromTouch(
-        evt.nativeEvent.pageY,
-        touchStartYRef.current,
-      );
+      updateCancelStateFromTouch(evt.nativeEvent.pageY, touchStartYRef.current);
     },
     [updateCancelStateFromTouch],
   );
@@ -288,10 +310,7 @@ export const useHoldToTalk = ({
         return;
       }
 
-      updateCancelStateFromTouch(
-        evt.nativeEvent.pageY,
-        touchStartYRef.current,
-      );
+      updateCancelStateFromTouch(evt.nativeEvent.pageY, touchStartYRef.current);
       void finishRecording(cancelingRef.current);
     },
     [finishRecording, resetVoicePressState, updateCancelStateFromTouch],

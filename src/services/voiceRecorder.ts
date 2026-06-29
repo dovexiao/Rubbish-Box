@@ -1,5 +1,6 @@
 import { NativeModules, Platform } from 'react-native';
 import { IS_HARMONY } from '@/constants';
+import { Toast } from '@ant-design/react-native';
 
 export type VoiceRecordingHandler = {
   stop: () => Promise<string>;
@@ -248,6 +249,9 @@ export async function startVoiceRecording(): Promise<VoiceRecordingHandler> {
               } catch (error) {
                 player.removeRecordBackListener();
                 console.warn('[voiceRecorder] stop failed', error);
+                setTimeout(() => {
+                  Toast.show('请检查是否已授予麦克风权限');
+                }, 2000);
                 return resolvedPath;
               }
             }),

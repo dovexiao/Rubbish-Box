@@ -52,7 +52,8 @@ function waitNextFrame(): Promise<void> {
 }
 
 function vibrateFallback(): void {
-  if (Platform.OS === 'ios' || Platform.OS === 'android') {
+  // 鸿蒙环境也完全支持调用基础的 Vibration.vibrate
+  if (Platform.OS === 'ios' || Platform.OS === 'android' || IS_HARMONY) {
     Vibration.vibrate(20);
   }
 }
@@ -160,6 +161,10 @@ function triggerNative(type: string): void {
 export function triggerLightHaptic(): void {
   try {
     triggerNative('impactHeavy');
+    if (IS_HARMONY) {
+      // 鸿蒙原生 haptic 可能未起效果，补充默认的轻震动作兜底
+      Vibration.vibrate(25);
+    }
   } catch (error) {
     console.warn('[haptics] trigger failed', error);
     vibrateFallback();

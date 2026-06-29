@@ -16,7 +16,6 @@ import { LinearGradient, PageContainer, TextInput } from '@/components';
 import { useHoldToTalk, VoiceRipple } from '@/components/HoldToTalk';
 import { useAIChat } from '@/hooks/useAIChat';
 import { showToast } from '@/utils';
-import { checkMicrophonePermission } from '@/utils/permissions';
 import { px } from '@/utils/ui';
 import MessageItem from './com/messageItem';
 import TextMessageItem from './com/textMessage';
@@ -108,13 +107,8 @@ const AiAssistant = () => {
     scrollToBottom();
   }, [scrollToBottom]);
 
-  const handleChangeType = useCallback(async (nextType: 'text' | 'voice') => {
+  const handleChangeType = useCallback((nextType: 'text' | 'voice') => {
     if (nextType === 'voice') {
-      const granted = await checkMicrophonePermission();
-      if (!granted) {
-        showToast({ title: '需要麦克风权限才能语音输入', icon: 'none' });
-        return;
-      }
       setIsInputFocused(false);
       Keyboard.dismiss();
     }
@@ -157,7 +151,6 @@ const AiAssistant = () => {
       enabled: type === 'voice' && !isLoading,
       onResult: handleSendMessage,
       onVoiceFile: sendVoiceMessage,
-      skipPermissionCheck: true,
     });
 
   const isExpandedInput =
