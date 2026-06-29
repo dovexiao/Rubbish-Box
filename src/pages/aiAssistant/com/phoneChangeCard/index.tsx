@@ -49,16 +49,12 @@ export default function PhoneChangeCard({ data }: Props) {
 
   return (
     <View style={styles.messageRow}>
-      <View style={styles.card}>
+      <TouchableOpacity style={styles.card} onPress={handleNavigate}>
         <View style={styles.header}>
           {data?.intro ? (
             <MarkdownView content={data.intro} style={styles.introMarkdown} />
           ) : null}
-          <TouchableOpacity
-            activeOpacity={0.85}
-            style={styles.link}
-            onPress={handleNavigate}
-          >
+          <TouchableOpacity activeOpacity={0.85} style={styles.link}>
             <Text style={styles.linkText}>点击前往</Text>
             <AppIcon name="a-nextpage" size={px(12)} color="#999999" />
           </TouchableOpacity>
@@ -72,7 +68,7 @@ export default function PhoneChangeCard({ data }: Props) {
             />
           ) : null}
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 }

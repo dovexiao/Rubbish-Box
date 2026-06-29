@@ -19,6 +19,11 @@ export default function TextMessageItem({ data }: Props) {
     !isUser && !isError && isStreaming && isStreamingExecuteJsonContent(content);
   const showThinking = isEmptyStreaming || isExecuteJsonStreaming;
 
+  // 占位流结束后内容被抽成卡片或合并进确认卡时，避免渲染空白气泡
+  if (!isUser && !isError && !showThinking && !content.trim()) {
+    return null;
+  }
+
   if (showThinking) {
     return (
       <View style={[styles.messageRow, styles.messageRowAssistant]}>

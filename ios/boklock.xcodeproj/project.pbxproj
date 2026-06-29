@@ -56,6 +56,7 @@
 		CBD618312F6557F100BC703F /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CBD6182F2F6557F100BC703F /* Info.plist */; };
 		CBD618322F6557F100BC703F /* boklockTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CBD6182E2F6557F100BC703F /* boklockTests.m */; };
 		CBF206712F75727E00944A76 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = CBF2066F2F75280000944A76 /* main.jsbundle */; };
+		CBSEL0042F9001000BC703F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CBSEL0012F9001000BC703F /* Localizable.strings */; };
 		D850CDDBD053AF84D6F349E9 /* libPods-boklock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FC5F90C915F2B6987376264 /* libPods-boklock.a */; };
 		F09BFA090CD720F34698B524 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
@@ -102,7 +103,7 @@
 		686A7DDF204A99BAB4654250 /* Pods-boklock.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-boklock.debug.xcconfig"; path = "Target Support Files/Pods-boklock/Pods-boklock.debug.xcconfig"; sourceTree = "<group>"; };
 		6FD87C62DDD4412CBE4162A7 /* antoutline.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = antoutline.ttf; path = "../node_modules/@ant-design/icons-react-native/fonts/antoutline.ttf"; sourceTree = "<group>"; };
 		7FC5F90C915F2B6987376264 /* libPods-boklock.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-boklock.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = boklock/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		81AB9BB92411601600AC10FF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = boklock/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9FA5AFED6349497980A3949F /* antfill.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = antfill.ttf; path = "../node_modules/@ant-design/icons-react-native/fonts/antfill.ttf"; sourceTree = "<group>"; };
 		CB9BA3CC2F65B33500142A27 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CBD6175D2F644D7300BC703F /* CashierPushServices.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CashierPushServices.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -164,6 +165,9 @@
 		CBD6182E2F6557F100BC703F /* boklockTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = boklockTests.m; sourceTree = "<group>"; };
 		CBD6182F2F6557F100BC703F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CBF2066F2F75280000944A76 /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; name = main.jsbundle; path = ios/main.jsbundle; sourceTree = "<group>"; };
+		CBSEL0022F9001000BC703F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = boklock/en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		CBSEL0032F9001000BC703F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "boklock/zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		CBSEL0052F9001000BC703F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "boklock/zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -220,6 +224,7 @@
 				CBD617DA2F6453DB00BC703F /* SSZipArchive.m */,
 				CBD617DB2F6453DB00BC703F /* SSZipCommon.h */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
+				CBSEL0012F9001000BC703F /* Localizable.strings */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				CBD617E52F6453E100BC703F /* boklock-Bridging-Header.h */,
@@ -465,11 +470,12 @@
 			};
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "boklock" */;
 			compatibilityVersion = "Xcode 12.0";
-			developmentRegion = en;
+			developmentRegion = "zh-Hans";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -489,6 +495,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CBF206712F75727E00944A76 /* main.jsbundle in Resources */,
+				CBSEL0042F9001000BC703F /* Localizable.strings in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				F09BFA090CD720F34698B524 /* PrivacyInfo.xcprivacy in Resources */,
 				90CF046A02224B73B1CA8399 /* antfill.ttf in Resources */,
@@ -662,6 +669,27 @@
 			targetProxy = CBD617C62F6452FE00BC703F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				81AB9BB92411601600AC10FF /* Base */,
+				CBSEL0052F9001000BC703F /* zh-Hans */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		CBSEL0012F9001000BC703F /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CBSEL0022F9001000BC703F /* en */,
+				CBSEL0032F9001000BC703F /* zh-Hans */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {

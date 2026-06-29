@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   },
   messageListInner: {
     flexGrow: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     paddingBottom: px(4),
   },
   userInputContent: {
@@ -105,8 +105,8 @@ const styles = StyleSheet.create({
     paddingLeft: px(16),
     paddingRight: px(8),
     borderRadius: px(12),
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.75)',
+    // borderWidth: 1,
+    // borderColor: 'rgba(255, 255, 255, 0.75)',
     flexDirection: 'row',
     alignItems: 'center',
     gap: px(8),
@@ -144,11 +144,14 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   questionInputShadow: {
+    width: '100%',
+    borderRadius: px(12),
+    backgroundColor: '#ffffff',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: px(2) },
+    shadowOffset: { width: 0, height: px(4) },
     shadowOpacity: 0.12,
     shadowRadius: px(8),
-    elevation: 4,
+    elevation: 6,
   },
   questionInputContentInput: {
     minWidth: 0,
@@ -232,6 +235,7 @@ const styles = StyleSheet.create({
     color: '#333333',
     lineHeight: px(24),
     textAlign: 'center',
+    pointerEvents: 'none',
   },
   questionInputContentVoiceActiveWrap: {
     flex: 1,

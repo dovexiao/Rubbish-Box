@@ -20,11 +20,6 @@ type AppModuleHaptic = {
   triggerUIKitHapticWithSessionRelease?: (feedbackType: string) => void;
 };
 
-type AudioRecorderNative = {
-  pauseRecorder?: () => Promise<string>;
-  resumeRecorder?: () => Promise<string>;
-};
-
 const HAPTIC_OPTIONS: TriggerOptions = {
   enableVibrateFallback: true,
   ignoreAndroidSystemSettings: false,
@@ -38,18 +33,6 @@ const IOS_HAPTIC_TYPE_MAP: Record<string, string> = {
   notificationSuccess: 'success',
   selection: 'selection',
 };
-
-let recordingHapticQueue: Promise<void> = Promise.resolve();
-
-function enqueueRecordingHaptic(task: () => Promise<void>): void {
-  recordingHapticQueue = recordingHapticQueue.then(task).catch(() => {});
-}
-
-function waitNextFrame(): Promise<void> {
-  return new Promise(resolve => {
-    requestAnimationFrame(() => resolve());
-  });
-}
 
 function vibrateFallback(): void {
   // 鸿蒙环境也完全支持调用基础的 Vibration.vibrate
@@ -81,39 +64,6 @@ function triggerUIKitHapticIOS(rnType: string): void {
   }
 
   vibrateFallback();
-}
-
-async function triggerHeavyHapticDuringRecording(): Promise<void> {
-  const recorder = NativeModules.RNAudioRecorderPlayer as
-    | AudioRecorderNative
-    | undefined;
-  const appModule = NativeModules.AppModule as AppModuleHaptic | undefined;
-  let paused = false;
-
-  if (recorder?.pauseRecorder) {
-    try {
-      await recorder.pauseRecorder();
-      paused = true;
-    } catch {
-      // ignore
-    }
-  }
-
-  if (appModule?.triggerUIKitHapticWithSessionRelease) {
-    appModule.triggerUIKitHapticWithSessionRelease('heavy');
-  } else {
-    triggerUIKitHapticIOS('impactHeavy');
-  }
-
-  await waitNextFrame();
-
-  if (paused && recorder?.resumeRecorder) {
-    try {
-      await recorder.resumeRecorder();
-    } catch {
-      // ignore
-    }
-  }
 }
 
 function triggerNative(type: string): void {
@@ -177,18 +127,19 @@ export function triggerHoldToTalkTransitionHaptic(
   recorderActive = false,
 ): void {
   try {
-    if (Platform.OS === 'ios' && recorderActive) {
-      enqueueRecordingHaptic(triggerHeavyHapticDuringRecording);
-      return;
-    }
-
     if (Platform.OS === 'ios') {
-      triggerUIKitHapticIOS('impactHeavy');
+      const appModule = NativeModules.AppModule as AppModuleHaptic | undefined;
+      // 录音进行中若 pause/resume 会打断音频采集导致卡顿，改用不占用录音会话的轻反馈
+      if (recorderActive && appModule?.triggerUIKitHapticWithSessionRelease) {
+        appModule.triggerUIKitHapticWithSessionRelease('light');
+        return;
+      }
+      triggerUIKitHapticIOS(recorderActive ? 'impactLight' : 'impactHeavy');
       return;
     }
 
-    triggerNative('impactHeavy');
-    Vibration.vibrate(25);
+    triggerNative(recorderActive ? 'impactLight' : 'impactHeavy');
+    Vibration.vibrate(recorderActive ? 15 : 25);
   } catch (error) {
     console.warn('[haptics] hold transition failed', error);
     vibrateFallback();

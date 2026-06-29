@@ -9,6 +9,7 @@ import { checkMicrophonePermission } from '@/utils/permissions';
 import { showToast } from '@/utils';
 import { speechToText } from '@/services/speechToText';
 import {
+  prepareVoiceRecorder,
   startVoiceRecording,
   VoiceRecordingHandler,
 } from '@/services/voiceRecorder';
@@ -31,7 +32,7 @@ export type HoldToTalkOptions = {
   onVoiceFile?: (filePath: string) => void;
 };
 
-const DEFAULT_HOLD_DELAY_MS = 100;
+const DEFAULT_HOLD_DELAY_MS = 50;
 const DEFAULT_MIN_DURATION_MS = 1000;
 const DEFAULT_CANCEL_SLIDE_THRESHOLD = 60;
 const DEFAULT_MAX_DURATION_MS = 180 * 1000;
@@ -75,6 +76,12 @@ export const useHoldToTalk = ({
   useEffect(() => {
     onVoiceFileRef.current = onVoiceFile;
   }, [onVoiceFile]);
+
+  useEffect(() => {
+    if (enabled) {
+      prepareVoiceRecorder();
+    }
+  }, [enabled]);
 
   const clearHoldTimer = useCallback(() => {
     if (holdTimerRef.current) {
@@ -219,7 +226,6 @@ export const useHoldToTalk = ({
       }
     } else if (!pressActiveRef.current) {
       busyRef.current = false;
-      console.log(1111);
       return;
     }
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, memo } from 'react';
 import {
   Keyboard,
   Platform,
@@ -17,6 +17,7 @@ import { LinearGradient, PageContainer, TextInput } from '@/components';
 import { useHoldToTalk, VoiceRipple } from '@/components/HoldToTalk';
 import { useAIChat } from '@/hooks/useAIChat';
 import { showToast } from '@/utils';
+import { checkMicrophonePermission } from '@/utils/permissions';
 import { px } from '@/utils/ui';
 import MessageItem from './com/messageItem';
 import TextMessageItem from './com/textMessage';
@@ -57,6 +58,44 @@ function hasActiveConfirmFlow(messages: ChatMessage[]): boolean {
   });
 }
 
+interface ChatMessageListProps {
+  messages: ChatMessage[];
+  showThinking: boolean;
+  onConfirmCancel: (sessionId: string, confirmMessageId?: string) => void;
+  onConfirmSubmit: (sessionId: string, confirmMessageId?: string) => void;
+}
+
+const ChatMessageList = memo(function ChatMessageList({
+  messages,
+  showThinking,
+  onConfirmCancel,
+  onConfirmSubmit,
+}: ChatMessageListProps) {
+  return (
+    <>
+      {messages.map(message => (
+        <MessageItem
+          key={message.id}
+          data={message}
+          onConfirmCancel={onConfirmCancel}
+          onConfirmSubmit={onConfirmSubmit}
+        />
+      ))}
+      {showThinking ? (
+        <TextMessageItem
+          data={{
+            id: '__thinking__',
+            role: 'assistant',
+            type: 'text',
+            content: '',
+            isStreaming: true,
+          }}
+        />
+      ) : null}
+    </>
+  );
+});
+
 const AiAssistant = () => {
   const insets = useSafeAreaInsets();
   const bottomSafePadding = Math.max(insets.bottom, px(6));
@@ -64,6 +103,7 @@ const AiAssistant = () => {
   const [inputText, setInputText] = React.useState('');
   const [isInputFocused, setIsInputFocused] = React.useState(false);
   const [type, setType] = React.useState<'text' | 'voice'>('text');
+  const [micPermissionReady, setMicPermissionReady] = React.useState(false);
   const [keyboardHeight, setKeyboardHeight] = React.useState(0);
 
   const messageListRef = useRef<ScrollView>(null);
@@ -113,9 +153,28 @@ const AiAssistant = () => {
     if (nextType === 'voice') {
       setIsInputFocused(false);
       Keyboard.dismiss();
+    } else {
+      setMicPermissionReady(false);
     }
     setType(nextType);
   }, []);
+
+  useEffect(() => {
+    if (type !== 'voice') {
+      return;
+    }
+
+    let cancelled = false;
+    checkMicrophonePermission().then(granted => {
+      if (!cancelled) {
+        setMicPermissionReady(granted);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [type]);
 
   const handleToggleInputType = useCallback(() => {
     void handleChangeType(type === 'text' ? 'voice' : 'text');
@@ -151,6 +210,7 @@ const AiAssistant = () => {
   const { voiceStatus, isVoiceRecording, voiceButtonRef, gestureCaptureProps } =
     useHoldToTalk({
       enabled: type === 'voice' && !isLoading,
+      skipPermissionCheck: micPermissionReady,
       onResult: handleSendMessage,
       onVoiceFile: sendVoiceMessage,
     });
@@ -263,40 +323,42 @@ const AiAssistant = () => {
   const renderQuestionInput = () => {
     if (isExpandedInput) {
       return (
-        <LinearGradient
-          colors={['#f7f7f7', '#ffffff']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={[
-            styles.questionInputContent,
-            styles.questionInputContentFocused,
-            styles.questionInputShadow,
-          ]}
-        >
-          <View style={styles.questionInputContentExpanded}>
-            <TextInput
-              ref={questionInputRef}
-              multiline
-              scrollEnabled={false}
-              editable={!isLoading}
-              style={[
-                styles.questionInputContentInput,
-                styles.questionInputContentInputFocused,
-              ]}
-              value={inputText}
-              placeholder="有什么需要问我吗？"
-              placeholderTextColor="#cccccc"
-              onBlur={() => setIsInputFocused(false)}
-              onFocus={() => setIsInputFocused(true)}
-              onChangeText={setInputText}
-              onContentSizeChange={handleInputContentSizeChange}
-            />
-            <View style={styles.questionInputContentActions}>
-              {renderInputToggleIcon()}
-              {renderSendButton()}
+        <View style={styles.questionInputShadow}>
+          <LinearGradient
+            colors={['#f7f7f7', '#ffffff']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={[
+              styles.questionInputContent,
+              styles.questionInputContentFocused,
+            ]}
+          >
+            <View style={styles.questionInputContentExpanded}>
+              <TextInput
+                ref={questionInputRef}
+                multiline
+                scrollEnabled={false}
+                editable={!isLoading}
+                style={[
+                  styles.questionInputContentInput,
+                  styles.questionInputContentInputFocused,
+                ]}
+                value={inputText}
+                maxLength={140}
+                placeholder="有什么需要问我吗？"
+                placeholderTextColor="#cccccc"
+                onBlur={() => setIsInputFocused(false)}
+                onFocus={() => setIsInputFocused(true)}
+                onChangeText={setInputText}
+                onContentSizeChange={handleInputContentSizeChange}
+              />
+              <View style={styles.questionInputContentActions}>
+                {renderInputToggleIcon()}
+                {renderSendButton()}
+              </View>
             </View>
-          </View>
-        </LinearGradient>
+          </LinearGradient>
+        </View>
       );
     }
 
@@ -318,7 +380,7 @@ const AiAssistant = () => {
         </>
       );
 
-      return (
+      const voiceGradient = (
         <LinearGradient
           key="voice"
           colors={
@@ -334,36 +396,41 @@ const AiAssistant = () => {
               : [
                   styles.questionInputContent,
                   styles.questionInputContentVoiceRow,
-                  styles.questionInputShadow,
                 ]
           }
         >
           {voiceInputBody}
         </LinearGradient>
       );
+
+      return (
+        <View style={styles.questionInputShadow}>{voiceGradient}</View>
+      );
     }
 
     return (
-      <LinearGradient
-        colors={['#f7f7f7', '#ffffff']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={[styles.questionInputContent, styles.questionInputShadow]}
-      >
-        {renderInputToggleIcon()}
-        <TouchableOpacity
-          style={[
-            styles.questionInputContentInput,
-            styles.questionInputContentInputRow,
-          ]}
-          onPress={() => setIsInputFocused(true)}
+      <View style={styles.questionInputShadow}>
+        <LinearGradient
+          colors={['#f7f7f7', '#ffffff']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.questionInputContent}
         >
-          <Text style={styles.questionInputContentInputText}>
-            有什么需要问我吗？
-          </Text>
-        </TouchableOpacity>
-        {renderSendButton()}
-      </LinearGradient>
+          {renderInputToggleIcon()}
+          <TouchableOpacity
+            style={[
+              styles.questionInputContentInput,
+              styles.questionInputContentInputRow,
+            ]}
+            onPress={() => setIsInputFocused(true)}
+          >
+            <Text style={styles.questionInputContentInputText}>
+              有什么需要问我吗？
+            </Text>
+          </TouchableOpacity>
+          {renderSendButton()}
+        </LinearGradient>
+      </View>
     );
   };
 
@@ -398,25 +465,12 @@ const AiAssistant = () => {
           scrollEnabled={!isVoiceRecording}
           onContentSizeChange={scrollToBottom}
         >
-          {messages.map(message => (
-            <MessageItem
-              key={message.id}
-              data={message}
-              onConfirmCancel={handleConfirmCancel}
-              onConfirmSubmit={handleConfirmSubmit}
-            />
-          ))}
-          {showThinking ? (
-            <TextMessageItem
-              data={{
-                id: '__thinking__',
-                role: 'assistant',
-                type: 'text',
-                content: '',
-                isStreaming: true,
-              }}
-            />
-          ) : null}
+          <ChatMessageList
+            messages={messages}
+            showThinking={showThinking}
+            onConfirmCancel={handleConfirmCancel}
+            onConfirmSubmit={handleConfirmSubmit}
+          />
         </ScrollView>
 
         <View
@@ -426,7 +480,7 @@ const AiAssistant = () => {
               paddingBottom:
                 keyboardHeight > 0
                   ? keyboardHeight + px(6) - tabBarHeight
-                  : bottomSafePadding,
+                  : px(6),
             },
           ]}
         >

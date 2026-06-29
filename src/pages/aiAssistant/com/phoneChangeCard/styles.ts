@@ -46,15 +46,15 @@ const styles = StyleSheet.create({
     lineHeight: px(20),
   },
   formCard: {
-    padding: px(16),
     backgroundColor: '#ffffff',
     borderRadius: px(16),
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.05)',
+    overflow: 'hidden',
   },
   img: {
     width: '100%',
-    height: px(190),
+    aspectRatio: 1 / 1,
   },
 });
 

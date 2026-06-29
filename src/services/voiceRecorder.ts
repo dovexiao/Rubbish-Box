@@ -224,6 +224,15 @@ async function tryStartRecorder(
   return startedUri;
 }
 
+/** 进入语音模式时预热录音模块，减少首次按住时的启动延迟 */
+export function prepareVoiceRecorder(): void {
+  try {
+    getSharedRecorder();
+  } catch {
+    // ignore when native module is unavailable
+  }
+}
+
 export async function startVoiceRecording(): Promise<VoiceRecordingHandler> {
   return withRecorderLock(async () => {
     const player = getSharedRecorder();

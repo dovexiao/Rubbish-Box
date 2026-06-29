@@ -1,9 +1,11 @@
 import React, { memo, useMemo } from 'react';
 import {
   Linking,
+  Platform,
   ScrollView,
   StyleProp,
   Text,
+  TextInput,
   View,
   ViewStyle,
 } from 'react-native';
@@ -11,46 +13,171 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import Markdown, {
   renderRules as defaultRenderRules,
 } from 'react-native-markdown-display';
+import {
+  containsInteractiveChild,
+  extractPlainText,
+  readOnlyTextInputStyle,
+} from '@/components/SelectableText';
 import { showToast } from '@/utils';
 import { markdownStyles } from './styles';
 import { normalizeMarkdownTables } from './normalizeMarkdownTables';
 
-const SELECTABLE_RULE_KEYS = [
-  'text',
-  'textgroup',
-  'strong',
-  'em',
-  's',
-  'code_inline',
-  'code_block',
-  'fence',
-  'hardbreak',
-  'softbreak',
-  'link',
-] as const;
+function renderSelectableMarkdownText(
+  key: React.Key,
+  value: string,
+  style: object,
+) {
+  if (!value) {
+    return null;
+  }
 
-function withSelectableRules(
-  rules: typeof defaultRenderRules,
-): typeof defaultRenderRules {
-  const next = { ...rules };
+  if (Platform.OS === 'ios') {
+    return (
+      <TextInput
+        key={key}
+        value={value}
+        multiline
+        editable={false}
+        scrollEnabled={false}
+        selectTextOnFocus={false}
+        caretHidden
+        underlineColorAndroid="transparent"
+        style={[style, readOnlyTextInputStyle]}
+      />
+    );
+  }
 
-  SELECTABLE_RULE_KEYS.forEach(key => {
-    const rule = rules[key];
-    if (!rule) return;
-
-    next[key] = (...args) => {
-      const element = rule(...args);
-      if (React.isValidElement(element) && element.type === Text) {
-        return React.cloneElement(element, { selectable: true });
-      }
-      return element;
-    };
-  });
-
-  return next;
+  return (
+    <Text key={key} style={style} selectable>
+      {value}
+    </Text>
+  );
 }
 
-const selectableRenderRules = withSelectableRules(defaultRenderRules);
+function withSelectableMarkdownRules(
+  rules: typeof defaultRenderRules,
+  isStreaming: boolean,
+): typeof defaultRenderRules {
+  return {
+    ...rules,
+    textgroup: (node, children, parent, styles) => {
+      if (
+        Platform.OS === 'ios' &&
+        !isStreaming &&
+        !containsInteractiveChild(children)
+      ) {
+        return renderSelectableMarkdownText(
+          node.key,
+          extractPlainText(children),
+          [markdownStyles.body, styles.textgroup],
+        );
+      }
+
+      return (
+        <Text key={node.key} style={styles.textgroup} selectable={!isStreaming}>
+          {children}
+        </Text>
+      );
+    },
+    code_block: (node, children, parent, styles, inheritedStyles = {}) => {
+      let content = node.content;
+
+      if (
+        typeof content === 'string' &&
+        content.charAt(content.length - 1) === '\n'
+      ) {
+        content = content.substring(0, content.length - 1);
+      }
+
+      if (Platform.OS === 'ios' && !isStreaming) {
+        return renderSelectableMarkdownText(node.key, content, [
+          inheritedStyles,
+          styles.code_block,
+        ]);
+      }
+
+      return (
+        <Text
+          key={node.key}
+          style={[inheritedStyles, styles.code_block]}
+          selectable={!isStreaming}
+        >
+          {content}
+        </Text>
+      );
+    },
+    fence: (node, children, parent, styles, inheritedStyles = {}) => {
+      let content = node.content;
+
+      if (
+        typeof content === 'string' &&
+        content.charAt(content.length - 1) === '\n'
+      ) {
+        content = content.substring(0, content.length - 1);
+      }
+
+      if (Platform.OS === 'ios' && !isStreaming) {
+        return renderSelectableMarkdownText(node.key, content, [
+          inheritedStyles,
+          styles.fence,
+        ]);
+      }
+
+      return (
+        <Text
+          key={node.key}
+          style={[inheritedStyles, styles.fence]}
+          selectable={!isStreaming}
+        >
+          {content}
+        </Text>
+      );
+    },
+  };
+}
+
+function createMarkdownRenderRules(isStreaming: boolean) {
+  const selectableRenderRules = withSelectableMarkdownRules(
+    defaultRenderRules,
+    isStreaming,
+  );
+
+  return {
+    ...selectableRenderRules,
+    table: (node, children, parent, styles) => (
+      <ScrollView
+        key={node.key}
+        horizontal
+        nestedScrollEnabled
+        showsHorizontalScrollIndicator
+        style={styles._VIEW_SAFE_tableScroll}
+        contentContainerStyle={styles._VIEW_SAFE_tableScrollContent}
+      >
+        <View style={styles._VIEW_SAFE_table}>{children}</View>
+      </ScrollView>
+    ),
+    th: (node, children, parent, styles) => {
+      if (isEmptyTableCell(node, children)) {
+        return (
+          <View key={node.key} style={styles._VIEW_SAFE_th}>
+            <Text>{''}</Text>
+          </View>
+        );
+      }
+      return selectableRenderRules.th!(node, children, parent, styles);
+    },
+    td: (node, children, parent, styles) => {
+      if (isEmptyTableCell(node, children)) {
+        return (
+          <View key={node.key} style={styles._VIEW_SAFE_td}>
+            <Text>{''}</Text>
+          </View>
+        );
+      }
+      return selectableRenderRules.td!(node, children, parent, styles);
+    },
+  };
+}
 
 function isEmptyTableCell(
   node: { content?: string },
@@ -79,46 +206,22 @@ function isEmptyTableCell(
   return !hasText;
 }
 
-const markdownRenderRules = {
-  ...selectableRenderRules,
-  table: (node, children, parent, styles) => (
-    <ScrollView
-      key={node.key}
-      horizontal
-      nestedScrollEnabled
-      showsHorizontalScrollIndicator
-      style={styles._VIEW_SAFE_tableScroll}
-      contentContainerStyle={styles._VIEW_SAFE_tableScrollContent}
-    >
-      <View style={styles._VIEW_SAFE_table}>{children}</View>
-    </ScrollView>
-  ),
-  th: (node, children, parent, styles) => {
-    if (isEmptyTableCell(node, children)) {
-      return null;
-    }
-    return selectableRenderRules.th!(node, children, parent, styles);
-  },
-  td: (node, children, parent, styles) => {
-    if (isEmptyTableCell(node, children)) {
-      return null;
-    }
-    return selectableRenderRules.td!(node, children, parent, styles);
-  },
-};
-
 export interface MarkdownViewProps {
   content: string;
   isStreaming?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
-function MarkdownView({ content, style }: MarkdownViewProps) {
+function MarkdownView({ content, style, isStreaming = false }: MarkdownViewProps) {
   const trimmed = content?.trim() ?? '';
   const markdownStyle = useMemo(() => markdownStyles, []);
   const normalizedContent = useMemo(
     () => normalizeMarkdownTables(trimmed),
     [trimmed],
+  );
+  const markdownRenderRules = useMemo(
+    () => createMarkdownRenderRules(isStreaming),
+    [isStreaming],
   );
 
   if (!trimmed) {

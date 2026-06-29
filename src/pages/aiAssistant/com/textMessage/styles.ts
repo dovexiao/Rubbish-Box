@@ -22,9 +22,13 @@ const styles = StyleSheet.create({
   },
   bubbleUser: {
     backgroundColor: '#e0e8f9',
+    alignSelf: 'flex-end',
+    maxWidth: '75%',
   },
   bubbleAssistant: {
     backgroundColor: '#ffffff',
+    alignSelf: 'flex-start',
+    width: '100%',
   },
   bubbleThinking: {
     alignSelf: 'flex-start',
