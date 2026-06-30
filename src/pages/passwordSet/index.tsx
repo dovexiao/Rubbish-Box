@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import { hideLoading, mobileExp, showLoading } from '@/utils';
 import { PURPOSE, POST_SOURCE } from '@/constants';
 import styles from './styles';
 import { showToast } from '@/utils';
+import { useCountDown } from '@/hooks/useCountDown';
 import { px } from '@/utils/ui';
 
 type Step = 1 | 2;
@@ -36,7 +37,7 @@ export default function PasswordSet() {
   const [code, setCode] = useState('');
   const [smsError, setSmsError] = useState(false);
   const [sending, setSending] = useState(false);
-  const [countdown, setCountdown] = useState(0);
+  const { count, isCounting, start } = useCountDown(60);
   const [smsRequested, setSmsRequested] = useState(false);
   const [verifySubmitting, setVerifySubmitting] = useState(false);
 
@@ -62,12 +63,6 @@ export default function PasswordSet() {
     [password, confirmPassword],
   );
 
-  useEffect(() => {
-    if (countdown <= 0) return;
-    const t = setInterval(() => setCountdown(c => (c <= 1 ? 0 : c - 1)), 1000);
-    return () => clearInterval(t);
-  }, [countdown]);
-
   const handleGetCode = async () => {
     const value = mobile.trim();
     if (!value) {
@@ -90,7 +85,7 @@ export default function PasswordSet() {
       const res = await getPrivateSendSms(params);
       if (res.code === 200) {
         setSmsRequested(true);
-        setCountdown(60);
+        start();
         showToast({ title: '验证码已发送', icon: 'info' });
       } else {
         showToast({
@@ -225,19 +220,19 @@ export default function PasswordSet() {
                 <TouchableOpacity
                   style={[
                     styles.codeBtn,
-                    countdown > 0 && styles.codeBtnDisabled,
+                    isCounting && styles.codeBtnDisabled,
                   ]}
                   onPress={handleGetCode}
-                  disabled={countdown > 0 || sending}
+                  disabled={isCounting || sending}
                 >
                   <Text
                     style={[
                       styles.codeBtnText,
-                      (countdown > 0 || sending) && styles.codeBtnTextDisabled,
+                      (isCounting || sending) && styles.codeBtnTextDisabled,
                     ]}
                   >
-                    {countdown > 0
-                      ? `${countdown}s`
+                    {isCounting
+                      ? `${count}s`
                       : smsError || smsRequested
                       ? '再次获取'
                       : '获取验证码'}

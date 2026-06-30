@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { PageContainer } from '@/components';
 import { wechatUnBind, getPrivateSendSms } from '@/services/user';
 import { mobileExp, showToast } from '@/utils';
 import { POST_SOURCE, PURPOSE } from '@/constants';
+import { useCountDown } from '@/hooks/useCountDown';
 import styles from './styles';
 
 export default function WechatUnbind() {
@@ -16,7 +17,7 @@ export default function WechatUnbind() {
   const [code, setCode] = useState('');
   const [smsError, setSmsError] = useState(false);
   const [sending, setSending] = useState(false);
-  const [countdown, setCountdown] = useState(0);
+  const { count, isCounting, start } = useCountDown(60);
   const [smsRequested, setSmsRequested] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -24,14 +25,6 @@ export default function WechatUnbind() {
     () => !!mobile && code.trim().length > 0,
     [mobile, code],
   );
-
-  useEffect(() => {
-    if (countdown <= 0) return;
-    const timer = setInterval(() => {
-      setCountdown(prev => (prev <= 1 ? 0 : prev - 1));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [countdown]);
 
   const handleGetCode = async () => {
     const value = mobile.trim();
@@ -56,7 +49,7 @@ export default function WechatUnbind() {
       const res = await getPrivateSendSms(params);
       if (res.code === 200) {
         setSmsRequested(true);
-        setCountdown(60);
+        start();
         showToast({ title: '验证码已发送', icon: 'info' });
       } else {
         showToast({
@@ -158,18 +151,18 @@ export default function WechatUnbind() {
               maxLength={6}
             />
             <TouchableOpacity
-              style={[styles.codeBtn, countdown > 0 && styles.codeBtnDisabled]}
+              style={[styles.codeBtn, isCounting && styles.codeBtnDisabled]}
               onPress={handleGetCode}
-              disabled={countdown > 0 || sending}
+              disabled={isCounting || sending}
             >
               <Text
                 style={[
                   styles.codeBtnText,
-                  (countdown > 0 || sending) && styles.codeBtnTextDisabled,
+                  (isCounting || sending) && styles.codeBtnTextDisabled,
                 ]}
               >
-                {countdown > 0
-                  ? `${countdown}s`
+                {isCounting
+                  ? `${count}s`
                   : smsError || smsRequested
                   ? '再次获取'
                   : '获取验证码'}
