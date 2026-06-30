@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
+  Platform,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { PageContainer } from '@/components';
@@ -272,6 +273,11 @@ export default function PasswordSet() {
 
               <View style={[styles.inputRow, showError && styles.errorBorder]}>
                 <TextInput
+                  key={
+                    Platform.OS === 'android'
+                      ? `password-${passwordCanSee}`
+                      : undefined
+                  }
                   style={styles.input}
                   placeholder="请输入8-16位密码，支持数字及符号"
                   placeholderTextColor="#CCCCCC"
@@ -281,7 +287,16 @@ export default function PasswordSet() {
                     setShowError(false);
                   }}
                   maxLength={16}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoComplete="password-new"
+                  textContentType="newPassword"
                   secureTextEntry={!passwordCanSee}
+                  keyboardType={
+                    Platform.OS === 'android' && passwordCanSee
+                      ? 'visible-password'
+                      : 'default'
+                  }
                 />
                 <TouchableOpacity
                   onPress={() => setPasswordCanSee(!passwordCanSee)}
@@ -296,6 +311,11 @@ export default function PasswordSet() {
 
               <View style={[styles.inputRow, showError && styles.errorBorder]}>
                 <TextInput
+                  key={
+                    Platform.OS === 'android'
+                      ? `confirm-password-${confirmPasswordCanSee}`
+                      : undefined
+                  }
                   style={styles.input}
                   placeholder="请再次输入密码"
                   placeholderTextColor="#CCCCCC"
@@ -305,7 +325,16 @@ export default function PasswordSet() {
                     setShowError(false);
                   }}
                   maxLength={16}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoComplete="password-new"
+                  textContentType="newPassword"
                   secureTextEntry={!confirmPasswordCanSee}
+                  keyboardType={
+                    Platform.OS === 'android' && confirmPasswordCanSee
+                      ? 'visible-password'
+                      : 'default'
+                  }
                 />
                 <TouchableOpacity
                   onPress={() =>
