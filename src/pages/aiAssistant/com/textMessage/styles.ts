@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   bubbleUser: {
     backgroundColor: '#e0e8f9',
     alignSelf: 'flex-end',
-    maxWidth: '75%',
+    maxWidth: '100%',
   },
   bubbleAssistant: {
     backgroundColor: '#ffffff',
@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   bubbleThinking: {
+    backgroundColor: '#ffffff',
     alignSelf: 'flex-start',
   },
   markdownWrap: {

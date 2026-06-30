@@ -27,9 +27,7 @@ export default function TextMessageItem({ data }: Props) {
   if (showThinking) {
     return (
       <View style={[styles.messageRow, styles.messageRowAssistant]}>
-        <View
-          style={[styles.bubble, styles.bubbleAssistant, styles.bubbleThinking]}
-        >
+        <View style={[styles.bubble, styles.bubbleThinking]}>
           <Text style={[styles.text, styles.thinkingText]} selectable>
             正在思考中...
           </Text>
