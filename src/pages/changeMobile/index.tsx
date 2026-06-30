@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { PageContainer } from '@/components';
+import { useCountDown } from '@/hooks/useCountDown';
 import {
   changeMobileVerify,
   getChangeMobileCode,
@@ -29,7 +30,11 @@ export default function ChangeMobile() {
   const [oldCode, setOldCode] = useState('');
   const [oldError, setOldError] = useState<string | null>(null);
   const [oldSending, setOldSending] = useState(false);
-  const [oldCountdown, setOldCountdown] = useState(0);
+  const {
+    count: oldCountdown,
+    isCounting: oldIsCounting,
+    start: startOldCountdown,
+  } = useCountDown(60);
   const [oldSmsRequested, setOldSmsRequested] = useState(false);
 
   // 新手机号
@@ -37,7 +42,11 @@ export default function ChangeMobile() {
   const [newCode, setNewCode] = useState('');
   const [newError, setNewError] = useState<string | null>(null);
   const [newSending, setNewSending] = useState(false);
-  const [newCountdown, setNewCountdown] = useState(0);
+  const {
+    count: newCountdown,
+    isCounting: newIsCounting,
+    start: startNewCountdown,
+  } = useCountDown(60);
   const [newSmsRequested, setNewSmsRequested] = useState(false);
   const [newFlowId, setNewFlowId] = useState<string | null>(null);
 
@@ -50,24 +59,6 @@ export default function ChangeMobile() {
     () => mobileExp(newMobile) && newCode.trim().length > 0 && hasGetCode2,
     [newMobile, newCode, hasGetCode2],
   );
-
-  // 原手机倒计时
-  useEffect(() => {
-    if (oldCountdown <= 0) return;
-    const timer = setInterval(() => {
-      setOldCountdown(prev => (prev <= 1 ? 0 : prev - 1));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [oldCountdown]);
-
-  // 新手机倒计时
-  useEffect(() => {
-    if (newCountdown <= 0) return;
-    const timer = setInterval(() => {
-      setNewCountdown(prev => (prev <= 1 ? 0 : prev - 1));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [newCountdown]);
 
   // 发送原手机验证码（支持再次获取）
   const handleSendOldCode = async () => {
@@ -96,7 +87,7 @@ export default function ChangeMobile() {
 
         setOldSmsRequested(true);
         setOldError(null);
-        setOldCountdown(60);
+        startOldCountdown();
         showToast({ title: '验证码已发送', icon: 'success' });
       } else {
         showToast({ title: res.msg || '发送失败', icon: 'info' });
@@ -187,7 +178,7 @@ export default function ChangeMobile() {
         setFlowId(res.data);
         setNewSmsRequested(true);
         setNewError(null);
-        setNewCountdown(60);
+        startNewCountdown();
         showToast({ title: '验证码已发送', icon: 'success' });
       } else {
         showToast({ title: res.msg || '发送验证码失败', icon: 'info' });
@@ -249,9 +240,6 @@ export default function ChangeMobile() {
       showToast('提交失败，请稍后重试');
     }
   };
-
-  const oldIsCounting = oldCountdown > 0;
-  const newIsCounting = newCountdown > 0;
 
   const oldCodeButtonText = oldIsCounting
     ? `${oldCountdown}s`
