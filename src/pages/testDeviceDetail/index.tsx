@@ -115,13 +115,14 @@ interface TestDeviceDetail {
 
 type RouteParams = {
   deviceNo: string;
+  type: number;
 };
 
 export default function TestDeviceDetailScreen() {
   const navigation = useAppNavigation();
   const route = useRoute<any>();
   const deviceNo: string = route.params?.deviceNo;
-
+  const type = route.params?.type ?? 1;
   const [detail, setDetail] = useState<TestDeviceDetail | null>(null);
   const [testResult, setTestResult] = useState<0 | 1 | 2 | undefined>(0);
   const [reasonList, setReasonList] = useState<TestReasonItem[]>([]);
@@ -151,7 +152,7 @@ export default function TestDeviceDetailScreen() {
   const fetchDetail = useCallback(async () => {
     if (!deviceNo) return;
     try {
-      const res: any = await getTestDeviceDetail({ deviceNo });
+      const res: any = await getTestDeviceDetail({ deviceNo, type });
       const d: TestDeviceDetail = res?.data ?? res ?? {};
       setDetail(d);
       setTestResult(d.testReason ? (d.testResult as any) : undefined);
@@ -160,18 +161,18 @@ export default function TestDeviceDetailScreen() {
     } finally {
       setLoading(false);
     }
-  }, [deviceNo]);
+  }, [deviceNo, type]);
 
   const fetchReasons = useCallback(async () => {
     if (!deviceNo) return;
     try {
-      const res: any = await getTestDeviceReason({ deviceNo });
+      const res: any = await getTestDeviceReason({ deviceNo, type });
       const list: TestReasonItem[] = res?.list || res?.data?.list || [];
       setReasonList(list);
     } catch (e) {
       console.error('getTestDeviceReason error:', e);
     }
-  }, [deviceNo]);
+  }, [deviceNo, type]);
 
   const checkConnection = useCallback(async () => {
     if (!detail?.lockId) {
@@ -319,6 +320,7 @@ export default function TestDeviceDetailScreen() {
       const payload: any = {
         deviceNo,
         ...params,
+        type,
       };
       const res: any = await modifyTestDevice(payload);
       if (res === true || Number(res?.code) === 200) {
@@ -399,7 +401,7 @@ export default function TestDeviceDetailScreen() {
     if (!deviceNo) return;
     showLoading({ title: '重测中...' });
     try {
-      const res: any = await resetTestDevice({ deviceNo });
+      const res: any = await resetTestDevice({ deviceNo, type });
       if (res === true || Number(res?.code) === 200) {
         hideLoading();
         await fetchDetail();

@@ -7,7 +7,7 @@ import {
   FlatList,
   ListRenderItem,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { SearchBar } from '@ant-design/react-native';
 import { PageContainer } from '@/components';
 import Flex from '@/components/Flex';
@@ -42,6 +42,8 @@ const itemDedupeKey = (item: TestDeviceItem) =>
 
 export default function TestDevice() {
   const navigation = useNavigation<any>();
+  const route = useRoute<any>();
+  const type = route.params?.type ?? 1;
   const [deviceList, setDeviceList] = useState<TestDeviceItem[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -73,6 +75,7 @@ export default function TestDevice() {
         offset,
         pageSize: PAGE_SIZE,
         lockId,
+        type,
       });
       const list: TestDeviceItem[] = Array.isArray(res?.list)
         ? res.list
@@ -150,6 +153,7 @@ export default function TestDevice() {
             'TestDeviceDetail' as never,
             {
               deviceNo: item.deviceNo,
+              type,
             } as never,
           );
         }}
@@ -192,7 +196,7 @@ export default function TestDevice() {
       statusBarBackgroundColor="#FFFFFF"
       safeAreaEdges={['top', 'bottom']}
       pageNavProps={{
-        text: '泊刻地锁工厂测试',
+        text: type === 1 ? '泊刻地锁工厂测试' : '泊刻地锁仓库测试',
         showBack: true,
         background: '#FFFFFF',
       }}

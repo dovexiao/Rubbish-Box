@@ -51,6 +51,7 @@ import { bluetoothOperationLockFallStatusStore } from '@/store/store';
 import { PopConfirmRef } from '../popConfirm';
 import PopCenter from '../PopCenter';
 import { px } from '@/utils/ui';
+import Video from 'react-native-video';
 
 interface ContentProps {
   detail?: LockInfoDTO;
@@ -81,7 +82,9 @@ const Content: React.FC<ContentProps> = ({
   const [lockFallStatus, setLockStatus] = useAtom(
     bluetoothOperationLockFallStatusStore,
   );
-
+  const [videoKey, setVideoKey] = useState(0);
+  const [showPlayBtn, setShowPlayBtn] = useState(true);
+  const [paused, setPaused] = useState(true);
   const popRef = useRef<AutoOperatePopRef>(null);
   const coverOpenRef = useRef<PopConfirmRef>(null);
   const manageMultipleRef = useRef<AnimationPopRef>(null);
@@ -90,6 +93,8 @@ const Content: React.FC<ContentProps> = ({
   const groupToastPop = useRef<AutoOperatePopRef>(null);
   const deviceNum = useRef<number>(0);
   const optionRef = useRef<string>('');
+  const keyTipPopRef = useRef<AutoOperatePopRef>(null);
+  const videoRef = useRef<any>(null);
 
   useEffect(() => {
     if (detail?.isGroup) {
@@ -159,6 +164,11 @@ const Content: React.FC<ContentProps> = ({
           longitude: location?.longitude,
           latitude: location?.latitude,
         } as any);
+
+        if (res?.code === 601) {
+          keyTipPopRef.current?.open();
+          return;
+        }
 
         if (res?.code !== 200) {
           eventCenter.trigger('onOptioned', false);
@@ -438,6 +448,12 @@ const Content: React.FC<ContentProps> = ({
       routes: [{ name: 'MainTabs', params: { screen: 'Index' } }],
     });
   };
+
+  const resetVideo = useCallback(() => {
+    setShowPlayBtn(true);
+    setPaused(true);
+    setVideoKey(k => k + 1);
+  }, []);
 
   const handleSetAutoOperate = (detail: any) => {
     if (detail?.role === 2 && !detail?.bluetoothStatus) {
@@ -804,11 +820,55 @@ const Content: React.FC<ContentProps> = ({
 
       <PopConfirm
         visible={eleInstallRef}
-        title={`市电联系${detail?.customerServicePhone}进行安装`}
+        title={
+          <Flex direction="column" align="center">
+            <Text>市电联系{detail?.customerServicePhone}进行安装</Text>
+            <View style={styles.videoContent}>
+              <Video
+                key={videoKey}
+                ref={videoRef}
+                paused={paused}
+                controls={false}
+                poster="https://g.18qjz.cn/video/installmini/installDemo1.jpg"
+                posterResizeMode="cover"
+                source={{
+                  uri: 'https://g.18qjz.cn/video/installmini/installDemo1.mp4',
+                }}
+                resizeMode={'contain'}
+                onEnd={() => {
+                  resetVideo();
+                }}
+                onError={() => {
+                  showToast({ title: '视频加载失败', icon: 'info' });
+                  resetVideo();
+                }}
+                style={styles.video}
+              />
+              {showPlayBtn && (
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    setShowPlayBtn(false);
+                    setPaused(false);
+                  }}
+                  style={styles.videoPlayBtn}
+                >
+                  <View style={styles.videoPlayCircle}>
+                    <AppIcon name="play" size={px(48)} color="#FFFFFF" />
+                  </View>
+                </TouchableOpacity>
+              )}
+            </View>
+          </Flex>
+        }
         confirmText="前往拨打"
         cancelText="取消"
-        onCancel={() => setEleInstallRef(false)}
+        onCancel={() => {
+          resetVideo();
+          setEleInstallRef(false);
+        }}
         onConfirm={async () => {
+          resetVideo();
           setEleInstallRef(false);
           await makePhoneCall({
             phoneNumber: detail?.customerServicePhone || '',
@@ -886,6 +946,46 @@ const Content: React.FC<ContentProps> = ({
             }}
           >
             <Text style={styles.dumpTextTitle}>前往设备列表查看</Text>
+          </TouchableOpacity>
+        </Flex>
+      </PopCenter>
+
+      {/* 钥匙关闭 */}
+      <PopCenter
+        height={px(324)}
+        ref={keyTipPopRef}
+        footer={false}
+        showHeader={false}
+      >
+        <Flex
+          style={{
+            width: '100%',
+            height: '100%',
+            // padding: px(24),
+            // backgroundColor: '#f12345',
+          }}
+          direction="column"
+          justify={'center'}
+          align="center"
+        >
+          <Text style={styles.toastTitle}>钥匙已关闭，无法操控地锁</Text>
+          <Text style={styles.toastSubTitleText}>
+            请按下方指示开启开关后再尝试操控地锁
+          </Text>
+          <Image
+            source={{
+              uri: 'https://g.18qjz.cn/img/boklock/433_device.jpg',
+            }}
+            style={styles.deviceImage}
+            resizeMode="contain"
+          />
+          <TouchableOpacity
+            style={styles.openSwitchBtn}
+            onPress={() => {
+              keyTipPopRef.current?.close();
+            }}
+          >
+            <Text style={styles.openSwitchBtnText}>确定</Text>
           </TouchableOpacity>
         </Flex>
       </PopCenter>

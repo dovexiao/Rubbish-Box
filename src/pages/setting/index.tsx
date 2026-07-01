@@ -33,6 +33,7 @@ export default function Setting() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const isTest = route.params?.isTest ?? false;
+  const isStoreTest = route.params?.isStoreTest ?? false;
   const inPushFlag = route.params?.inPushFlag ?? 0; //站内推送开关：0-关闭 1-开启
   const mobPushFlag = route.params?.mobPushFlag ?? 0; //设备端推送开关：0-关闭 1-开启，无设备注册时为null
   const [inPushEnabled, setInPushEnabled] = useState(inPushFlag);
@@ -383,9 +384,28 @@ export default function Setting() {
           <TouchableOpacity
             activeOpacity={0.8}
             style={styles.item}
-            onPress={() => navigation.navigate('TestDevice' as never)}
+            onPress={() =>
+              navigation.navigate('TestDevice' as never, {
+                type: 1,
+              })
+            }
           >
             <Text style={styles.itemText}>泊刻地锁工厂测试</Text>
+            <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
+          </TouchableOpacity>
+        )}
+
+        {isStoreTest && (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.item}
+            onPress={() =>
+              navigation.navigate('TestDevice' as never, {
+                type: 2,
+              })
+            }
+          >
+            <Text style={styles.itemText}>泊刻地锁工仓库测试</Text>
             <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
           </TouchableOpacity>
         )}
