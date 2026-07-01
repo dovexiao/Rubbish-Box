@@ -167,7 +167,7 @@ const DeviceInfo = () => {
         <TouchableOpacity
           style={[styles.footerBtn, styles.cancelBtn]}
           onPress={async () => {
-            if (deviceInfo?.powerType !== 1) {
+            if (lockInfo?.mode === 2) {
               await setOptionType('1');
               bluetoothStatusUnbindRef.current?.open();
             } else {
@@ -187,7 +187,7 @@ const DeviceInfo = () => {
         <TouchableOpacity
           style={[styles.footerBtn, styles.confirmBtn]}
           onPress={async () => {
-            if (deviceInfo?.powerType !== 1) {
+            if (lockInfo?.mode === 2) {
               await setOptionType('2');
               bluetoothStatusUnbindRef.current?.open();
             } else {
@@ -589,7 +589,7 @@ const DeviceInfo = () => {
     getDeviceKeys();
   }, [lockInfo?.deviceNo]);
 
-  console.log('===lockInfo', lockInfo);
+  // console.log('===lockInfo', lockInfo);
 
   return (
     <PageContainer
@@ -803,20 +803,20 @@ const DeviceInfo = () => {
             </Flex>
           )}
 
-          {deviceInfo?.powerType === 1 && (
+          {lockInfo?.mode !== 2 && (
             <Flex
               style={
                 (styles.cardRows,
-                lockInfo?.powerType === 1 ? {} : { alignItems: 'flex-start' })
+                lockInfo?.mode !== 2 ? {} : { alignItems: 'flex-start' })
               }
             >
-              {lockInfo?.powerType === 1 ? (
+              {lockInfo?.mode !== 2 ? (
                 <>
                   <Text style={styles.cardLable}>碰撞蜂鸣</Text>
                   <TouchableOpacity
                     style={styles.cardRowsTouch}
                     onPress={() => {
-                      if (lockInfo?.powerType !== 1) return;
+                      if (lockInfo?.mode === 2) return;
                       beeBuzzingCollisionRef.current?.open();
                     }}
                   >
@@ -872,7 +872,7 @@ const DeviceInfo = () => {
               <TouchableOpacity
                 style={styles.cardRowsTouch}
                 onPress={() => {
-                  if (lockInfo?.powerType !== 1) {
+                  if (lockInfo?.mode === 2) {
                     return;
                   }
                   leaveRiseLockRef.current?.open();
@@ -882,7 +882,7 @@ const DeviceInfo = () => {
                 <Text
                   style={styles.cardValue}
                 >{`车辆离开${lockInfo?.leaveUpTime}秒后升起`}</Text>
-                {lockInfo?.powerType === 1 && (
+                {lockInfo?.powerType !== 2 && (
                   <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
                 )}
               </TouchableOpacity>

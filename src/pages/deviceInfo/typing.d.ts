@@ -61,4 +61,7 @@ export interface lockInfoProps {
   buttonKeyFlag: boolean;
 
   closeCarCheck: number;
+
+  /**模式：1-性能模式 2-续航优先 */
+  mode: number;
 }

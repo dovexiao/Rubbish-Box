@@ -177,15 +177,15 @@ const Index = () => {
           }
 
           setCurrentDeviceStatus(() => {
-            const powerType = lockRes.data?.powerType;
+            const mode = lockRes.data?.mode;
             const coverStatus = lockRes.data?.coverStatus;
             const fallStatus = lockRes.data?.fallStatus;
             // 非市电版本：只展示静态升起图
-            if (powerType !== 1) {
+            if (mode === 2) {
               return 'rise';
             }
             // 市电版本 & 盖子已打开
-            if (coverStatus === 1 && powerType === 1) {
+            if (coverStatus === 1 && mode !== 2) {
               return 'openCover';
             }
             // 根据 fallStatus 判定

@@ -1,7 +1,9 @@
 import React, {
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import {
@@ -19,6 +21,7 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from '@/libs/safeAreaContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useIsFocused } from '@react-navigation/core';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles';
 import AppIcon from '@/components/AppIcon';
@@ -193,7 +196,19 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
     const { theme } = useTheme();
+    const isFocused = useIsFocused();
     const [reloadSeed, setReloadSeed] = useState(0);
+    // 每次页面获得焦点时递增，强制 StatusBar 重新挂载，
+    // 解决 freezeOnBlur 导致切换 Tab 后状态栏背景色不更新的问题
+    const [statusBarFocusKey, setStatusBarFocusKey] = useState(0);
+    const prevFocusedRef = useRef(isFocused);
+
+    useEffect(() => {
+      if (isFocused && !prevFocusedRef.current) {
+        setStatusBarFocusKey(k => k + 1);
+      }
+      prevFocusedRef.current = isFocused;
+    }, [isFocused]);
 
     useImperativeHandle(ref, () => ({
       refresh: () => {
@@ -522,6 +537,7 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
         {/* 状态栏配置 */}
         {showStatusBar && (
           <StatusBar
+            key={`statusbar-${statusBarFocusKey}`}
             barStyle={defaultStatusBarStyle}
             backgroundColor={
               isOverlayLoading ? 'transparent' : defaultStatusBarBackgroundColor

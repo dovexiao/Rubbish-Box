@@ -488,7 +488,7 @@ const Content: React.FC<ContentProps> = ({
         style={styles.manualRow}
       >
         {/* 市电暂时不需要显示自动升降 */}
-        {detail?.powerType !== 1 && !detail?.isGroup && (
+        {detail?.mode === 2 && !detail?.isGroup && (
           <TouchableOpacity
             activeOpacity={1}
             style={styles.manualBtn}
@@ -524,7 +524,7 @@ const Content: React.FC<ContentProps> = ({
             style={styles.manualBtn}
             disabled={optioning}
             onPress={() => {
-              if (detail?.powerType === 1 || detail?.isGroup) {
+              if (detail?.mode !== 2 || detail?.isGroup) {
                 handleOperate('RISE');
               } else {
                 bluetoothControlRef.current = 'RISE';
@@ -544,7 +544,7 @@ const Content: React.FC<ContentProps> = ({
             style={styles.manualBtn}
             disabled={optioning}
             onPress={() => {
-              if (detail?.powerType === 1 || detail?.isGroup) {
+              if (detail?.mode !== 2 || detail?.isGroup) {
                 handleOperate('DOWN');
               } else {
                 bluetoothControlRef.current = 'DOWN';
@@ -576,7 +576,7 @@ const Content: React.FC<ContentProps> = ({
               <Text style={styles.manualText}>组合管理</Text>
             </TouchableOpacity>
           )
-        ) : detail?.powerType === 1 && detail.canOpenCover ? (
+        ) : detail && detail?.mode !== 2 && detail.canOpenCover ? (
           <TouchableOpacity
             activeOpacity={1}
             style={styles.manualBtn}
@@ -715,7 +715,7 @@ const Content: React.FC<ContentProps> = ({
             </Flex>
           </TouchableOpacity>
         )}
-        {detail?.mode === 1 && (
+        {detail?.mode !== 2 && (
           <TouchableOpacity
             style={styles.entryItem}
             onPress={() => {
@@ -838,7 +838,7 @@ const Content: React.FC<ContentProps> = ({
         }锁盖吗？`}
         onConfirm={async () => {
           coverOpenRef.current?.close();
-          if (detail?.powerType === 1) {
+          if (detail?.mode !== 2) {
             await operateCover();
           } else {
             bluetoothConnectStatusRef.current?.open?.();

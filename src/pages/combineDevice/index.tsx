@@ -283,7 +283,7 @@ export default function CombineDeviece() {
         <View style={styles.deviceSectionBox}>
           <Text style={styles.deviceSection}>选择设备：</Text>
           <Text style={styles.bindDeviceToast}>
-            (仅市电款的地锁可创建组合设备)
+            (仅市电款、新版电池款的地锁可创建组合设备)
           </Text>
         </View>
 

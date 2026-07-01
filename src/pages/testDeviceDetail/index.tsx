@@ -486,6 +486,11 @@ export default function TestDeviceDetailScreen() {
                       visible: true,
                       title: `确定本次测试结果合格吗？`,
                       onConfirm: async () => {
+                        if (detail?.model === 2) {
+                          hideLoading();
+                          showToast({ title: '仅性能优先模式可通过合格' });
+                          return;
+                        }
                         const res: any = await switchTestDevice(
                           {
                             deviceNo: detail.deviceNo,
