@@ -41,7 +41,10 @@ interface SourceRange {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 
-const readString = (record: Record<string, unknown>, keys: string[]): string => {
+const readString = (
+  record: Record<string, unknown>,
+  keys: string[],
+): string => {
   for (const key of keys) {
     const value = record[key];
     if (typeof value === 'string' && value.trim()) return value.trim();
@@ -85,7 +88,8 @@ export const stripJsonCodeBlocks = (markdown: string): string =>
     findJsonCodeBlocks(markdown).map(({ start, end }) => ({ start, end })),
   );
 
-const EXECUTE_JSON_MARKERS = /"pageType"\s*:|"toolName"\s*:|"interactionType"\s*:/;
+const EXECUTE_JSON_MARKERS =
+  /"pageType"\s*:|"toolName"\s*:|"interactionType"\s*:/;
 
 export const isStreamingExecuteJsonContent = (content: string): boolean => {
   const trimmed = content.trimStart();
@@ -127,7 +131,8 @@ export const parseVideoGuideMedia = (
   }
 
   if (extendRecord) {
-    videoUrl = readString(extendRecord, ['videoUrl', 'url', 'video']) || videoUrl;
+    videoUrl =
+      readString(extendRecord, ['videoUrl', 'url', 'video']) || videoUrl;
     posterUrl = readString(extendRecord, ['posterUrl', 'poster']) || posterUrl;
   }
 
@@ -137,11 +142,23 @@ export const parseVideoGuideMedia = (
   };
 };
 
+/** 从客户端派生的消息 id（如 xxx-card-0）还原后端 sessionId */
+export const resolveBackendSessionId = (
+  messageId: string,
+  explicitSessionId?: string,
+): string => {
+  const candidate = explicitSessionId?.trim() || messageId;
+  return candidate.replace(/-(?:card|text)-\d+$/, '').replace(/-confirm$/, '');
+};
+
 export const mapExecutePayloadToCard = (
   payload: ExecutePayload,
   cardId: string,
+  streamSessionId?: string,
 ): ChatMessage | null => {
   if (!isExecutePayload(payload)) return null;
+
+  const parentSessionId = streamSessionId ?? cardId;
 
   const pageType =
     payload.pageType === undefined || payload.pageType === null
@@ -168,8 +185,9 @@ export const mapExecutePayloadToCard = (
       content: readPayloadString(payload, ['content', 'message']),
       cancelText: readPayloadString(payload, ['cancelText']) || undefined,
       confirmText: readPayloadString(payload, ['confirmText']) || undefined,
-      sessionId: readPayloadString(payload, ['sessionId']) || cardId,
-      replyId: readPayloadString(payload, ['replyId', 'messageId']) || cardId,
+      sessionId: readPayloadString(payload, ['sessionId']) || parentSessionId,
+      replyId:
+        readPayloadString(payload, ['replyId', 'messageId']) || parentSessionId,
     };
     return card;
   }
@@ -216,6 +234,7 @@ const mapBlockToCards = (
     const card = mapExecutePayloadToCard(
       payload,
       `${sessionId}-card-${cardIndexStart + cards.length}`,
+      sessionId,
     );
     if (card) cards.push(card);
   }
@@ -232,7 +251,9 @@ export const extractJsonCardsFromTextContent = (
   const cards: ChatMessage[] = [];
 
   for (const block of blocks) {
-    cards.push(...mapBlockToCards(block, sessionId, cardIndexStart + cards.length));
+    cards.push(
+      ...mapBlockToCards(block, sessionId, cardIndexStart + cards.length),
+    );
   }
 
   if (blocks.length) {
@@ -257,6 +278,7 @@ export const extractJsonCardsFromTextContent = (
       const card = mapExecutePayloadToCard(
         payload,
         `${sessionId}-card-${cardIndexStart + bareCards.length}`,
+        sessionId,
       );
       if (card) bareCards.push(card);
     }

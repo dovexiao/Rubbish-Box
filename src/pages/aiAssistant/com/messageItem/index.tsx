@@ -3,11 +3,8 @@ import TextMessageItem from '../textMessage';
 import PhoneChangeCard from '../phoneChangeCard';
 import ConfirmCard from '../confirmCard';
 import VideoGuideCard from '../videoGuideCard';
-import {
-  ChatMessage,
-  ConfirmMessage,
-  TextMessage,
-} from '../../typing';
+import { ChatMessage, ConfirmMessage, TextMessage } from '../../typing';
+import { resolveBackendSessionId } from '../../utils/extractJsonCardsFromMarkdown';
 
 interface Props {
   data: ChatMessage;
@@ -39,6 +36,19 @@ const toConfirmCard = (message: TextMessage): ConfirmMessage | null => {
   };
 };
 
+const emitConfirmAction = (
+  card: ConfirmMessage,
+  handler: Props['onConfirmCancel'] | Props['onConfirmSubmit'],
+) => {
+  const explicitSessionId = card.sessionId?.trim();
+  if (!explicitSessionId) return;
+
+  const sessionId = resolveBackendSessionId(card.id, explicitSessionId);
+  if (!sessionId) return;
+
+  handler?.(sessionId, card.id);
+};
+
 export default function MessageItem({
   data,
   onConfirmCancel,
@@ -51,15 +61,13 @@ export default function MessageItem({
         return <TextMessageItem data={data} />;
       }
 
-      const sessionId =
-        confirmCard.sessionId || confirmCard.replyId || confirmCard.id;
       return (
         <React.Fragment key={data.id}>
           <TextMessageItem data={data} />
           <ConfirmCard
             data={confirmCard}
-            onCancel={() => onConfirmCancel?.(sessionId, confirmCard.id)}
-            onConfirm={() => onConfirmSubmit?.(sessionId, confirmCard.id)}
+            onCancel={() => emitConfirmAction(confirmCard, onConfirmCancel)}
+            onConfirm={() => emitConfirmAction(confirmCard, onConfirmSubmit)}
           />
         </React.Fragment>
       );
@@ -74,12 +82,8 @@ export default function MessageItem({
       return (
         <ConfirmCard
           data={data}
-          onCancel={() =>
-            onConfirmCancel?.(data.sessionId || data.replyId || data.id, data.id)
-          }
-          onConfirm={() =>
-            onConfirmSubmit?.(data.sessionId || data.replyId || data.id, data.id)
-          }
+          onCancel={() => emitConfirmAction(data, onConfirmCancel)}
+          onConfirm={() => emitConfirmAction(data, onConfirmSubmit)}
         />
       );
     default:

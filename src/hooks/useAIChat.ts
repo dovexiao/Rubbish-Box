@@ -13,6 +13,7 @@ import type {
 import {
   extractJsonCardsFromTextContent,
   mapExecutePayloadToCard,
+  resolveBackendSessionId,
   type ExecutePayload,
 } from '@/pages/aiAssistant/utils/extractJsonCardsFromMarkdown';
 
@@ -743,7 +744,12 @@ const mapWSMessageToChatMessage = (
         : undefined);
 
     if (pageType !== undefined) {
-      const card = mapExecutePayloadToCard({ ...data, pageType }, messageId);
+      const parentSessionId = messageId;
+      const card = mapExecutePayloadToCard(
+        { ...data, pageType },
+        messageId,
+        parentSessionId,
+      );
       if (card?.type === 'confirm') {
         return {
           ...card,
@@ -1487,21 +1493,30 @@ export const useAIChat = (options?: UseAIChatOptions) => {
     ) => {
       if (pendingConfirmRef.current) return;
 
+      const normalizedSessionId = resolveBackendSessionId(
+        params?.confirmMessageId ?? sessionId,
+        sessionId,
+      );
+      if (!normalizedSessionId) {
+        showToast({ title: '会话无效，请重新发起', icon: 'none' });
+        return;
+      }
+
       const approved = params?.approved !== false;
       const target: ConfirmTarget = {
-        sessionId,
+        sessionId: normalizedSessionId,
         confirmMessageId: params?.confirmMessageId,
       };
 
       commitMessages(prev => applyConfirmProcessingState(prev, target));
 
       const sendConfirmPayload = () => {
-        aiWebSocketService.send({ sessionId, approved });
+        aiWebSocketService.send({ sessionId: normalizedSessionId, approved });
       };
 
       try {
         pendingConfirmRef.current = {
-          sessionId,
+          sessionId: normalizedSessionId,
           approved,
           confirmMessageId: params?.confirmMessageId,
         };
@@ -1514,7 +1529,7 @@ export const useAIChat = (options?: UseAIChatOptions) => {
         }
 
         const connected = await connectChatWebSocket(
-          { sessionId, approved },
+          { sessionId: normalizedSessionId, approved },
           sendConfirmPayload,
         );
         if (!connected) {
