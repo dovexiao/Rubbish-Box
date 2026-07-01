@@ -209,7 +209,7 @@ const AiAssistant = () => {
 
   const { voiceStatus, isVoiceRecording, voiceButtonRef, gestureCaptureProps } =
     useHoldToTalk({
-      enabled: type === 'voice' && !isLoading,
+      enabled: type === 'voice' && !isLoading && micPermissionReady,
       skipPermissionCheck: micPermissionReady,
       onResult: handleSendMessage,
       onVoiceFile: sendVoiceMessage,

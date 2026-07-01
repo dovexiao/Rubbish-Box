@@ -13,8 +13,6 @@ import {
   startVoiceRecording,
   VoiceRecordingHandler,
 } from '@/services/voiceRecorder';
-import { IS_HARMONY } from '@/constants';
-
 export type VoiceStatus = 'idle' | 'recording' | 'cancel';
 
 export type HoldToTalkOptions = {
@@ -36,6 +34,8 @@ const DEFAULT_HOLD_DELAY_MS = 50;
 const DEFAULT_MIN_DURATION_MS = 1000;
 const DEFAULT_CANCEL_SLIDE_THRESHOLD = 60;
 const DEFAULT_MAX_DURATION_MS = 180 * 1000;
+/** 权限弹窗等待超过该阈值时，视为手势已被系统弹窗打断，放弃本次录音 */
+const PERMISSION_DIALOG_INTERRUPT_MS = 2000;
 
 function triggerHoldFeedback(toCancel: boolean, recorderActive: boolean) {
   triggerHoldToTalkTransitionHaptic(toCancel, recorderActive);
@@ -58,6 +58,7 @@ export const useHoldToTalk = ({
   const recordStartTimeRef = useRef(0);
   const touchStartYRef = useRef(0);
   const pressActiveRef = useRef(false);
+  const pressGrantTokenRef = useRef(0);
   const hasStartedRef = useRef(false);
   const cancelingRef = useRef(false);
   const busyRef = useRef(false);
@@ -105,6 +106,7 @@ export const useHoldToTalk = ({
 
   const resetVoiceState = useCallback(() => {
     pressActiveRef.current = false;
+    pressGrantTokenRef.current = 0;
     hasStartedRef.current = false;
     cancelingRef.current = false;
     clearHoldTimer();
@@ -189,9 +191,30 @@ export const useHoldToTalk = ({
     [cancelSlideThreshold],
   );
 
+  const isPressSessionActive = useCallback((grantToken: number) => {
+    return (
+      grantToken > 0 &&
+      pressActiveRef.current &&
+      pressGrantTokenRef.current === grantToken
+    );
+  }, []);
+
+  const abortPendingRecording = useCallback(() => {
+    busyRef.current = false;
+    setVoiceStatus('idle');
+    pressActiveRef.current = false;
+    pressGrantTokenRef.current = 0;
+    if (holdTimerRef.current) {
+      clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+  }, []);
+
   const beginVoiceRecording = useCallback(async () => {
+    const grantToken = pressGrantTokenRef.current;
+
     if (
-      !pressActiveRef.current ||
+      !isPressSessionActive(grantToken) ||
       hasStartedRef.current ||
       busyRef.current ||
       !enabledRef.current
@@ -206,47 +229,38 @@ export const useHoldToTalk = ({
       const granted = await checkMicrophonePermission();
       const authDuration = Date.now() - authStart;
 
-      // 如果发生了权限弹窗等待（耗时较长），在鸿蒙上触摸事件会被吞掉导致手势没被 release。
-      // 这种情况下，无论是否授权成功，都中断当前录音，要求用户重新按住。
+      // 权限弹窗会抢走触摸焦点，release 事件可能丢失；耗时过长视为手势已打断。
+      const permissionDialogInterrupted =
+        authDuration > PERMISSION_DIALOG_INTERRUPT_MS;
+
       if (
         !granted ||
-        !pressActiveRef.current ||
-        (IS_HARMONY && authDuration > 1500)
+        !isPressSessionActive(grantToken) ||
+        permissionDialogInterrupted
       ) {
-        busyRef.current = false;
-        setVoiceStatus('idle');
+        abortPendingRecording();
 
         if (!granted) {
           showToast({ title: '请前往手机应用设置开启录音权限', icon: 'none' });
         }
 
-        pressActiveRef.current = false;
-        if (holdTimerRef.current) clearTimeout(holdTimerRef.current);
         return;
       }
-    } else if (!pressActiveRef.current) {
+    } else if (!isPressSessionActive(grantToken)) {
       busyRef.current = false;
       return;
     }
 
-    const reqStartTime = Date.now();
     try {
       const handler = await startRecording();
-      const waitTime = Date.now() - reqStartTime;
 
-      // 如果在启动录音期间用户松开了手，终止录音
-      // 注意：由于在前面的跳出了弹窗检测（authDuration），这里如果 startRecording()
-      // 等待时间异常偏长（>1500ms），可能发生底层模块阻断。为防止误杀，将阈值放宽或直接去除鸿蒙硬拦截。
-      if (!pressActiveRef.current) {
+      if (!isPressSessionActive(grantToken)) {
         try {
           await handler.stop();
         } catch {
           // ignore
         }
-        busyRef.current = false;
-        setVoiceStatus('idle');
-        pressActiveRef.current = false;
-        if (holdTimerRef.current) clearTimeout(holdTimerRef.current);
+        abortPendingRecording();
         return;
       }
 
@@ -268,14 +282,22 @@ export const useHoldToTalk = ({
       busyRef.current = false;
       setVoiceStatus('idle');
       console.warn('[HoldToTalk] start recording failed', error);
-      if (pressActiveRef.current) {
+      if (isPressSessionActive(grantToken)) {
         showToast({ title: '录音启动失败，请重试', icon: 'none' });
       }
     }
-  }, [finishRecording, maxDurationMs, skipPermissionCheck, startRecording]);
+  }, [
+    abortPendingRecording,
+    finishRecording,
+    isPressSessionActive,
+    maxDurationMs,
+    skipPermissionCheck,
+    startRecording,
+  ]);
 
   const resetVoicePressState = useCallback(() => {
     pressActiveRef.current = false;
+    pressGrantTokenRef.current = 0;
     clearHoldTimer();
   }, [clearHoldTimer]);
 
@@ -286,6 +308,7 @@ export const useHoldToTalk = ({
       }
 
       touchStartYRef.current = evt.nativeEvent.pageY;
+      pressGrantTokenRef.current += 1;
       pressActiveRef.current = true;
       cancelingRef.current = false;
       clearHoldTimer();
