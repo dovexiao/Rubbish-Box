@@ -55,7 +55,7 @@ const readString = (
 const readPayloadString = (payload: ExecutePayload, keys: string[]): string =>
   readString(payload as Record<string, unknown>, keys);
 
-const parseExtend = (extend: unknown): Record<string, unknown> | null => {
+export const parseExtend = (extend: unknown): Record<string, unknown> | null => {
   if (isRecord(extend)) return extend;
   if (typeof extend !== 'string') return null;
 

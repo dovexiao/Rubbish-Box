@@ -1067,7 +1067,7 @@ export const useAIChat = (options?: UseAIChatOptions) => {
         });
         return next;
       });
-      showToast({ title: '已取消', icon: 'none' });
+      // showToast({ title: '已取消', icon: 'none' });
       pendingConfirmRef.current = null;
     },
     [commitMessages],

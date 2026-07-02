@@ -112,12 +112,14 @@ export const markdownStyles = StyleSheet.create({
   },
   tableScroll: {
     marginBottom: px(8),
-    maxWidth: '100%',
+    width: '100%',
   },
   tableScrollContent: {
-    flexGrow: 0,
+    minWidth: '100%',
   },
   table: {
+    width: '100%',
+    alignSelf: 'stretch',
     borderWidth: 1,
     borderColor: '#e8e8e8',
     borderRadius: px(6),
@@ -129,22 +131,32 @@ export const markdownStyles = StyleSheet.create({
   tbody: {},
   tr: {
     flexDirection: 'row',
-    width: '100%',
+    alignItems: 'stretch',
     borderBottomWidth: 1,
     borderColor: '#e8e8e8',
   },
   th: {
-    flex: 1,
-    flexBasis: 0,
     padding: px(6),
     borderRightWidth: 1,
     borderColor: '#e8e8e8',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   td: {
-    flex: 1,
-    flexBasis: 0,
     padding: px(6),
     borderRightWidth: 1,
     borderColor: '#e8e8e8',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tableCell: {
+    minWidth: 0,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tableCellText: {
+    flexShrink: 1,
+    textAlign: 'center',
   },
 });

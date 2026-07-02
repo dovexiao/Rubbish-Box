@@ -5,6 +5,7 @@ import MarkdownView from '@/components/MarkdownView';
 import AppIcon from '@/components/AppIcon';
 import { PhoneChangeMessage } from '../../typing';
 import { getPageTypeConfig } from '../../constants';
+import { parseExtend } from '../../utils/extractJsonCardsFromMarkdown';
 import { px } from '@/utils/ui';
 import styles from './styles';
 
@@ -12,22 +13,28 @@ interface Props {
   data: PhoneChangeMessage;
 }
 
+const normalizeExtendParams = (
+  extend: unknown,
+): Record<string, unknown> | undefined => {
+  const parsed = parseExtend(extend);
+  if (!parsed || Object.keys(parsed).length === 0) return undefined;
+
+  const params = { ...parsed };
+  if (params.lockId != null && params.id == null) {
+    params.id = params.lockId;
+  }
+  return params;
+};
+
 export default function PhoneChangeCard({ data }: Props) {
-  console.log('data', data);
   const navigation = useNavigation<any>();
-  const maskedPhone = data.maskedPhone;
   const pageConfig = getPageTypeConfig(data?.pageType, 1);
 
   const handleNavigate = useCallback(() => {
     const route = pageConfig?.route;
     if (!route) return;
 
-    const params =
-      maskedPhone &&
-      typeof maskedPhone === 'object' &&
-      Object.keys(maskedPhone).length > 0
-        ? maskedPhone
-        : undefined;
+    const params = normalizeExtendParams(data.maskedPhone);
     if (String(data?.pageType) === '16') {
       navigation.navigate('MainTabs', {
         screen: route,
@@ -45,7 +52,7 @@ export default function PhoneChangeCard({ data }: Props) {
       pageType: data?.pageType || 1,
       _autoOpenAt: Date.now(),
     });
-  }, [data?.pageType, maskedPhone, navigation, pageConfig?.route]);
+  }, [data?.pageType, data?.maskedPhone, navigation, pageConfig?.route]);
 
   return (
     <View style={styles.messageRow}>
