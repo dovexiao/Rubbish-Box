@@ -195,6 +195,7 @@ export default function RemoteKeyUnbind() {
         key: keyResponse,
         phoneNumber,
         type: 'remoteKey',
+        id: params.id,
       });
       return;
     }
@@ -329,7 +330,7 @@ export default function RemoteKeyUnbind() {
           </View>
         </View>
 
-        {!params?.hasButtonKeyFlag && (
+        {params?.hasButtonKeyFlag && (
           <View style={styles.footerWrap}>
             <TouchableOpacity
               activeOpacity={disableUnbind ? 1 : 0.85}

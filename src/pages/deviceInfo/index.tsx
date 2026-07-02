@@ -429,6 +429,7 @@ const DeviceInfo = () => {
             timer = null;
           }
           hideLoading();
+          setRemoteKeyPopVisible(false);
           showToast({ title: '操作成功', icon: 'success' });
           resolve(true);
           return false;
@@ -607,6 +608,36 @@ const DeviceInfo = () => {
             </Flex>
           )}
 
+          {lockInfo?.has433Key && (
+            <Flex style={styles.cardRows}>
+              <Flex direction="row" align="center" style={{ gap: px(4) }}>
+                <Text style={styles.cardLable}>遥控钥匙</Text>
+              </Flex>
+
+              <TouchableOpacity
+                style={styles.cardRowsTouch}
+                onPress={() => {
+                  if (lockInfo?.keyCount === 0) {
+                    if (!lockInfo?.buttonKeyFlag) {
+                      navigation.navigate('RemoteKeyPairingVideo');
+                    } else {
+                      navigation.navigate('RemoteKeyPairingVideo', {
+                        lockId: lockInfo?.deviceNo,
+                      });
+                    }
+                  } else {
+                    setRemoteKeyPopVisible(true);
+                  }
+                }}
+              >
+                <Text style={styles.cardValue}>
+                  {lockInfo?.keyCount === 0 ? '未绑定,新增钥匙' : '已绑定'}
+                </Text>
+                <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
+              </TouchableOpacity>
+            </Flex>
+          )}
+
           <Flex style={styles.cardLine} />
           <Flex direction="row" align="center">
             <View style={styles.cardTitleLine} />
@@ -713,35 +744,6 @@ const DeviceInfo = () => {
               )}
             </TouchableOpacity>
           </Flex>
-          {lockInfo?.has433Key && (
-            <Flex style={styles.cardRows}>
-              <Flex direction="row" align="center" style={{ gap: px(4) }}>
-                <Text style={styles.cardLable}>遥控钥匙</Text>
-              </Flex>
-
-              <TouchableOpacity
-                style={styles.cardRowsTouch}
-                onPress={() => {
-                  if (lockInfo?.keyCount === 0) {
-                    if (lockInfo?.buttonKeyFlag) {
-                      navigation.navigate('RemoteKeyPairingVideo');
-                    } else {
-                      navigation.navigate('RemoteKeyPairingVideo', {
-                        lockId: lockInfo?.id,
-                      });
-                    }
-                  } else {
-                    setRemoteKeyPopVisible(true);
-                  }
-                }}
-              >
-                <Text style={styles.cardValue}>
-                  {lockInfo?.keyCount === 0 ? '未绑定,新增钥匙' : '已绑定'}
-                </Text>
-                <AppIcon name={'a-headfor-20'} color="#333" size={px(20)} />
-              </TouchableOpacity>
-            </Flex>
-          )}
 
           <Flex style={styles.cardRows}>
             <Text style={styles.cardLable}>复位升锁</Text>
@@ -1041,7 +1043,7 @@ const DeviceInfo = () => {
               style={[styles.editBtn, styles.cancelPopBtn]}
               onPress={() => {
                 setRemoteKeyPopVisible(false);
-                if (lockInfo?.buttonKeyFlag) {
+                if (!lockInfo?.buttonKeyFlag) {
                   navigation.navigate('RemoteKeyPairingVideo');
                 } else {
                   navigation.navigate('RemoteKeyPairingVideo', {
