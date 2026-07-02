@@ -47,8 +47,10 @@ function withRecorderLock<T>(task: () => Promise<T>): Promise<T> {
 }
 
 const RETRY_DELAY_MS = 80;
-const RESET_RETRY_DELAY_MS = 100;
-const RESET_MAX_ATTEMPTS = 3;
+const RESET_RETRY_DELAY_MS = Platform.OS === 'android' ? 150 : 100;
+const RESET_MAX_ATTEMPTS = Platform.OS === 'android' ? 5 : 3;
+const ANDROID_SETTLE_DELAY_MS = 250;
+const START_STUCK_RETRY_DELAY_MS = 200;
 
 function ensureNativeRecorderModule() {
   if (IS_HARMONY) {
@@ -219,6 +221,14 @@ async function tryStopRecorder(player: AudioRecorderPlayerInstance): Promise<boo
   return false;
 }
 
+function isRecorderAlreadyActiveError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes('startRecorder has already been called') ||
+    message === 'Already recording'
+  );
+}
+
 async function forceResetRecorder(player: AudioRecorderPlayerInstance) {
   player.removeRecordBackListener();
   player._isRecording = false;
@@ -237,6 +247,14 @@ async function forceResetRecorder(player: AudioRecorderPlayerInstance) {
     '[voiceRecorder] force reset exhausted retries, recreating recorder instance',
   );
   sharedRecorder = null;
+
+  if (Platform.OS === 'android') {
+    await delay(ANDROID_SETTLE_DELAY_MS);
+    const freshPlayer = getSharedRecorder();
+    freshPlayer.removeRecordBackListener();
+    freshPlayer._isRecording = false;
+    await tryStopRecorder(freshPlayer);
+  }
 }
 
 async function stopActiveRecording(
@@ -256,12 +274,10 @@ async function stopActiveRecording(
   }
 }
 
-async function tryStartRecorder(
+async function invokeStartRecorder(
   player: AudioRecorderPlayerInstance,
   attempt: RecordingAttempt,
 ): Promise<string> {
-  await forceResetRecorder(player);
-
   const startedUri = await player.startRecorder(
     attempt.filePath,
     attempt.audioSet,
@@ -276,6 +292,34 @@ async function tryStartRecorder(
   player.addRecordBackListener(() => {});
 
   return startedUri;
+}
+
+async function tryStartRecorder(
+  player: AudioRecorderPlayerInstance,
+  attempt: RecordingAttempt,
+): Promise<string> {
+  await forceResetRecorder(player);
+
+  try {
+    return await invokeStartRecorder(player, attempt);
+  } catch (error) {
+    if (!isRecorderAlreadyActiveError(error)) {
+      throw error;
+    }
+
+    console.warn(
+      '[voiceRecorder] recorder still active after reset, retrying start',
+      error,
+    );
+    await forceResetRecorder(player);
+
+    if (Platform.OS === 'android') {
+      await delay(START_STUCK_RETRY_DELAY_MS);
+    }
+
+    const retryPlayer = getSharedRecorder();
+    return invokeStartRecorder(retryPlayer, attempt);
+  }
 }
 
 /** 进入语音模式时预热录音模块，减少首次按住时的启动延迟 */
@@ -336,9 +380,10 @@ export async function startVoiceRecording(): Promise<VoiceRecordingHandler> {
         lastError = error;
         console.warn('[voiceRecorder] attempt failed', attempt.filePath, error);
         if (index < attempts.length - 1) {
-          await new Promise<void>(resolve => {
-            setTimeout(resolve, RETRY_DELAY_MS);
-          });
+          const retryDelay = isRecorderAlreadyActiveError(error)
+            ? START_STUCK_RETRY_DELAY_MS
+            : RETRY_DELAY_MS;
+          await delay(retryDelay);
         }
       }
     }

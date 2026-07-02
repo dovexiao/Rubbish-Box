@@ -99,22 +99,32 @@ export const useHoldToTalk = ({
     }
   }, []);
 
-  const cleanupRecording = useCallback(() => {
-    clearMaxDurationTimer();
-    stopRecordingRef.current = null;
-    busyRef.current = false;
-  }, [clearMaxDurationTimer]);
-
-  const resetVoiceState = useCallback(() => {
+  const resetVoiceState = useCallback(async () => {
     pressActiveRef.current = false;
     pressGrantTokenRef.current = 0;
     hasStartedRef.current = false;
     cancelingRef.current = false;
     clearHoldTimer();
-    cleanupRecording();
+    clearMaxDurationTimer();
+
+    const stopFn = stopRecordingRef.current;
+    stopRecordingRef.current = null;
     setVoiceStatus('idle');
-    void resetVoiceRecorder();
-  }, [clearHoldTimer, cleanupRecording]);
+    busyRef.current = true;
+
+    try {
+      if (stopFn) {
+        try {
+          await stopFn();
+        } catch {
+          // ignore
+        }
+      }
+      await resetVoiceRecorder();
+    } finally {
+      busyRef.current = false;
+    }
+  }, [clearHoldTimer, clearMaxDurationTimer]);
 
   const finishRecording = useCallback(
     async (isCancel: boolean) => {
@@ -124,50 +134,53 @@ export const useHoldToTalk = ({
 
       const stopRecording = stopRecordingRef.current;
       stopRecordingRef.current = null;
-      busyRef.current = false;
       setVoiceStatus('idle');
 
-      if (isCancel || !stopRecording) {
-        if (stopRecording) {
+      try {
+        if (isCancel || !stopRecording) {
+          if (stopRecording) {
+            try {
+              await stopRecording();
+            } catch {
+              // ignore
+            }
+          }
+          return;
+        }
+
+        const duration = Date.now() - recordStartTimeRef.current;
+        if (duration < minDurationMs) {
           try {
             await stopRecording();
           } catch {
             // ignore
           }
-        }
-        return;
-      }
-
-      const duration = Date.now() - recordStartTimeRef.current;
-      if (duration < minDurationMs) {
-        try {
-          await stopRecording();
-        } catch {
-          // ignore
-        }
-        showToast({ title: '说话时间太短', icon: 'none' });
-        return;
-      }
-
-      try {
-        const filePath = await stopRecording();
-        const uploadVoice = onVoiceFileRef.current;
-        if (uploadVoice) {
-          if (filePath) {
-            uploadVoice(filePath);
-          } else {
-            showToast({ title: '录音文件无效', icon: 'none' });
-          }
+          showToast({ title: '说话时间太短', icon: 'none' });
           return;
         }
 
-        const { text } = await speechToText(filePath);
-        const trimmedText = text.trim();
-        if (trimmedText) {
-          onResult(trimmedText);
+        try {
+          const filePath = await stopRecording();
+          const uploadVoice = onVoiceFileRef.current;
+          if (uploadVoice) {
+            if (filePath) {
+              uploadVoice(filePath);
+            } else {
+              showToast({ title: '录音文件无效', icon: 'none' });
+            }
+            return;
+          }
+
+          const { text } = await speechToText(filePath);
+          const trimmedText = text.trim();
+          if (trimmedText) {
+            onResult(trimmedText);
+          }
+        } catch {
+          showToast({ title: '语音识别失败', icon: 'none' });
         }
-      } catch {
-        showToast({ title: '语音识别失败', icon: 'none' });
+      } finally {
+        busyRef.current = false;
       }
     },
     [clearMaxDurationTimer, minDurationMs, onResult],
@@ -267,6 +280,7 @@ export const useHoldToTalk = ({
         } catch {
           // ignore
         }
+        await resetVoiceRecorder();
         abortPendingRecording();
         return;
       }
@@ -286,9 +300,15 @@ export const useHoldToTalk = ({
     } catch (error) {
       hasStartedRef.current = false;
       cancelingRef.current = false;
-      busyRef.current = false;
       setVoiceStatus('idle');
       console.warn('[HoldToTalk] start recording failed', error);
+      try {
+        await resetVoiceRecorder();
+      } catch {
+        // ignore
+      } finally {
+        busyRef.current = false;
+      }
       if (isPressSessionActive(grantToken)) {
         showToast({ title: '录音启动失败，请重试', icon: 'none' });
       }
@@ -405,7 +425,7 @@ export const useHoldToTalk = ({
   useFocusEffect(
     useCallback(() => {
       return () => {
-        resetVoiceState();
+        void resetVoiceState();
       };
     }, [resetVoiceState]),
   );
