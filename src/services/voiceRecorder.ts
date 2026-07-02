@@ -47,6 +47,8 @@ function withRecorderLock<T>(task: () => Promise<T>): Promise<T> {
 }
 
 const RETRY_DELAY_MS = 80;
+const RESET_RETRY_DELAY_MS = 100;
+const RESET_MAX_ATTEMPTS = 3;
 
 function ensureNativeRecorderModule() {
   if (IS_HARMONY) {
@@ -191,14 +193,66 @@ function normalizeMeteringLevel(currentMetering?: number): number {
   return Math.max(0, Math.min(1, (currentMetering + 160) / 160));
 }
 
+function delay(ms: number): Promise<void> {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function tryStopRecorder(player: AudioRecorderPlayerInstance): Promise<boolean> {
+  try {
+    await player.stopRecorder();
+    return true;
+  } catch {
+    // fall through to native module
+  }
+
+  if (!IS_HARMONY && NativeModules.RNAudioRecorderPlayer?.stopRecorder) {
+    try {
+      await NativeModules.RNAudioRecorderPlayer.stopRecorder();
+      return true;
+    } catch {
+      // native recorder may already be idle or stuck
+    }
+  }
+
+  return false;
+}
+
 async function forceResetRecorder(player: AudioRecorderPlayerInstance) {
   player.removeRecordBackListener();
   player._isRecording = false;
 
+  for (let attempt = 0; attempt < RESET_MAX_ATTEMPTS; attempt += 1) {
+    if (await tryStopRecorder(player)) {
+      return;
+    }
+
+    if (attempt < RESET_MAX_ATTEMPTS - 1) {
+      await delay(RESET_RETRY_DELAY_MS);
+    }
+  }
+
+  console.warn(
+    '[voiceRecorder] force reset exhausted retries, recreating recorder instance',
+  );
+  sharedRecorder = null;
+}
+
+async function stopActiveRecording(
+  player: AudioRecorderPlayerInstance,
+  fallbackPath?: string,
+): Promise<string> {
   try {
-    await NativeModules.RNAudioRecorderPlayer.stopRecorder();
-  } catch {
-    // ignore when native recorder is already idle
+    const result = await player.stopRecorder();
+    player.removeRecordBackListener();
+    player._isRecording = false;
+    return normalizeRecordingPath(result, fallbackPath);
+  } catch (error) {
+    player.removeRecordBackListener();
+    console.warn('[voiceRecorder] stop failed', error);
+    await forceResetRecorder(player);
+    return normalizeRecordingPath('', fallbackPath);
   }
 }
 
@@ -233,14 +287,25 @@ export function prepareVoiceRecorder(): void {
   }
 }
 
+/** 强制释放原生录音器，避免 stop 失败后无法再次 start */
+export function resetVoiceRecorder(): Promise<void> {
+  return withRecorderLock(async () => {
+    if (!sharedRecorder) {
+      return;
+    }
+
+    await forceResetRecorder(sharedRecorder);
+  });
+}
+
 export async function startVoiceRecording(): Promise<VoiceRecordingHandler> {
   return withRecorderLock(async () => {
-    const player = getSharedRecorder();
     const attempts = getRecordingAttempts();
     let lastError: unknown;
 
     for (let index = 0; index < attempts.length; index += 1) {
       const attempt = attempts[index];
+      const player = getSharedRecorder();
       try {
         const startedUri = await tryStartRecorder(player, attempt);
         const resolvedPath = normalizeRecordingPath(
@@ -250,17 +315,9 @@ export async function startVoiceRecording(): Promise<VoiceRecordingHandler> {
 
         return {
           stop: async () =>
-            withRecorderLock(async () => {
-              try {
-                const result = await player.stopRecorder();
-                player.removeRecordBackListener();
-                return normalizeRecordingPath(result, resolvedPath);
-              } catch (error) {
-                player.removeRecordBackListener();
-                console.warn('[voiceRecorder] stop failed', error);
-                return resolvedPath;
-              }
-            }),
+            withRecorderLock(async () =>
+              stopActiveRecording(player, resolvedPath),
+            ),
           onLevel: listener => {
             if (!attempt.meteringEnabled) {
               return () => {};

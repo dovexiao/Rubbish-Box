@@ -10,6 +10,7 @@ import { showToast } from '@/utils';
 import { speechToText } from '@/services/speechToText';
 import {
   prepareVoiceRecorder,
+  resetVoiceRecorder,
   startVoiceRecording,
   VoiceRecordingHandler,
 } from '@/services/voiceRecorder';
@@ -30,7 +31,7 @@ export type HoldToTalkOptions = {
   onVoiceFile?: (filePath: string) => void;
 };
 
-const DEFAULT_HOLD_DELAY_MS = 50;
+const DEFAULT_HOLD_DELAY_MS = 200;
 const DEFAULT_MIN_DURATION_MS = 1000;
 const DEFAULT_CANCEL_SLIDE_THRESHOLD = 60;
 const DEFAULT_MAX_DURATION_MS = 180 * 1000;
@@ -112,6 +113,7 @@ export const useHoldToTalk = ({
     clearHoldTimer();
     cleanupRecording();
     setVoiceStatus('idle');
+    void resetVoiceRecorder();
   }, [clearHoldTimer, cleanupRecording]);
 
   const finishRecording = useCallback(
@@ -252,6 +254,11 @@ export const useHoldToTalk = ({
     }
 
     try {
+      if (!isPressSessionActive(grantToken)) {
+        busyRef.current = false;
+        return;
+      }
+
       const handler = await startRecording();
 
       if (!isPressSessionActive(grantToken)) {
@@ -303,7 +310,11 @@ export const useHoldToTalk = ({
 
   const handleGrant = useCallback(
     (evt: GestureResponderEvent) => {
-      if (!enabledRef.current || hasStartedRef.current) {
+      if (
+        !enabledRef.current ||
+        hasStartedRef.current ||
+        busyRef.current
+      ) {
         return;
       }
 
@@ -356,7 +367,9 @@ export const useHoldToTalk = ({
   }, [finishRecording, resetVoicePressState]);
 
   const shouldStartVoicePress = useCallback(() => {
-    return enabledRef.current && !pressActiveRef.current;
+    return (
+      enabledRef.current && !pressActiveRef.current && !busyRef.current
+    );
   }, []);
 
   const gestureCaptureProps = useMemo(
