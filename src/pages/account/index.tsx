@@ -1,6 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, AppState } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  AppState,
+  InteractionManager,
+} from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Flex, PageContainer } from '@/components';
 import AppIcon from '@/components/AppIcon';
 import { getAccountInfo, getThirdState, userThirdBind } from '@/services/user';
@@ -20,35 +26,60 @@ interface AccountInfo {
 
 export default function Account() {
   const navigation = useNavigation<any>();
-  const [detail, setDetail] = useState<AccountInfo | null>(null);
-  const popConfirmRef = useRef<any>(null);
-  const unbindWechatRef = useRef<any>(null);
-  const appStateSubRef = useRef<any>(null);
+  const route = useRoute<any>();
+  const pageType = route.params?.pageType;
+  const autoOpenAt = route.params?._autoOpenAt as number | undefined;
 
-  const loadAccount = useCallback(async () => {
-    try {
-      const res = await getAccountInfo({});
-      const data = (res as any)?.data ?? res ?? {};
-      setDetail(data);
-    } catch (e) {
-      showToast({ title: '获取账号信息失败', icon: 'info' });
-    }
-  }, []);
+  const [detail, setDetail] = useState<AccountInfo | null>(null);
+  const [shouldOpenMobilePop, setShouldOpenMobilePop] = useState(false);
+  const [shouldOpenUnbindWechatPop, setShouldOpenUnbindWechatPop] =
+    useState(false);
+  const [mobilePopVisible, setMobilePopVisible] = useState(false);
+  const [wechatPopVisible, setWechatPopVisible] = useState(false);
+  const appStateSubRef = useRef<any>(null);
+  const lastConsumedAutoOpenAt = useRef<number | undefined>();
 
   useFocusEffect(
     useCallback(() => {
-      loadAccount();
-    }, [loadAccount]),
+      const isNewAutoOpen =
+        autoOpenAt !== undefined &&
+        autoOpenAt !== lastConsumedAutoOpenAt.current;
+      const shouldOpen7 = isNewAutoOpen && String(pageType) === '7';
+      const shouldOpen14 = isNewAutoOpen && String(pageType) === '14';
+      if (shouldOpen7 || shouldOpen14) {
+        lastConsumedAutoOpenAt.current = autoOpenAt;
+        setShouldOpenMobilePop(shouldOpen7);
+        setShouldOpenUnbindWechatPop(shouldOpen14);
+      }
+
+      let active = true;
+
+      (async () => {
+        try {
+          const res = await getAccountInfo({});
+          const data = (res as any)?.data ?? res ?? {};
+          if (!active) return;
+          setDetail(data);
+        } catch (e) {
+          if (active) {
+            showToast({ title: '获取账号信息失败', icon: 'info' });
+          }
+        }
+      })();
+
+      return () => {
+        active = false;
+      };
+    }, [autoOpenAt, pageType]),
   );
 
   const handleChangeMobile = () => {
     if (!detail?.mobile) return;
-    // 这里仅保留占位，具体改号流程可按需要后续迁移
-    popConfirmRef.current.open();
+    setMobilePopVisible(true);
   };
 
   const handleWechat = () => {
-    unbindWechatRef.current.open();
+    setWechatPopVisible(true);
   };
 
   // 微信绑定（已登录状态下绑定当前微信）
@@ -132,7 +163,53 @@ export default function Account() {
     navigation.navigate('Logoff', { mobile: detail.mobile });
   };
 
+  // 延迟打开：避免「点击前往」的触摸事件穿透到 Modal 遮罩导致一闪即关
+  useEffect(() => {
+    if (!detail || !shouldOpenMobilePop) return;
+
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    const task = InteractionManager.runAfterInteractions(() => {
+      timer = setTimeout(() => {
+        if (!cancelled) {
+          setMobilePopVisible(true);
+          setShouldOpenMobilePop(false);
+        }
+      }, 450);
+    });
+
+    return () => {
+      cancelled = true;
+      task.cancel();
+      if (timer) clearTimeout(timer);
+    };
+  }, [detail, shouldOpenMobilePop]);
+
+  useEffect(() => {
+    if (!detail || !shouldOpenUnbindWechatPop) return;
+
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    const task = InteractionManager.runAfterInteractions(() => {
+      timer = setTimeout(() => {
+        if (!cancelled) {
+          setWechatPopVisible(true);
+          setShouldOpenUnbindWechatPop(false);
+        }
+      }, 450);
+    });
+
+    return () => {
+      cancelled = true;
+      task.cancel();
+      if (timer) clearTimeout(timer);
+    };
+  }, [detail, shouldOpenUnbindWechatPop]);
+
   return (
+    <>
     <PageContainer
       backgroundColor="#FFFFFF"
       statusBarStyle="dark-content"
@@ -208,46 +285,50 @@ export default function Account() {
           </View>
         </TouchableOpacity>
       </View>
+    </PageContainer>
 
-      {/* 更换手机号码弹窗 */}
-      <PopConfirm
-        ref={popConfirmRef}
-        title={
-          <Flex direction="column" align="center">
-            <Text style={styles.popTitle}>更换绑定的手机号？</Text>
-            <Text
-              style={styles.popDesc}
-            >{`当前绑定的手机号码为${detail?.mobile}`}</Text>
-          </Flex>
-        }
-        confirmText="更换"
-        onConfirm={() => {
-          popConfirmRef.current.close();
-          navigation.navigate('ChangeMobile', {
+    {/* 弹窗放在 PageContainer 外，避免 loading 遮罩(zIndex:999)挡住 Modal */}
+    <PopConfirm
+      visible={mobilePopVisible}
+      onVisibleChange={setMobilePopVisible}
+      maskClosable={false}
+      title={
+        <Flex direction="column" align="center">
+          <Text style={styles.popTitle}>更换绑定的手机号？</Text>
+          <Text
+            style={styles.popDesc}
+          >{`当前绑定的手机号码为${detail?.mobile}`}</Text>
+        </Flex>
+      }
+      confirmText="更换"
+      onConfirm={() => {
+        setMobilePopVisible(false);
+        navigation.navigate('ChangeMobile', {
+          mobile: detail?.mobile,
+        });
+      }}
+    />
+    <PopConfirm
+      visible={wechatPopVisible}
+      onVisibleChange={setWechatPopVisible}
+      maskClosable={false}
+      title={
+        detail?.bindWechatApp
+          ? '确定要解除绑定吗？'
+          : '确定要绑定当前登录的微信账号吗？'
+      }
+      confirmText={detail?.bindWechatApp ? '解除' : '绑定'}
+      onConfirm={() => {
+        setWechatPopVisible(false);
+        if (detail?.bindWechatApp) {
+          navigation.navigate('WechatUnbind', {
             mobile: detail?.mobile,
           });
-        }}
-      />
-      {/* 微信 */}
-      <PopConfirm
-        ref={unbindWechatRef}
-        title={
-          detail?.bindWechatApp
-            ? '确定要解除绑定吗？'
-            : '确定要绑定当前登录的微信账号吗？'
+        } else {
+          goBindWechat();
         }
-        confirmText={detail?.bindWechatApp ? '解除' : '绑定'}
-        onConfirm={() => {
-          unbindWechatRef.current?.close();
-          if (detail?.bindWechatApp) {
-            navigation.navigate('WechatUnbind', {
-              mobile: detail?.mobile,
-            });
-          } else {
-            goBindWechat();
-          }
-        }}
-      />
-    </PageContainer>
+      }}
+    />
+    </>
   );
 }

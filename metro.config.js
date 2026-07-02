@@ -117,15 +117,26 @@ baseConfig.resolver = {
       }
 
       if (moduleName === 'react-native-linear-gradient') {
-        // Harmony 上用 JS 版 LinearGradient，避免 BVLinearGradient 原生组件缺失
-        return resolve(
-          {
-            ...context,
-            resolveRequest: null,
-          },
-          path.resolve(__dirname, 'src/harmony/linear-gradient-shim.tsx'),
-          platform,
-        );
+        // Harmony 上优先使用 OH 原生 linear-gradient，若解析失败再回退 JS shim
+        try {
+          return resolve(
+            {
+              ...context,
+              resolveRequest: null,
+            },
+            '@react-native-oh-tpl/react-native-linear-gradient',
+            platform,
+          );
+        } catch (e) {
+          return resolve(
+            {
+              ...context,
+              resolveRequest: null,
+            },
+            path.resolve(__dirname, 'src/harmony/linear-gradient-shim.tsx'),
+            platform,
+          );
+        }
       }
 
       if (moduleName === 'react-native-screens') {
@@ -216,6 +227,34 @@ baseConfig.resolver = {
           path.resolve(
             __dirname,
             'node_modules/@react-native-oh-tpl/react-native-view-shot/src/index.js',
+          ),
+          platform,
+        );
+      }
+
+      if (moduleName === 'react-native-audio-recorder-player') {
+        return resolve(
+          {
+            ...context,
+            resolveRequest: null,
+          },
+          path.resolve(
+            __dirname,
+            'node_modules/@react-native-ohos/react-native-audio-recorder-player/index.ts',
+          ),
+          platform,
+        );
+      }
+
+      if (moduleName === 'react-native-haptic-feedback') {
+        return resolve(
+          {
+            ...context,
+            resolveRequest: null,
+          },
+          path.resolve(
+            __dirname,
+            'node_modules/@react-native-oh-tpl/react-native-haptic-feedback/lib/commonjs/index.js',
           ),
           platform,
         );

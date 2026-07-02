@@ -2,6 +2,10 @@
 import { IconFontTTFName } from '@/iconfont/IconFontTTF';
 
 const harmonyPngMap: Partial<Record<IconFontTTFName, number>> = {
+  'icon_voice_input': require('../assets/harmony-icons/icon_voice_input.png'),
+  'icon_send1': require('../assets/harmony-icons/icon_send1.png'),
+  'icon_send': require('../assets/harmony-icons/icon_send.png'),
+  'icon_keyboard': require('../assets/harmony-icons/icon_keyboard.png'),
   'icon_mute': require('../assets/harmony-icons/icon_mute.png'),
   'icon_voice': require('../assets/harmony-icons/icon_voice.png'),
   'bank-zhaoshang': require('../assets/harmony-icons/bank-zhaoshang.png'),

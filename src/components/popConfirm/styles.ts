@@ -30,7 +30,7 @@ const popupStyle = StyleSheet.create({
     borderColor: 'rgba(0,0,0,0.1)',
   },
   btnContainerCloseText: {
-    color: '#999999',
+    color: '#9a9a9a',
     fontWeight: '400',
     fontSize: fontSize(14),
     lineHeight: px(20),

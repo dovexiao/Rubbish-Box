@@ -10,7 +10,6 @@ import {
   ActivityIndicator,
   ImageBackground,
   ImageSourcePropType,
-  KeyboardAvoidingView,
   Platform,
   StatusBar,
   View,
@@ -85,8 +84,6 @@ interface PageContainerProps {
   scrollable?: boolean;
   /** 键盘交互模式 */
   keyboardShouldPersistTaps?: 'always' | 'never' | 'handled';
-  /** 是否启用键盘避让视图 */
-  keyboardAvoidingView?: boolean;
   /** 键盘避让时的顶部偏移量 */
   keyboardVerticalOffset?: number;
 
@@ -168,8 +165,6 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
       safeAreaEdges = ['top', 'bottom'],
       scrollable = false,
       keyboardShouldPersistTaps = 'handled',
-      keyboardAvoidingView = true,
-      keyboardVerticalOffset = 0,
       // 状态栏默认值
       statusBarStyle,
       statusBarBackgroundColor,
@@ -441,56 +436,6 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
       return style;
     }, [backgroundImage, safeAreaEdges, insets]);
 
-    const renderMainStructure = useMemo(() => {
-      const mainContent = (
-        <View style={[styles.pageContainer, manualPaddingStyle]}>
-          {/* 头部区域 */}
-          {(header || pageNavProps) && (
-            <View style={styles.headerContainer}>{renderNavHeader}</View>
-          )}
-
-          {/* 内容区域 */}
-          {renderContent}
-
-          {/* 底部区域 */}
-          {footer && (
-            <View
-              style={[
-                styles.footerContainer,
-                Platform.OS !== 'ios' && {
-                  paddingBottom: insets.bottom + px(20),
-                },
-              ]}
-            >
-              {footer}
-            </View>
-          )}
-        </View>
-      );
-
-      if (!keyboardAvoidingView) return mainContent;
-
-      return (
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={keyboardVerticalOffset}
-        >
-          {mainContent}
-        </KeyboardAvoidingView>
-      );
-    }, [
-      footer,
-      header,
-      insets.bottom,
-      keyboardAvoidingView,
-      keyboardVerticalOffset,
-      manualPaddingStyle,
-      pageNavProps,
-      renderContent,
-      renderNavHeader,
-    ]);
-
     // 4. Loading 遮罩
     const renderLoading = () => {
       if (!isOverlayLoading) return null;
@@ -570,7 +515,30 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
                 edges={finalEdges}
               >
                 {/* 页面主结构 */}
-                {renderMainStructure}
+                <View style={[styles.pageContainer, manualPaddingStyle]}>
+                  {/* 头部区域 */}
+                  {(header || pageNavProps) && (
+                    <View style={styles.headerContainer}>
+                      {renderNavHeader}
+                    </View>
+                  )}
+                  {/* 内容区域 */}
+                  {renderContent}
+                  {/* 底部区域 */}
+                  {footer && (
+                    <View
+                      style={[
+                        styles.footerContainer,
+                        // Android 底部额外 padding 适配
+                        Platform.OS !== 'ios' && {
+                          paddingBottom: insets.bottom + px(20),
+                        },
+                      ]}
+                    >
+                      {footer}
+                    </View>
+                  )}
+                </View>
               </SafeAreaView>
 
               {renderLoading()}
@@ -589,7 +557,29 @@ const PageContainer = forwardRef<PageContainerRef, PageContainerProps>(
                 edges={finalEdges}
               >
                 {/* 页面主结构 */}
-                {renderMainStructure}
+                <View style={[styles.pageContainer, manualPaddingStyle]}>
+                  {/* 头部区域 */}
+                  {(header || pageNavProps) && (
+                    <View style={styles.headerContainer}>
+                      {renderNavHeader}
+                    </View>
+                  )}
+                  {/* 内容区域 */}
+                  {renderContent}
+                  {/* 底部区域 */}
+                  {footer && (
+                    <View
+                      style={[
+                        styles.footerContainer,
+                        Platform.OS !== 'ios' && {
+                          paddingBottom: insets.bottom + px(20),
+                        },
+                      ]}
+                    >
+                      {footer}
+                    </View>
+                  )}
+                </View>
               </SafeAreaView>
 
               {renderLoading()}

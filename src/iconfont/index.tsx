@@ -5,6 +5,10 @@ import React, { FunctionComponent } from 'react';
 import { ViewProps, Platform } from 'react-native';
 import HarmonyIconImage from '@/harmony/HarmonyIconImage';
 import { GProps } from 'react-native-svg';
+import IconIconVoiceInput from './IconIconVoiceInput';
+import IconIconSend1 from './IconIconSend1';
+import IconIconSend from './IconIconSend';
+import IconIconKeyboard from './IconIconKeyboard';
 import IconIconMute from './IconIconMute';
 import IconIconVoice from './IconIconVoice';
 import IconBankZhaoshang from './IconBankZhaoshang';
@@ -103,6 +107,10 @@ import IconAHeadfor20 from './IconAHeadfor20';
 import IconStatistics from './IconStatistics';
 import IconManager from './IconManager';
 import IconArrows1 from './IconArrows1';
+export { default as IconIconVoiceInput } from './IconIconVoiceInput';
+export { default as IconIconSend1 } from './IconIconSend1';
+export { default as IconIconSend } from './IconIconSend';
+export { default as IconIconKeyboard } from './IconIconKeyboard';
 export { default as IconIconMute } from './IconIconMute';
 export { default as IconIconVoice } from './IconIconVoice';
 export { default as IconBankZhaoshang } from './IconBankZhaoshang';
@@ -202,7 +210,7 @@ export { default as IconStatistics } from './IconStatistics';
 export { default as IconManager } from './IconManager';
 export { default as IconArrows1 } from './IconArrows1';
 
-export type IconNames = 'icon_mute' | 'icon_voice' | 'bank-zhaoshang' | 'bank-youzheng' | 'bank-minsheng' | 'bank-jianshe' | 'bank-jiaotong' | 'bank-gongshang' | 'bank-nongye' | 'bank-zhongxin' | 'bank-tongyong' | 'bank-zhongguo' | 'bank-pufa' | 'bank-xingye' | 'install-video' | 'time' | 'camera1' | 'a-pop-upwindowsclose' | 'star' | 'a-combinationunit' | 'a-styledescription' | 'a-add12' | 'a-scanQRcodes1' | 'copy1' | 'feedback' | 'a-nextpage' | 'a-previouspage' | 'a-addequipments' | 'a-batterylifepriority' | 'a-powersupply' | 'a-performancefirst' | 'more' | 'search' | 'a-downloadtheAPP' | 'a-operatingguide' | 'message1' | 'a-Equipmentlist' | 'a-customerservice' | 'lock' | 'order' | 'unlock' | 'park1' | 'pull-down' | 'a-VIPInvitation' | 'a-headfor-16-grey1' | 'bluetooth-1' | 'a-headfor-201' | 'down' | 'a-advertisingdisplay' | 'a-headfor-121' | 'exit' | 'a-combinationmanagement' | 'maintain' | 'share' | 'a-powermanagement' | 'a-equipmentinformation' | 'member-20' | 'message' | 'location1' | 'rise' | 'setting' | 'member' | 'a-skinpeeler' | 'shopping' | 'pen16' | 'pen24' | 'explain' | 'download' | 'play' | 'a-headfor-16-grey' | 'a-Videoguidance' | 'a-Upgradelock' | 'mine' | 'statistics1' | 'a-Lowbatteryreminder' | 'bell' | 'wrong-red' | 'right-green' | 'invisible' | 'visible' | 'back' | 'selected' | 'unselected' | 'multiplication' | 'tick-white' | 'minus' | 'telephone' | 'add' | 'camera' | 'refresh' | 'location' | 'redact' | 'close' | 'a-headfor-12' | 'a-headfor-20' | 'statistics' | 'manager' | 'arrows1';
+export type IconNames = 'icon_voice_input' | 'icon_send1' | 'icon_send' | 'icon_keyboard' | 'icon_mute' | 'icon_voice' | 'bank-zhaoshang' | 'bank-youzheng' | 'bank-minsheng' | 'bank-jianshe' | 'bank-jiaotong' | 'bank-gongshang' | 'bank-nongye' | 'bank-zhongxin' | 'bank-tongyong' | 'bank-zhongguo' | 'bank-pufa' | 'bank-xingye' | 'install-video' | 'time' | 'camera1' | 'a-pop-upwindowsclose' | 'star' | 'a-combinationunit' | 'a-styledescription' | 'a-add12' | 'a-scanQRcodes1' | 'copy1' | 'feedback' | 'a-nextpage' | 'a-previouspage' | 'a-addequipments' | 'a-batterylifepriority' | 'a-powersupply' | 'a-performancefirst' | 'more' | 'search' | 'a-downloadtheAPP' | 'a-operatingguide' | 'message1' | 'a-Equipmentlist' | 'a-customerservice' | 'lock' | 'order' | 'unlock' | 'park1' | 'pull-down' | 'a-VIPInvitation' | 'a-headfor-16-grey1' | 'bluetooth-1' | 'a-headfor-201' | 'down' | 'a-advertisingdisplay' | 'a-headfor-121' | 'exit' | 'a-combinationmanagement' | 'maintain' | 'share' | 'a-powermanagement' | 'a-equipmentinformation' | 'member-20' | 'message' | 'location1' | 'rise' | 'setting' | 'member' | 'a-skinpeeler' | 'shopping' | 'pen16' | 'pen24' | 'explain' | 'download' | 'play' | 'a-headfor-16-grey' | 'a-Videoguidance' | 'a-Upgradelock' | 'mine' | 'statistics1' | 'a-Lowbatteryreminder' | 'bell' | 'wrong-red' | 'right-green' | 'invisible' | 'visible' | 'back' | 'selected' | 'unselected' | 'multiplication' | 'tick-white' | 'minus' | 'telephone' | 'add' | 'camera' | 'refresh' | 'location' | 'redact' | 'close' | 'a-headfor-12' | 'a-headfor-20' | 'statistics' | 'manager' | 'arrows1';
 
 interface Props extends GProps, ViewProps {
   name: IconNames;
@@ -212,202 +220,210 @@ interface Props extends GProps, ViewProps {
 
 let IconFont: FunctionComponent<Props> = ({ name, ...rest }) => {
   switch (name) {
+    case 'icon_voice_input':
+      return <IconIconVoiceInput key="1" {...rest} />;
+    case 'icon_send1':
+      return <IconIconSend1 key="2" {...rest} />;
+    case 'icon_send':
+      return <IconIconSend key="3" {...rest} />;
+    case 'icon_keyboard':
+      return <IconIconKeyboard key="4" {...rest} />;
     case 'icon_mute':
-      return <IconIconMute key="1" {...rest} />;
+      return <IconIconMute key="5" {...rest} />;
     case 'icon_voice':
-      return <IconIconVoice key="2" {...rest} />;
+      return <IconIconVoice key="6" {...rest} />;
     case 'bank-zhaoshang':
-      return <IconBankZhaoshang key="3" {...rest} />;
+      return <IconBankZhaoshang key="7" {...rest} />;
     case 'bank-youzheng':
-      return <IconBankYouzheng key="4" {...rest} />;
+      return <IconBankYouzheng key="8" {...rest} />;
     case 'bank-minsheng':
-      return <IconBankMinsheng key="5" {...rest} />;
+      return <IconBankMinsheng key="9" {...rest} />;
     case 'bank-jianshe':
-      return <IconBankJianshe key="6" {...rest} />;
+      return <IconBankJianshe key="10" {...rest} />;
     case 'bank-jiaotong':
-      return <IconBankJiaotong key="7" {...rest} />;
+      return <IconBankJiaotong key="11" {...rest} />;
     case 'bank-gongshang':
-      return <IconBankGongshang key="8" {...rest} />;
+      return <IconBankGongshang key="12" {...rest} />;
     case 'bank-nongye':
-      return <IconBankNongye key="9" {...rest} />;
+      return <IconBankNongye key="13" {...rest} />;
     case 'bank-zhongxin':
-      return <IconBankZhongxin key="10" {...rest} />;
+      return <IconBankZhongxin key="14" {...rest} />;
     case 'bank-tongyong':
-      return <IconBankTongyong key="11" {...rest} />;
+      return <IconBankTongyong key="15" {...rest} />;
     case 'bank-zhongguo':
-      return <IconBankZhongguo key="12" {...rest} />;
+      return <IconBankZhongguo key="16" {...rest} />;
     case 'bank-pufa':
-      return <IconBankPufa key="13" {...rest} />;
+      return <IconBankPufa key="17" {...rest} />;
     case 'bank-xingye':
-      return <IconBankXingye key="14" {...rest} />;
+      return <IconBankXingye key="18" {...rest} />;
     case 'install-video':
-      return <IconInstallVideo key="15" {...rest} />;
+      return <IconInstallVideo key="19" {...rest} />;
     case 'time':
-      return <IconTime key="16" {...rest} />;
+      return <IconTime key="20" {...rest} />;
     case 'camera1':
-      return <IconCamera1 key="17" {...rest} />;
+      return <IconCamera1 key="21" {...rest} />;
     case 'a-pop-upwindowsclose':
-      return <IconAPopUpwindowsclose key="18" {...rest} />;
+      return <IconAPopUpwindowsclose key="22" {...rest} />;
     case 'star':
-      return <IconStar key="19" {...rest} />;
+      return <IconStar key="23" {...rest} />;
     case 'a-combinationunit':
-      return <IconACombinationunit key="20" {...rest} />;
+      return <IconACombinationunit key="24" {...rest} />;
     case 'a-styledescription':
-      return <IconAStyledescription key="21" {...rest} />;
+      return <IconAStyledescription key="25" {...rest} />;
     case 'a-add12':
-      return <IconAAdd12 key="22" {...rest} />;
+      return <IconAAdd12 key="26" {...rest} />;
     case 'a-scanQRcodes1':
-      return <IconAScanQRcodes1 key="23" {...rest} />;
+      return <IconAScanQRcodes1 key="27" {...rest} />;
     case 'copy1':
-      return <IconCopy1 key="24" {...rest} />;
+      return <IconCopy1 key="28" {...rest} />;
     case 'feedback':
-      return <IconFeedback key="25" {...rest} />;
+      return <IconFeedback key="29" {...rest} />;
     case 'a-nextpage':
-      return <IconANextpage key="26" {...rest} />;
+      return <IconANextpage key="30" {...rest} />;
     case 'a-previouspage':
-      return <IconAPreviouspage key="27" {...rest} />;
+      return <IconAPreviouspage key="31" {...rest} />;
     case 'a-addequipments':
-      return <IconAAddequipments key="28" {...rest} />;
+      return <IconAAddequipments key="32" {...rest} />;
     case 'a-batterylifepriority':
-      return <IconABatterylifepriority key="29" {...rest} />;
+      return <IconABatterylifepriority key="33" {...rest} />;
     case 'a-powersupply':
-      return <IconAPowersupply key="30" {...rest} />;
+      return <IconAPowersupply key="34" {...rest} />;
     case 'a-performancefirst':
-      return <IconAPerformancefirst key="31" {...rest} />;
+      return <IconAPerformancefirst key="35" {...rest} />;
     case 'more':
-      return <IconMore key="32" {...rest} />;
+      return <IconMore key="36" {...rest} />;
     case 'search':
-      return <IconSearch key="33" {...rest} />;
+      return <IconSearch key="37" {...rest} />;
     case 'a-downloadtheAPP':
-      return <IconADownloadtheApp key="34" {...rest} />;
+      return <IconADownloadtheApp key="38" {...rest} />;
     case 'a-operatingguide':
-      return <IconAOperatingguide key="35" {...rest} />;
+      return <IconAOperatingguide key="39" {...rest} />;
     case 'message1':
-      return <IconMessage1 key="36" {...rest} />;
+      return <IconMessage1 key="40" {...rest} />;
     case 'a-Equipmentlist':
-      return <IconAEquipmentlist key="37" {...rest} />;
+      return <IconAEquipmentlist key="41" {...rest} />;
     case 'a-customerservice':
-      return <IconACustomerservice key="38" {...rest} />;
+      return <IconACustomerservice key="42" {...rest} />;
     case 'lock':
-      return <IconLock key="39" {...rest} />;
+      return <IconLock key="43" {...rest} />;
     case 'order':
-      return <IconOrder key="40" {...rest} />;
+      return <IconOrder key="44" {...rest} />;
     case 'unlock':
-      return <IconUnlock key="41" {...rest} />;
+      return <IconUnlock key="45" {...rest} />;
     case 'park1':
-      return <IconPark1 key="42" {...rest} />;
+      return <IconPark1 key="46" {...rest} />;
     case 'pull-down':
-      return <IconPullDown key="43" {...rest} />;
+      return <IconPullDown key="47" {...rest} />;
     case 'a-VIPInvitation':
-      return <IconAVipInvitation key="44" {...rest} />;
+      return <IconAVipInvitation key="48" {...rest} />;
     case 'a-headfor-16-grey1':
-      return <IconAHeadfor16Grey1 key="45" {...rest} />;
+      return <IconAHeadfor16Grey1 key="49" {...rest} />;
     case 'bluetooth-1':
-      return <IconBluetooth1 key="46" {...rest} />;
+      return <IconBluetooth1 key="50" {...rest} />;
     case 'a-headfor-201':
-      return <IconAHeadfor201 key="47" {...rest} />;
+      return <IconAHeadfor201 key="51" {...rest} />;
     case 'down':
-      return <IconDown key="48" {...rest} />;
+      return <IconDown key="52" {...rest} />;
     case 'a-advertisingdisplay':
-      return <IconAAdvertisingdisplay key="49" {...rest} />;
+      return <IconAAdvertisingdisplay key="53" {...rest} />;
     case 'a-headfor-121':
-      return <IconAHeadfor121 key="50" {...rest} />;
+      return <IconAHeadfor121 key="54" {...rest} />;
     case 'exit':
-      return <IconExit key="51" {...rest} />;
+      return <IconExit key="55" {...rest} />;
     case 'a-combinationmanagement':
-      return <IconACombinationmanagement key="52" {...rest} />;
+      return <IconACombinationmanagement key="56" {...rest} />;
     case 'maintain':
-      return <IconMaintain key="53" {...rest} />;
+      return <IconMaintain key="57" {...rest} />;
     case 'share':
-      return <IconShare key="54" {...rest} />;
+      return <IconShare key="58" {...rest} />;
     case 'a-powermanagement':
-      return <IconAPowermanagement key="55" {...rest} />;
+      return <IconAPowermanagement key="59" {...rest} />;
     case 'a-equipmentinformation':
-      return <IconAEquipmentinformation key="56" {...rest} />;
+      return <IconAEquipmentinformation key="60" {...rest} />;
     case 'member-20':
-      return <IconMember20 key="57" {...rest} />;
+      return <IconMember20 key="61" {...rest} />;
     case 'message':
-      return <IconMessage key="58" {...rest} />;
+      return <IconMessage key="62" {...rest} />;
     case 'location1':
-      return <IconLocation1 key="59" {...rest} />;
+      return <IconLocation1 key="63" {...rest} />;
     case 'rise':
-      return <IconRise key="60" {...rest} />;
+      return <IconRise key="64" {...rest} />;
     case 'setting':
-      return <IconSetting key="61" {...rest} />;
+      return <IconSetting key="65" {...rest} />;
     case 'member':
-      return <IconMember key="62" {...rest} />;
+      return <IconMember key="66" {...rest} />;
     case 'a-skinpeeler':
-      return <IconASkinpeeler key="63" {...rest} />;
+      return <IconASkinpeeler key="67" {...rest} />;
     case 'shopping':
-      return <IconShopping key="64" {...rest} />;
+      return <IconShopping key="68" {...rest} />;
     case 'pen16':
-      return <IconPen16 key="65" {...rest} />;
+      return <IconPen16 key="69" {...rest} />;
     case 'pen24':
-      return <IconPen24 key="66" {...rest} />;
+      return <IconPen24 key="70" {...rest} />;
     case 'explain':
-      return <IconExplain key="67" {...rest} />;
+      return <IconExplain key="71" {...rest} />;
     case 'download':
-      return <IconDownload key="68" {...rest} />;
+      return <IconDownload key="72" {...rest} />;
     case 'play':
-      return <IconPlay key="69" {...rest} />;
+      return <IconPlay key="73" {...rest} />;
     case 'a-headfor-16-grey':
-      return <IconAHeadfor16Grey key="70" {...rest} />;
+      return <IconAHeadfor16Grey key="74" {...rest} />;
     case 'a-Videoguidance':
-      return <IconAVideoguidance key="71" {...rest} />;
+      return <IconAVideoguidance key="75" {...rest} />;
     case 'a-Upgradelock':
-      return <IconAUpgradelock key="72" {...rest} />;
+      return <IconAUpgradelock key="76" {...rest} />;
     case 'mine':
-      return <IconMine key="73" {...rest} />;
+      return <IconMine key="77" {...rest} />;
     case 'statistics1':
-      return <IconStatistics1 key="74" {...rest} />;
+      return <IconStatistics1 key="78" {...rest} />;
     case 'a-Lowbatteryreminder':
-      return <IconALowbatteryreminder key="75" {...rest} />;
+      return <IconALowbatteryreminder key="79" {...rest} />;
     case 'bell':
-      return <IconBell key="76" {...rest} />;
+      return <IconBell key="80" {...rest} />;
     case 'wrong-red':
-      return <IconWrongRed key="77" {...rest} />;
+      return <IconWrongRed key="81" {...rest} />;
     case 'right-green':
-      return <IconRightGreen key="78" {...rest} />;
+      return <IconRightGreen key="82" {...rest} />;
     case 'invisible':
-      return <IconInvisible key="79" {...rest} />;
+      return <IconInvisible key="83" {...rest} />;
     case 'visible':
-      return <IconVisible key="80" {...rest} />;
+      return <IconVisible key="84" {...rest} />;
     case 'back':
-      return <IconBack key="81" {...rest} />;
+      return <IconBack key="85" {...rest} />;
     case 'selected':
-      return <IconSelected key="82" {...rest} />;
+      return <IconSelected key="86" {...rest} />;
     case 'unselected':
-      return <IconUnselected key="83" {...rest} />;
+      return <IconUnselected key="87" {...rest} />;
     case 'multiplication':
-      return <IconMultiplication key="84" {...rest} />;
+      return <IconMultiplication key="88" {...rest} />;
     case 'tick-white':
-      return <IconTickWhite key="85" {...rest} />;
+      return <IconTickWhite key="89" {...rest} />;
     case 'minus':
-      return <IconMinus key="86" {...rest} />;
+      return <IconMinus key="90" {...rest} />;
     case 'telephone':
-      return <IconTelephone key="87" {...rest} />;
+      return <IconTelephone key="91" {...rest} />;
     case 'add':
-      return <IconAdd key="88" {...rest} />;
+      return <IconAdd key="92" {...rest} />;
     case 'camera':
-      return <IconCamera key="89" {...rest} />;
+      return <IconCamera key="93" {...rest} />;
     case 'refresh':
-      return <IconRefresh key="90" {...rest} />;
+      return <IconRefresh key="94" {...rest} />;
     case 'location':
-      return <IconLocation key="91" {...rest} />;
+      return <IconLocation key="95" {...rest} />;
     case 'redact':
-      return <IconRedact key="92" {...rest} />;
+      return <IconRedact key="96" {...rest} />;
     case 'close':
-      return <IconClose key="93" {...rest} />;
+      return <IconClose key="97" {...rest} />;
     case 'a-headfor-12':
-      return <IconAHeadfor12 key="94" {...rest} />;
+      return <IconAHeadfor12 key="98" {...rest} />;
     case 'a-headfor-20':
-      return <IconAHeadfor20 key="95" {...rest} />;
+      return <IconAHeadfor20 key="99" {...rest} />;
     case 'statistics':
-      return <IconStatistics key="96" {...rest} />;
+      return <IconStatistics key="100" {...rest} />;
     case 'manager':
-      return <IconManager key="97" {...rest} />;
+      return <IconManager key="101" {...rest} />;
     case 'arrows1':
-      return <IconArrows1 key="98" {...rest} />;
+      return <IconArrows1 key="102" {...rest} />;
   }
 
   return null;

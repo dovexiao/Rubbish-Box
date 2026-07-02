@@ -1,14 +1,40 @@
 import React, { useMemo, useRef, useCallback } from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Image } from 'react-native';
+import {
+  BottomTabBar,
+  BottomTabBarProps,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
+import { Image, View } from 'react-native';
+import { useSetAtom } from 'jotai';
 import { useSafeAreaInsets } from '@/libs/safeAreaContext';
 import { routes } from '@/routes';
+import { tabBarHeightStore } from '@/store/store';
 import appManager from '@/utils/env/rn/appManager';
 import { showAppUpdateDialog } from '@/components';
-import { pad } from 'crypto-js';
+import {
+  getTabBarHeightFallback,
+  TAB_BAR_MIN_BOTTOM_INSET,
+} from '@/utils/tabBarHeight';
 import { fontSize, px } from '@/utils/ui';
 
 const Tab = createBottomTabNavigator();
+
+function MeasuredTabBar(props: BottomTabBarProps) {
+  const setTabBarHeight = useSetAtom(tabBarHeightStore);
+
+  return (
+    <View
+      onLayout={event => {
+        const height = event.nativeEvent.layout.height;
+        if (height > 0) {
+          setTabBarHeight(height);
+        }
+      }}
+    >
+      <BottomTabBar {...props} />
+    </View>
+  );
+}
 
 export const MainTabNavigator: React.FC = () => {
   const insets = useSafeAreaInsets();
@@ -51,8 +77,8 @@ export const MainTabNavigator: React.FC = () => {
       paddingHorizontal: px(16),
       borderTopWidth: 1,
       borderTopColor: 'rgba(0,0,0,0.05)',
-      height: px(60 + Math.max(insets.bottom, 20)),
-      paddingBottom: px(Math.max(insets.bottom, 20)),
+      height: getTabBarHeightFallback(insets.bottom),
+      paddingBottom: px(Math.max(insets.bottom, TAB_BAR_MIN_BOTTOM_INSET)),
     };
   }, [insets]);
 
@@ -66,9 +92,11 @@ export const MainTabNavigator: React.FC = () => {
     if (!routeConfig) return null;
     const iconUri = focused ? routeConfig.chooseIcon : routeConfig.icon;
 
-    const isCenter = route.name === 'Index';
-    const iconSize = isCenter ? px(50) : px(30);
-    const marginBottom = isCenter ? 0 : px(3);
+    // const isCenter = route.name === 'Index';
+    // const iconSize = isCenter ? px(50) : px(30);
+    // const marginBottom = isCenter ? 0 : px(3);
+    const iconSize = px(30);
+    const marginBottom = px(3);
 
     return (
       <Image
@@ -86,11 +114,12 @@ export const MainTabNavigator: React.FC = () => {
   return (
     <Tab.Navigator
       initialRouteName="Index"
+      tabBar={props => <MeasuredTabBar {...props} />}
       screenListeners={{
         state: handleCheckUpdateSilent,
       }}
       screenOptions={({ route }: { route: any }) => {
-        const isCenter = route.name === 'Index';
+        // const isCenter = route.name === 'Index';
         return {
           tabBarIcon: ({
             focused,
@@ -104,40 +133,31 @@ export const MainTabNavigator: React.FC = () => {
           tabBarActiveTintColor: '#333333',
           tabBarInactiveTintColor: '#666666',
           tabBarStyle,
+          tabBarHideOnKeyboard: false,
           tabBarLabelStyle: {
             fontSize: fontSize(11),
             fontWeight: '400',
           },
           // 每个 Tab 外层加红色边框，Index 固定宽度 50，其它平均铺满
-          tabBarItemStyle: isCenter
-            ? {
-                width: px(50),
-                flexShrink: 0,
-                flexGrow: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }
-            : {
-                flex: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-              },
+          tabBarItemStyle: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          },
           headerShown: false,
         };
       }}
     >
       {routes.tabs.map(route => {
-        const isCenter = route.name === 'Index';
+        // const isCenter = route.name === 'Index';
         return (
           <Tab.Screen
             key={route.name}
             name={route.name}
             options={{
               // 中间的 Index 完全不渲染 label，避免占位高度
-              tabBarLabel: isCenter ? () => null : route.label,
-              tabBarIconStyle: isCenter
-                ? { marginBottom: 0, marginTop: px(4) }
-                : { marginBottom: 0 },
+              tabBarLabel: route.label,
+              tabBarIconStyle: { marginBottom: 0 },
               freezeOnBlur: true,
             }}
             component={route.component}

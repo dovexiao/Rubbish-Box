@@ -57,6 +57,26 @@ allprojects {
 
 // Ensure all Android modules use a consistent SDK / Build Tools setup
 subprojects { subproject ->
+    // Some third-party RN modules still declare AGP as 8.+ in their own buildscript.
+    // Align them to the app's AGP and add mirror repositories to avoid dl.google.com timeout.
+    buildscript {
+        repositories {
+            maven { url 'https://maven.aliyun.com/repository/public' }
+            maven { url 'https://maven.aliyun.com/repository/google' }
+            maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+            google()
+            mavenCentral()
+        }
+        configurations.matching { it.name == 'classpath' }.all {
+            resolutionStrategy.eachDependency { details ->
+                if (details.requested.group == 'com.android.tools.build' && details.requested.name == 'gradle') {
+                    details.useVersion('7.4.2')
+                    details.because('Align AGP with React Native 0.72 root build to avoid dynamic 8.+ fetch failures')
+                }
+            }
+        }
+    }
+
     afterEvaluate { project ->
         if (project.hasProperty("android") && project.android != null) {
             // Align compileSdk / buildTools across app and all libraries

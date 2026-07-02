@@ -1,0 +1,7 @@
+/* LaunchScreen localization for zh-Hans */
+
+/* Class = "UILabel"; text = "boklock"; ObjectID = "GJd-Yh-RWb"; */
+"GJd-Yh-RWb.text" = "泊刻地锁";
+
+/* Class = "UILabel"; text = "Powered by React Native"; ObjectID = "MN2-I3-ftu"; */
+"MN2-I3-ftu.text" = "Powered by React Native";

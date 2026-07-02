@@ -4,23 +4,32 @@ export const routes = {
       name: 'Multiple',
       label: '组合设备',
       component: require('@/pages/multiple/index').default,
-      icon: 'https://g.18qjz.cn/img/boklock/tabBar/multiple_hd.png',
+      icon: 'https://g.18qjz.cn/img/boklock/tabBar/img_combine_device.png',
       chooseIcon:
-        'https://g.18qjz.cn/img/boklock/tabBar/multiple_selected_hd.png',
+        'https://g.18qjz.cn/img/boklock/tabBar/img_combine_device_selected.png',
     },
     {
       name: 'Index',
       label: '设备',
       component: require('@/pages/index/index').default,
-      icon: 'https://g.18qjz.cn/img/boklock/tabBar/index_hd.png',
-      chooseIcon: 'https://g.18qjz.cn/img/boklock/tabBar/index_selected_hd.png',
+      icon: 'https://g.18qjz.cn/img/boklock/tabBar/img_device.png',
+      chooseIcon:
+        'https://g.18qjz.cn/img/boklock/tabBar/img_device_selected.png',
+    },
+    {
+      name: 'AiAssistant',
+      label: '泊刻AI',
+      component: require('@/pages/aiAssistant/index').default,
+      icon: 'https://g.18qjz.cn/img/boklock/tabBar/img_boke_ai.png',
+      chooseIcon:
+        'https://g.18qjz.cn/img/boklock/tabBar/img_boke_ai_selected.png',
     },
     {
       name: 'Mine',
       label: '我的',
       component: require('@/pages/mine').default,
-      icon: 'https://g.18qjz.cn/img/boklock/tabBar/mine_hd.png',
-      chooseIcon: 'https://g.18qjz.cn/img/boklock/tabBar/mine_selected_hd.png',
+      icon: 'https://g.18qjz.cn/img/boklock/tabBar/img_my.png',
+      chooseIcon: 'https://g.18qjz.cn/img/boklock/tabBar/img_my_selected.png',
     },
   ],
   pages: [

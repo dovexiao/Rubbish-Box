@@ -202,20 +202,40 @@ http.interceptors.request.use(
       const token = await getTokenForHeaders();
       const secret = await cacheGetSync('siscrt');
       const random = randomStr(16);
+      const isFormData =
+        typeof FormData !== 'undefined' && config.data instanceof FormData;
       const requestData =
         config.method === 'get' ? (config.params as any) : (config.data as any);
       const sign = getSign(
-        (requestData && typeof requestData === 'object'
-          ? requestData
-          : {}) as Record<string, any>,
+        isFormData
+          ? {}
+          : ((requestData && typeof requestData === 'object'
+              ? requestData
+              : {}) as Record<string, any>),
         random,
         secret ? String(secret) : undefined,
+      );
+
+      const headerEntries = Object.entries(
+        (config.headers || {}) as Record<string, any>,
+      );
+      const hasContentTypeHeader = headerEntries.some(
+        ([key, value]) =>
+          key.toLowerCase() === 'content-type' && value !== undefined,
       );
 
       // 4) 公共请求头（RN 专用）
       config.headers = (config.headers || {}) as any;
       (config.headers as any)['Accept'] = '*/*';
-      (config.headers as any)['Content-Type'] = 'application/json';
+      if (isFormData) {
+        // multipart 需由 axios 自动带上 boundary；如果调用方已显式指定，则保留它
+        // 注意：此处必须使用首字母大写的 Content-Type，防止在鸿蒙端与底层强制追加的 Content-Type 产生双重 header
+        if (!hasContentTypeHeader) {
+          (config.headers as any)['Content-Type'] = 'multipart/form-data';
+        }
+      } else {
+        (config.headers as any)['Content-Type'] = 'application/json';
+      }
       (config.headers as any)['X-M-VERSION'] = DEPLOY_VERSION || '';
       (config.headers as any)['X-M-TOKEN'] = token || '';
       (config.headers as any)['X-M-TYPE'] = 'rn';
@@ -234,6 +254,7 @@ http.interceptors.request.use(
         console.warn('无法获取 token:', error);
       }
     }
+
     return config;
   },
   error => {
@@ -322,6 +343,7 @@ http.interceptors.response.use(
     }
 
     if (error?.request) {
+      console.log(error?.request, '=====');
       const unified: CreateFetchResponse<any> = {
         header: {},
         success: false,
