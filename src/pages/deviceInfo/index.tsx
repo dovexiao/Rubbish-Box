@@ -1045,7 +1045,7 @@ const DeviceInfo = () => {
                   navigation.navigate('RemoteKeyPairingVideo');
                 } else {
                   navigation.navigate('RemoteKeyPairingVideo', {
-                    lockId: lockInfo?.id,
+                    lockId: lockInfo?.deviceNo,
                   });
                 }
               }}
