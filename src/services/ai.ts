@@ -7,7 +7,6 @@ export interface GetUserSessionKeyRequest {
   message?: string;
   conversationId?: string;
   sessionId?: string;
-  approved?: boolean;
   [key: string]: any;
 }
 
