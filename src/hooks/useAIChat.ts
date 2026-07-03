@@ -571,6 +571,26 @@ const isSameConfirmCard = (card: ConfirmMessage, sessionId?: string) => {
   );
 };
 
+const DEFAULT_CONFIRM_TITLE = '需要确认';
+const DEFAULT_CONFIRM_CONTENT = '是否执行？';
+
+const isPlaceholderConfirmCard = (card: ConfirmMessage): boolean => {
+  const title = card.title?.trim() || '';
+  const content = card.content?.trim() || '';
+  return (
+    (!title || title === DEFAULT_CONFIRM_TITLE) &&
+    (!content || content === DEFAULT_CONFIRM_CONTENT)
+  );
+};
+
+const findActiveConfirmIndex = (messages: ChatMessage[]): number =>
+  messages.findIndex(
+    msg =>
+      msg.type === 'confirm' &&
+      !msg.rejected &&
+      (msg.submitted || msg.processing || msg.approved),
+  );
+
 const mergeConfirmCardIntoMessages = (
   messages: ChatMessage[],
   card: ConfirmMessage,
@@ -589,12 +609,26 @@ const mergeConfirmCardIntoMessages = (
   );
 
   if (existingIndex >= 0) {
+    const existing = finalized[existingIndex] as ConfirmMessage;
+    if (
+      isPlaceholderConfirmCard(card) &&
+      (existing.submitted || existing.processing || existing.approved)
+    ) {
+      return finalized;
+    }
     const next = [...finalized];
     next[existingIndex] = {
-      ...(next[existingIndex] as ConfirmMessage),
+      ...existing,
       ...card,
     };
     return next;
+  }
+
+  if (
+    isPlaceholderConfirmCard(card) &&
+    findActiveConfirmIndex(finalized) >= 0
+  ) {
+    return finalized;
   }
 
   return [...finalized, card];
@@ -649,6 +683,12 @@ const materializeJsonCardsFromText = (
   let insertAt = textContent.trim() ? textIndex + 1 : textIndex;
   for (const card of cards) {
     if (card.type === 'confirm') {
+      if (
+        isPlaceholderConfirmCard(card) &&
+        findActiveConfirmIndex(next) >= 0
+      ) {
+        continue;
+      }
       next = mergeConfirmCardIntoMessages(next, card, sessionId);
       insertAt = next.length;
       continue;
@@ -705,12 +745,12 @@ const processStreamChunk = (
   if (isComplete && state.currentTextId) {
     if (!options?.confirmTarget) {
       messages = finalizeTextSegment(messages, state.currentTextId);
+      messages = materializeJsonCardsFromText(
+        messages,
+        state.currentTextId,
+        state.sessionId,
+      );
     }
-    messages = materializeJsonCardsFromText(
-      messages,
-      state.currentTextId,
-      state.sessionId,
-    );
   }
 
   return { messages, state };
@@ -841,6 +881,22 @@ const findConfirmIndex = (
   return submittedIndexes.length === 1 ? submittedIndexes[0]! : -1;
 };
 
+const removeRedundantPlaceholderConfirmCards = (
+  messages: ChatMessage[],
+  target: ConfirmTarget,
+): ChatMessage[] => {
+  const primaryIndex = findConfirmIndex(messages, target);
+  if (primaryIndex < 0) return messages;
+
+  const primaryId = (messages[primaryIndex] as ConfirmMessage).id;
+
+  return messages.filter(msg => {
+    if (msg.type !== 'confirm') return true;
+    if (msg.id === primaryId) return true;
+    return !isPlaceholderConfirmCard(msg);
+  });
+};
+
 const isTextForConfirmTarget = (
   message: TextMessage,
   target: ConfirmTarget,
@@ -940,6 +996,7 @@ export const useAIChat = (options?: UseAIChatOptions) => {
   const messagesRef = useRef(messages);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const connectionEpochRef = useRef(0);
+  const chatKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
     optionsRef.current = options;
@@ -1114,6 +1171,12 @@ export const useAIChat = (options?: UseAIChatOptions) => {
       }
 
       if (type === 'confirm') {
+        if (
+          pendingConfirmRef.current?.approved ||
+          lastApprovedConfirmTargetRef.current
+        ) {
+          return;
+        }
         setIsLoading(false);
         const cardMessage = mapTopLevelConfirmMessage(wsMessage);
         if (cardMessage) {
@@ -1137,6 +1200,13 @@ export const useAIChat = (options?: UseAIChatOptions) => {
         if (type === 'execute' && isSpecialCardMessage(wsMessage)) {
           const cardMessage = mapWSMessageToChatMessage(wsMessage);
           if (cardMessage) {
+            if (
+              cardMessage.type === 'confirm' &&
+              (pendingConfirmRef.current?.approved ||
+                lastApprovedConfirmTargetRef.current)
+            ) {
+              return;
+            }
             const sessionId = getStreamMessageId(wsMessage);
             commitMessages(prev => {
               let finalized = finalizeStreamingMessages(prev);
@@ -1241,9 +1311,10 @@ export const useAIChat = (options?: UseAIChatOptions) => {
             true,
             streamOptions,
           );
-          let nextMessages = materializeAllJsonCardsInMessages(
-            finalizeStreamingMessages(messages),
-          );
+          let nextMessages = finalizeStreamingMessages(messages);
+          if (!pendingConfirm?.approved) {
+            nextMessages = materializeAllJsonCardsInMessages(nextMessages);
+          }
           nextMessages = removeEmptyAssistantTexts(nextMessages);
 
           const consolidateTarget =
@@ -1257,6 +1328,10 @@ export const useAIChat = (options?: UseAIChatOptions) => {
               shouldConsolidateConfirmReply(nextMessages, consolidateTarget);
             if (shouldConsolidate) {
               nextMessages = consolidateConfirmReplyMessages(
+                nextMessages,
+                consolidateTarget,
+              );
+              nextMessages = removeRedundantPlaceholderConfirmCards(
                 nextMessages,
                 consolidateTarget,
               );
@@ -1298,6 +1373,71 @@ export const useAIChat = (options?: UseAIChatOptions) => {
     ],
   );
 
+  const openChatWebSocket = useCallback(
+    (
+      chatKey: string,
+      connectionEpoch: number,
+      afterConnect?: () => void,
+    ): boolean => {
+      const wsUrl = getWebSocketUrl();
+      if (!wsUrl) {
+        setIsLoading(false);
+        if (!pendingConfirmRef.current) {
+          abortActiveAssistantStream();
+        } else {
+          pendingConfirmRef.current = null;
+        }
+        showToast({ title: 'WebSocket 地址无效', icon: 'none' });
+        return false;
+      }
+
+      aiWebSocketService.connect({
+        url: wsUrl,
+        chatKey,
+        onOpen: () => {
+          if (connectionEpoch !== connectionEpochRef.current) return;
+          setIsConnected(true);
+          afterConnect?.();
+        },
+        onClose: () => {
+          if (connectionEpoch !== connectionEpochRef.current) return;
+          setIsConnected(false);
+          finalizeStream();
+        },
+        onError: () => {
+          if (connectionEpoch !== connectionEpochRef.current) return;
+          setIsConnected(false);
+          setIsLoading(false);
+          if (!pendingConfirmRef.current) {
+            abortActiveAssistantStream();
+          }
+          pendingConfirmRef.current = null;
+          lastApprovedConfirmTargetRef.current = null;
+          showToast({ title: '连接失败，请重试', icon: 'none' });
+        },
+        onMessage: wsMessage => {
+          if (connectionEpoch !== connectionEpochRef.current) return;
+          handleWSMessage(wsMessage);
+        },
+      });
+      return true;
+    },
+    [abortActiveAssistantStream, finalizeStream, handleWSMessage],
+  );
+
+  const reconnectChatWebSocket = useCallback(
+    async (afterConnect?: () => void): Promise<boolean> => {
+      const chatKey = chatKeyRef.current;
+      if (!chatKey) return false;
+
+      clearScheduledClose();
+      const connectionEpoch = ++connectionEpochRef.current;
+
+      return openChatWebSocket(chatKey, connectionEpoch, afterConnect);
+    },
+    [clearScheduledClose, openChatWebSocket],
+  );
+
   const connectChatWebSocket = useCallback(
     async (
       requestParams: Record<string, unknown>,
@@ -1333,49 +1473,10 @@ export const useAIChat = (options?: UseAIChatOptions) => {
           return false;
         }
 
-        const wsUrl = getWebSocketUrl();
+        chatKeyRef.current = res.data;
         if (connectionEpoch !== connectionEpochRef.current) return false;
-        if (!wsUrl) {
-          setIsLoading(false);
-          if (!pendingConfirmRef.current) {
-            abortActiveAssistantStream();
-          } else {
-            pendingConfirmRef.current = null;
-          }
-          showToast({ title: 'WebSocket 地址无效', icon: 'none' });
-          return false;
-        }
 
-        aiWebSocketService.connect({
-          url: wsUrl,
-          chatKey: res.data,
-          onOpen: () => {
-            if (connectionEpoch !== connectionEpochRef.current) return;
-            setIsConnected(true);
-            afterConnect?.();
-          },
-          onClose: () => {
-            if (connectionEpoch !== connectionEpochRef.current) return;
-            setIsConnected(false);
-            finalizeStream();
-          },
-          onError: () => {
-            if (connectionEpoch !== connectionEpochRef.current) return;
-            setIsConnected(false);
-            setIsLoading(false);
-            if (!pendingConfirmRef.current) {
-              abortActiveAssistantStream();
-            }
-            pendingConfirmRef.current = null;
-            lastApprovedConfirmTargetRef.current = null;
-            showToast({ title: '连接失败，请重试', icon: 'none' });
-          },
-          onMessage: wsMessage => {
-            if (connectionEpoch !== connectionEpochRef.current) return;
-            handleWSMessage(wsMessage);
-          },
-        });
-        return true;
+        return openChatWebSocket(res.data, connectionEpoch, afterConnect);
       } catch (error: unknown) {
         if (connectionEpoch !== connectionEpochRef.current) return false;
         console.error('初始化 WebSocket 失败:', error);
@@ -1396,8 +1497,7 @@ export const useAIChat = (options?: UseAIChatOptions) => {
     [
       abortActiveAssistantStream,
       clearScheduledClose,
-      finalizeStream,
-      handleWSMessage,
+      openChatWebSocket,
     ],
   );
 
@@ -1528,10 +1628,18 @@ export const useAIChat = (options?: UseAIChatOptions) => {
           return;
         }
 
-        const connected = await connectChatWebSocket(
-          { sessionId: normalizedSessionId, approved },
-          sendConfirmPayload,
-        );
+        if (!chatKeyRef.current) {
+          pendingConfirmRef.current = null;
+          lastApprovedConfirmTargetRef.current = null;
+          setIsLoading(false);
+          commitMessages(prev =>
+            applyConfirmResetProcessingState(prev, target),
+          );
+          showToast({ title: '连接已断开，请重新发起对话', icon: 'none' });
+          return;
+        }
+
+        const connected = await reconnectChatWebSocket(sendConfirmPayload);
         if (!connected) {
           pendingConfirmRef.current = null;
           lastApprovedConfirmTargetRef.current = null;
@@ -1539,6 +1647,7 @@ export const useAIChat = (options?: UseAIChatOptions) => {
           commitMessages(prev =>
             applyConfirmResetProcessingState(prev, target),
           );
+          showToast({ title: '连接已断开，请重新发起对话', icon: 'none' });
         }
       } catch (error: unknown) {
         pendingConfirmRef.current = null;
@@ -1548,7 +1657,7 @@ export const useAIChat = (options?: UseAIChatOptions) => {
         showToast({ title: getErrorMessage(error, '操作失败'), icon: 'none' });
       }
     },
-    [commitMessages, connectChatWebSocket],
+    [commitMessages, reconnectChatWebSocket],
   );
 
   const disconnect = useCallback(() => {
@@ -1563,6 +1672,7 @@ export const useAIChat = (options?: UseAIChatOptions) => {
     streamParserRef.current = null;
     pendingConfirmRef.current = null;
     lastApprovedConfirmTargetRef.current = null;
+    chatKeyRef.current = null;
   }, [clearScheduledClose]);
 
   const clearMessages = useCallback(() => {
