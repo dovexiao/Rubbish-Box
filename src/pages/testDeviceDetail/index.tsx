@@ -982,7 +982,7 @@ export default function TestDeviceDetailScreen() {
                       isTouchView
                       onPress={() => {
                         if (!detail.keyCount) {
-                          if (detail.buttonKeyFlag) {
+                          if (!detail.buttonKeyFlag) {
                             navigation.navigate('RemoteKeyPairingVideo');
                           } else {
                             navigation.navigate('RemoteKeyPairingVideo', {
