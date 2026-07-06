@@ -152,7 +152,7 @@ export default function TestDeviceDetailScreen() {
   const fetchDetail = useCallback(async () => {
     if (!deviceNo) return;
     try {
-      const res: any = await getTestDeviceDetail({ deviceNo, type });
+      const res: any = await getTestDeviceDetail({ deviceNo, testType: type });
       const d: TestDeviceDetail = res?.data ?? res ?? {};
       setDetail(d);
       setTestResult(d.testReason ? (d.testResult as any) : undefined);
@@ -166,7 +166,7 @@ export default function TestDeviceDetailScreen() {
   const fetchReasons = useCallback(async () => {
     if (!deviceNo) return;
     try {
-      const res: any = await getTestDeviceReason({ deviceNo, type });
+      const res: any = await getTestDeviceReason({ deviceNo, testType: type });
       const list: TestReasonItem[] = res?.list || res?.data?.list || [];
       setReasonList(list);
     } catch (e) {
@@ -320,7 +320,7 @@ export default function TestDeviceDetailScreen() {
       const payload: any = {
         deviceNo,
         ...params,
-        type,
+        testType: type,
       };
       const res: any = await modifyTestDevice(payload);
       if (res === true || Number(res?.code) === 200) {
@@ -401,7 +401,7 @@ export default function TestDeviceDetailScreen() {
     if (!deviceNo) return;
     showLoading({ title: '重测中...' });
     try {
-      const res: any = await resetTestDevice({ deviceNo, type });
+      const res: any = await resetTestDevice({ deviceNo, testType: type });
       if (res === true || Number(res?.code) === 200) {
         hideLoading();
         await fetchDetail();

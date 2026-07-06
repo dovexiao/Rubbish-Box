@@ -75,7 +75,7 @@ export default function TestDevice() {
         offset,
         pageSize: PAGE_SIZE,
         lockId,
-        type,
+        testType: type,
       });
       const list: TestDeviceItem[] = Array.isArray(res?.list)
         ? res.list
