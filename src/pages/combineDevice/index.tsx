@@ -342,6 +342,7 @@ export default function CombineDeviece() {
             ) : (
               <FlatList
                 data={chooseList}
+                style={{ maxHeight: px(200) }}
                 keyExtractor={(item, index) => String(item.id ?? index)}
                 renderItem={({ item }) => (
                   <Flex

@@ -405,7 +405,7 @@ export default function Setting() {
               })
             }
           >
-            <Text style={styles.itemText}>泊刻地锁工仓库测试</Text>
+            <Text style={styles.itemText}>泊刻地锁仓库测试</Text>
             <AppIcon name="a-headfor-20" size={px(20)} color="#333333" />
           </TouchableOpacity>
         )}

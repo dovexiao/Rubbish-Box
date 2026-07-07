@@ -300,11 +300,18 @@ export default function TestDeviceDetailScreen() {
     }, [detail, checkConnection]),
   );
 
-  useEffect(() => {
-    if (detail?.deviceNo) {
-      handleTestDeviceReslt();
-    }
-  }, [detail?.deviceNo, handleTestDeviceReslt]);
+  useFocusEffect(
+    useCallback(() => {
+      if (detail?.deviceNo) {
+        handleTestDeviceReslt();
+      }
+
+      return () => {
+        testStatusPollingRef.current?.stop?.();
+        testStatusPollingRef.current = null;
+      };
+    }, [detail?.deviceNo, handleTestDeviceReslt]),
+  );
 
   useEffect(() => {
     return () => {

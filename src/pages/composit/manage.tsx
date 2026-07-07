@@ -390,7 +390,7 @@ const ManageComposite = () => {
                 void openAddPopup();
               }}
             >
-              <Text style={styles.addBtnText}>新增【市电款】设备</Text>
+              <Text style={styles.addBtnText}>新增设备</Text>
               <AppIcon name="add" size={px(12)} color="#333333" />
             </Flex>
           </Flex>

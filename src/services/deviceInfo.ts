@@ -139,13 +139,13 @@ export const testStartPairingResult = createFetch<any, any>(
 // 绑定钥匙
 export const testBindKey = createFetch<any, any>(
   '/boke/deviceTest/key/bind',
-  'GET',
+  'POST',
 );
 
 //绑定钥匙结果
 export const testBindKeyResult = createFetch<any, any>(
   '/boke/deviceTest/key/bindRes',
-  'GET',
+  'POST',
 );
 
 export const getDeviceTestKeyResponse = createFetch<any, any>(
