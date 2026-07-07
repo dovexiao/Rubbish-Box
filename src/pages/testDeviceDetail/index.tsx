@@ -246,7 +246,6 @@ export default function TestDeviceDetailScreen() {
             ) {
               hasShownSwitchSuccess = true;
               hideLoading();
-              showToast({ title: '切换成功', icon: 'info' });
             }
             // 若后端返回了最终测试结果，则刷新详情并停止轮询
             const tr = (res?.data ?? res)?.testResult;
@@ -561,7 +560,6 @@ export default function TestDeviceDetailScreen() {
     );
   };
 
-  console.log(detail, 'detail?.model');
   return (
     <PageContainer
       backgroundColor="#FFFFFF"
