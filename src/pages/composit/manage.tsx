@@ -441,7 +441,7 @@ const ManageComposite = () => {
             style={styles.paddingH16}
           >
             <Text style={{ width: px(24), height: px(24) }}></Text>
-            <Text style={styles.popTitle}>新增【市电款】设备</Text>
+            <Text style={styles.popTitle}>新增设备</Text>
             <AppIcon
               onPress={() => setAddDeviceVisible(false)}
               name={'close'}
