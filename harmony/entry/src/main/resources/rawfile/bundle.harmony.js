@@ -279680,6 +279680,19 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var cardSessionId = card.sessionId || card.replyId || card.id;
     return Boolean(sessionId && (cardSessionId === sessionId || card.replyId === sessionId || card.id === sessionId));
   };
+  var DEFAULT_CONFIRM_TITLE = '需要确认';
+  var DEFAULT_CONFIRM_CONTENT = '是否执行？';
+  var isPlaceholderConfirmCard = function isPlaceholderConfirmCard(card) {
+    var _card$title, _card$content;
+    var title = ((_card$title = card.title) == null ? void 0 : _card$title.trim()) || '';
+    var content = ((_card$content = card.content) == null ? void 0 : _card$content.trim()) || '';
+    return (!title || title === DEFAULT_CONFIRM_TITLE) && (!content || content === DEFAULT_CONFIRM_CONTENT);
+  };
+  var findActiveConfirmIndex = function findActiveConfirmIndex(messages) {
+    return messages.findIndex(function (msg) {
+      return msg.type === 'confirm' && !msg.rejected && (msg.submitted || msg.processing || msg.approved);
+    });
+  };
   var mergeConfirmCardIntoMessages = function mergeConfirmCardIntoMessages(messages, card, sessionId) {
     var finalized = messages.map(function (item) {
       return item.type === 'text' && item.isStreaming ? Object.assign({}, item, {
@@ -279690,9 +279703,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       return msg.type === 'confirm' && isSameConfirmCard(msg, sessionId || card.sessionId || card.id);
     });
     if (existingIndex >= 0) {
+      var existing = finalized[existingIndex];
+      if (isPlaceholderConfirmCard(card) && (existing.submitted || existing.processing || existing.approved)) {
+        return finalized;
+      }
       var next = (0, _toConsumableArray2.default)(finalized);
-      next[existingIndex] = Object.assign({}, next[existingIndex], card);
+      next[existingIndex] = Object.assign({}, existing, card);
       return next;
+    }
+    if (isPlaceholderConfirmCard(card) && findActiveConfirmIndex(finalized) >= 0) {
+      return finalized;
     }
     return [].concat((0, _toConsumableArray2.default)(finalized), [card]);
   };
@@ -279735,6 +279755,9 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var insertAt = textContent.trim() ? textIndex + 1 : textIndex;
     for (var card of cards) {
       if (card.type === 'confirm') {
+        if (isPlaceholderConfirmCard(card) && findActiveConfirmIndex(next) >= 0) {
+          continue;
+        }
         next = mergeConfirmCardIntoMessages(next, card, sessionId);
         insertAt = next.length;
         continue;
@@ -279765,8 +279788,8 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     if (isComplete && state.currentTextId) {
       if (!(options != null && options.confirmTarget)) {
         messages = finalizeTextSegment(messages, state.currentTextId);
+        messages = materializeJsonCardsFromText(messages, state.currentTextId, state.sessionId);
       }
-      messages = materializeJsonCardsFromText(messages, state.currentTextId, state.sessionId);
     }
     return {
       messages: messages,
@@ -279862,6 +279885,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     }, []);
     return submittedIndexes.length === 1 ? submittedIndexes[0] : -1;
   };
+  var removeRedundantPlaceholderConfirmCards = function removeRedundantPlaceholderConfirmCards(messages, target) {
+    var primaryIndex = findConfirmIndex(messages, target);
+    if (primaryIndex < 0) return messages;
+    var primaryId = messages[primaryIndex].id;
+    return messages.filter(function (msg) {
+      if (msg.type !== 'confirm') return true;
+      if (msg.id === primaryId) return true;
+      return !isPlaceholderConfirmCard(msg);
+    });
+  };
   var isTextForConfirmTarget = function isTextForConfirmTarget(message, target) {
     var sessionId = getSessionIdFromTextId(message.id);
     return sessionId === target.sessionId || message.id === target.sessionId;
@@ -279940,6 +279973,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
     var messagesRef = (0, _react.useRef)(messages);
     var closeTimerRef = (0, _react.useRef)(null);
     var connectionEpochRef = (0, _react.useRef)(0);
+    var chatKeyRef = (0, _react.useRef)(null);
     (0, _react.useEffect)(function () {
       optionsRef.current = options;
     }, [options]);
@@ -280070,6 +280104,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         return;
       }
       if (type === 'confirm') {
+        var _pendingConfirmRef$cu;
+        if ((_pendingConfirmRef$cu = pendingConfirmRef.current) != null && _pendingConfirmRef$cu.approved || lastApprovedConfirmTargetRef.current) {
+          return;
+        }
         setIsLoading(false);
         var cardMessage = mapTopLevelConfirmMessage(wsMessage);
         if (cardMessage) {
@@ -280088,6 +280126,10 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         if (type === 'execute' && isSpecialCardMessage(wsMessage)) {
           var _cardMessage = mapWSMessageToChatMessage(wsMessage);
           if (_cardMessage) {
+            var _pendingConfirmRef$cu2;
+            if (_cardMessage.type === 'confirm' && ((_pendingConfirmRef$cu2 = pendingConfirmRef.current) != null && _pendingConfirmRef$cu2.approved || lastApprovedConfirmTargetRef.current)) {
+              return;
+            }
             var _sessionId2 = getStreamMessageId(wsMessage);
             commitMessages(function (prev) {
               var finalized = finalizeStreamingMessages(prev);
@@ -280157,13 +280199,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           } : undefined;
           var _processStreamChunk2 = processStreamChunk(prev, parserSnapshot, content || '', true, streamOptions),
             messages = _processStreamChunk2.messages;
-          var nextMessages = materializeAllJsonCardsInMessages(finalizeStreamingMessages(messages));
+          var nextMessages = finalizeStreamingMessages(messages);
+          if (!(pendingConfirm != null && pendingConfirm.approved)) {
+            nextMessages = materializeAllJsonCardsInMessages(nextMessages);
+          }
           nextMessages = removeEmptyAssistantTexts(nextMessages);
           var consolidateTarget = (_ref3 = (_ref4 = pendingConfirm != null && pendingConfirm.approved ? confirmTarget : undefined) != null ? _ref4 : lastApprovedConfirmTargetRef.current) != null ? _ref3 : undefined;
           if (consolidateTarget) {
             var shouldConsolidate = Boolean(pendingConfirm == null ? void 0 : pendingConfirm.approved) || shouldConsolidateConfirmReply(nextMessages, consolidateTarget);
             if (shouldConsolidate) {
               nextMessages = consolidateConfirmReplyMessages(nextMessages, consolidateTarget);
+              nextMessages = removeRedundantPlaceholderConfirmCards(nextMessages, consolidateTarget);
               lastApprovedConfirmTargetRef.current = null;
             }
           }
@@ -280185,8 +280231,69 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
       }
     }, [appendStreamContent, commitMessages, finishPendingConfirmReject, scheduleSocketClose]);
+    var openChatWebSocket = (0, _react.useCallback)(function (chatKey, connectionEpoch, afterConnect) {
+      var wsUrl = getWebSocketUrl();
+      if (!wsUrl) {
+        setIsLoading(false);
+        if (!pendingConfirmRef.current) {
+          abortActiveAssistantStream();
+        } else {
+          pendingConfirmRef.current = null;
+        }
+        (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          title: 'WebSocket 地址无效',
+          icon: 'none'
+        });
+        return false;
+      }
+      _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.connect({
+        url: wsUrl,
+        chatKey: chatKey,
+        onOpen: function onOpen() {
+          if (connectionEpoch !== connectionEpochRef.current) return;
+          setIsConnected(true);
+          afterConnect == null || afterConnect();
+        },
+        onClose: function onClose() {
+          if (connectionEpoch !== connectionEpochRef.current) return;
+          setIsConnected(false);
+          finalizeStream();
+        },
+        onError: function onError() {
+          if (connectionEpoch !== connectionEpochRef.current) return;
+          setIsConnected(false);
+          setIsLoading(false);
+          if (!pendingConfirmRef.current) {
+            abortActiveAssistantStream();
+          }
+          pendingConfirmRef.current = null;
+          lastApprovedConfirmTargetRef.current = null;
+          (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            title: '连接失败，请重试',
+            icon: 'none'
+          });
+        },
+        onMessage: function onMessage(wsMessage) {
+          if (connectionEpoch !== connectionEpochRef.current) return;
+          handleWSMessage(wsMessage);
+        }
+      });
+      return true;
+    }, [abortActiveAssistantStream, finalizeStream, handleWSMessage]);
+    var reconnectChatWebSocket = (0, _react.useCallback)(/*#__PURE__*/function () {
+      var _ref5 = (0, _asyncToGenerator2.default)(function* (afterConnect) {
+        var chatKey = chatKeyRef.current;
+        if (!chatKey) return false;
+        clearScheduledClose();
+        var connectionEpoch = ++connectionEpochRef.current;
+        return openChatWebSocket(chatKey, connectionEpoch, afterConnect);
+      });
+      return function (_x) {
+        return _ref5.apply(this, arguments);
+      };
+    }(), [clearScheduledClose, openChatWebSocket]);
     var connectChatWebSocket = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref5 = (0, _asyncToGenerator2.default)(function* (requestParams, afterConnect) {
+      var _ref6 = (0, _asyncToGenerator2.default)(function* (requestParams, afterConnect) {
         clearScheduledClose();
         var connectionEpoch = ++connectionEpochRef.current;
         try {
@@ -280194,7 +280301,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           var params = Object.assign({}, requestParams, (_optionsRef$current = optionsRef.current) == null ? void 0 : _optionsRef$current.extraParams);
           if (conversationIdRef.current) params['conversationId'] = conversationIdRef.current;
           if (sessionIdRef.current) params['sessionId'] = sessionIdRef.current;
-          var res = yield (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/services/ai").getUserSessionKey)(params);
+          var res = yield (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/services/ai").getUserSessionKey)(params);
           if (connectionEpoch !== connectionEpochRef.current) return false;
           if (!res.success || !res.data) {
             setIsLoading(false);
@@ -280206,60 +280313,15 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             if (res.code === 206) {
               return false;
             }
-            (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: res.message || '获取会话失败',
               icon: 'none'
             });
             return false;
           }
-          var wsUrl = getWebSocketUrl();
+          chatKeyRef.current = res.data;
           if (connectionEpoch !== connectionEpochRef.current) return false;
-          if (!wsUrl) {
-            setIsLoading(false);
-            if (!pendingConfirmRef.current) {
-              abortActiveAssistantStream();
-            } else {
-              pendingConfirmRef.current = null;
-            }
-            (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
-              title: 'WebSocket 地址无效',
-              icon: 'none'
-            });
-            return false;
-          }
-          _$$_REQUIRE(_dependencyMap[7], "D:\\xqkj\\bokeapp\\src/services/aiWebSocketService").aiWebSocketService.connect({
-            url: wsUrl,
-            chatKey: res.data,
-            onOpen: function onOpen() {
-              if (connectionEpoch !== connectionEpochRef.current) return;
-              setIsConnected(true);
-              afterConnect == null || afterConnect();
-            },
-            onClose: function onClose() {
-              if (connectionEpoch !== connectionEpochRef.current) return;
-              setIsConnected(false);
-              finalizeStream();
-            },
-            onError: function onError() {
-              if (connectionEpoch !== connectionEpochRef.current) return;
-              setIsConnected(false);
-              setIsLoading(false);
-              if (!pendingConfirmRef.current) {
-                abortActiveAssistantStream();
-              }
-              pendingConfirmRef.current = null;
-              lastApprovedConfirmTargetRef.current = null;
-              (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
-                title: '连接失败，请重试',
-                icon: 'none'
-              });
-            },
-            onMessage: function onMessage(wsMessage) {
-              if (connectionEpoch !== connectionEpochRef.current) return;
-              handleWSMessage(wsMessage);
-            }
-          });
-          return true;
+          return openChatWebSocket(res.data, connectionEpoch, afterConnect);
         } catch (error) {
           if (connectionEpoch !== connectionEpochRef.current) return false;
           console.error('初始化 WebSocket 失败:', error);
@@ -280270,35 +280332,35 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             pendingConfirmRef.current = null;
           }
           lastApprovedConfirmTargetRef.current = null;
-          (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: getErrorMessage(error, '发送失败，请重试'),
             icon: 'none'
           });
           return false;
         }
       });
-      return function (_x, _x2) {
-        return _ref5.apply(this, arguments);
+      return function (_x2, _x3) {
+        return _ref6.apply(this, arguments);
       };
-    }(), [abortActiveAssistantStream, clearScheduledClose, finalizeStream, handleWSMessage]);
+    }(), [abortActiveAssistantStream, clearScheduledClose, openChatWebSocket]);
     var initWebSocket = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref6 = (0, _asyncToGenerator2.default)(function* (message, sessionId) {
+      var _ref7 = (0, _asyncToGenerator2.default)(function* (message, sessionId) {
         yield connectChatWebSocket(Object.assign({
           message: message
         }, sessionId ? {
           sessionId: sessionId
         } : {}));
       });
-      return function (_x3, _x4) {
-        return _ref6.apply(this, arguments);
+      return function (_x4, _x5) {
+        return _ref7.apply(this, arguments);
       };
     }(), [connectChatWebSocket]);
     var sendMessage = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref7 = (0, _asyncToGenerator2.default)(function* (content) {
+      var _ref8 = (0, _asyncToGenerator2.default)(function* (content) {
         var text = content.trim();
         if (!text) return;
         if (pendingConfirmRef.current) {
-          (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: '请等待当前操作完成',
             icon: 'none'
           });
@@ -280331,14 +280393,14 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           setIsLoading(false);
         }
       });
-      return function (_x5) {
-        return _ref7.apply(this, arguments);
+      return function (_x6) {
+        return _ref8.apply(this, arguments);
       };
     }(), [abortActiveAssistantStream, commitMessages, initWebSocket]);
     var sendVoiceMessage = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref8 = (0, _asyncToGenerator2.default)(function* (filePath) {
+      var _ref9 = (0, _asyncToGenerator2.default)(function* (filePath) {
         if (!filePath) {
-          (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: '录音文件无效',
             icon: 'none'
           });
@@ -280346,16 +280408,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         }
         try {
           var _log$data;
-          var log = yield (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/services/ai").userVoiceToText)(filePath);
+          var log = yield (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/services/ai").userVoiceToText)(filePath);
           if (!log.success) {
-            (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: log.message || log.msg || '识别失败',
               icon: 'none'
             });
             return;
           }
           if (!((_log$data = log.data) != null && _log$data.length)) {
-            (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+            (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
               title: '未识别到语音内容',
               icon: 'none'
             });
@@ -280363,23 +280425,23 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
           yield sendMessage(log.data);
         } catch (error) {
-          (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: getErrorMessage(error, '语音识别失败'),
             icon: 'none'
           });
         }
       });
-      return function (_x6) {
-        return _ref8.apply(this, arguments);
+      return function (_x7) {
+        return _ref9.apply(this, arguments);
       };
     }(), [sendMessage]);
     var confirmToolCall = (0, _react.useCallback)(/*#__PURE__*/function () {
-      var _ref9 = (0, _asyncToGenerator2.default)(function* (sessionId, params) {
+      var _ref0 = (0, _asyncToGenerator2.default)(function* (sessionId, params) {
         var _params$confirmMessag;
         if (pendingConfirmRef.current) return;
         var normalizedSessionId = (0, _$$_REQUIRE(_dependencyMap[6], "D:\\xqkj\\bokeapp\\src/pages/aiAssistant/utils/extractJsonCardsFromMarkdown").resolveBackendSessionId)((_params$confirmMessag = params == null ? void 0 : params.confirmMessageId) != null ? _params$confirmMessag : sessionId, sessionId);
         if (!normalizedSessionId) {
-          (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: '会话无效，请重新发起',
             icon: 'none'
           });
@@ -280411,16 +280473,30 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             sendConfirmPayload();
             return;
           }
-          var connected = yield connectChatWebSocket({
-            sessionId: normalizedSessionId,
-            approved: approved
-          }, sendConfirmPayload);
+          if (!chatKeyRef.current) {
+            pendingConfirmRef.current = null;
+            lastApprovedConfirmTargetRef.current = null;
+            setIsLoading(false);
+            commitMessages(function (prev) {
+              return applyConfirmResetProcessingState(prev, target);
+            });
+            (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+              title: '连接已断开，请重新发起对话',
+              icon: 'none'
+            });
+            return;
+          }
+          var connected = yield reconnectChatWebSocket(sendConfirmPayload);
           if (!connected) {
             pendingConfirmRef.current = null;
             lastApprovedConfirmTargetRef.current = null;
             setIsLoading(false);
             commitMessages(function (prev) {
               return applyConfirmResetProcessingState(prev, target);
+            });
+            (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+              title: '连接已断开，请重新发起对话',
+              icon: 'none'
             });
           }
         } catch (error) {
@@ -280430,16 +280506,16 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           commitMessages(function (prev) {
             return applyConfirmResetProcessingState(prev, target);
           });
-          (0, _$$_REQUIRE(_dependencyMap[10], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+          (0, _$$_REQUIRE(_dependencyMap[9], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
             title: getErrorMessage(error, '操作失败'),
             icon: 'none'
           });
         }
       });
-      return function (_x7, _x8) {
-        return _ref9.apply(this, arguments);
+      return function (_x8, _x9) {
+        return _ref0.apply(this, arguments);
       };
-    }(), [commitMessages, connectChatWebSocket]);
+    }(), [commitMessages, reconnectChatWebSocket]);
     var disconnect = (0, _react.useCallback)(function () {
       clearScheduledClose();
       connectionEpochRef.current += 1;
@@ -280452,6 +280528,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       streamParserRef.current = null;
       pendingConfirmRef.current = null;
       lastApprovedConfirmTargetRef.current = null;
+      chatKeyRef.current = null;
     }, [clearScheduledClose]);
     var clearMessages = (0, _react.useCallback)(function () {
       disconnect();
@@ -280478,7 +280555,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       reconnect: initWebSocket
     };
   };
-},1794,[1,2,25,7,42,1007,1782,1795,1796,1803,1190],"src\\hooks\\useAIChat.ts");
+},1794,[1,2,25,7,42,1007,1782,1795,1796,1190,1803],"src\\hooks\\useAIChat.ts");
 __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
   var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], "@babel/runtime/helpers/interopRequireDefault");
   Object.defineProperty(exports, "__esModule", {
@@ -313133,9 +313210,17 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
       (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showLoading)({
         title: '授权中...'
       });
-      var resPromise = (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/wechat").wechatLogin)();
+      var settled = false;
+      var hasGoneBackground = false;
+      var resPromise = (0, _$$_REQUIRE(_dependencyMap[13], "D:\\xqkj\\bokeapp\\src/utils/wechat").wechatLogin)().then(function (r) {
+        settled = true;
+        return r;
+      });
       var appStatePromise = new Promise(function (resolve) {
         appStateSubRef.current = _reactNative.AppState.addEventListener == null ? void 0 : _reactNative.AppState.addEventListener('change', function (s) {
+          if (s === 'background' || s === 'inactive') {
+            hasGoneBackground = true;
+          }
           if (s === 'active') {
             resolve({
               result: false,
@@ -313145,10 +313230,29 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
           }
         });
       });
+      var timeoutPromise = new Promise(function (resolve) {
+        setTimeout(function () {
+          if (settled) return;
+          settled = true;
+          resolve({
+            result: false,
+            errCode: -997,
+            message: hasGoneBackground ? '微信授权超时，请重试' : ''
+          });
+        }, 60000);
+      });
+      var harmonyHideTimer;
+      if (_reactNative.Platform.OS !== 'ios' && _reactNative.Platform.OS !== 'android') {
+        harmonyHideTimer = setTimeout(function () {
+          if (!hasGoneBackground && !settled) {
+            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+          }
+        }, 3000);
+      }
       var r;
       try {
         var _r;
-        r = yield Promise.race([resPromise, appStatePromise]);
+        r = yield Promise.race([resPromise, appStatePromise, timeoutPromise]);
         console.log('r', r);
         if ((_r = r) != null && _r.result) {
           var thirdState = yield (0, _$$_REQUIRE(_dependencyMap[11], "D:\\xqkj\\bokeapp\\src/services/user").getThirdState)({});
@@ -313178,12 +313282,22 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
             });
           }
         } else {
-          var _r2;
-          if (((_r2 = r) == null ? void 0 : _r2.errCode) !== -998) {
-            var _r3;
-            (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+          var _r2, _r3;
+          (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").hideLoading)();
+          if (((_r2 = r) == null ? void 0 : _r2.errCode) === -998) {
+            console.log('用户手动返回');
+          } else if (((_r3 = r) == null ? void 0 : _r3.errCode) === -997) {
+            var _r4;
+            if ((_r4 = r) != null && _r4.message) {
+              (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
+                title: r.message,
+                icon: 'info'
+              });
+            }
+          } else {
+            var _r5;
             (0, _$$_REQUIRE(_dependencyMap[12], "D:\\xqkj\\bokeapp\\src/utils").showToast)({
-              title: ((_r3 = r) == null ? void 0 : _r3.message) || '授权失败',
+              title: ((_r5 = r) == null ? void 0 : _r5.message) || '授权失败',
               icon: 'error'
             });
           }
@@ -313196,6 +313310,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
         });
       } finally {
         var _appStateSubRef$curre;
+        if (harmonyHideTimer) clearTimeout(harmonyHideTimer);
         (_appStateSubRef$curre = appStateSubRef.current) == null || _appStateSubRef$curre.remove == null || _appStateSubRef$curre.remove();
         appStateSubRef.current = undefined;
       }
@@ -320881,7 +320996,7 @@ __d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, e
 __d(function(global, require, _importDefaultUnused, _importAllUnused, module, exports, _dependencyMapUnused) {
   module.exports = {
   "name": "boklock",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "private": true,
   "scripts": {
     "start": "react-native start",
