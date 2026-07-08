@@ -161,7 +161,7 @@ export interface LockInfoDTO {
   isGateway?: number;
 
   /* 433网关SN码 */
-  gatewayKeySn?: string;
+  gatewaySn?: string;
 }
 
 interface LowBatteryNoticeList {

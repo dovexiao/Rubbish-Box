@@ -791,7 +791,7 @@ const Content: React.FC<ContentProps> = ({
               navigation.navigate('CompositeManage', {
                 lockId: detail.id,
                 isGateway: detail?.isGateway,
-                gatewayKeySn: detail?.gatewayKeySn,
+                gatewayKeySn: detail?.gatewaySn,
               });
             }}
           >
