@@ -214,6 +214,12 @@ export default function TestDevice() {
             onSubmit={v => onSearch(v)}
             returnKeyType="search"
             style={styles.searchBar}
+            onCancel={() => {
+              setSearchValue('');
+              searchRef.current = '';
+              offsetRef.current = 0;
+              void loadList(true, '');
+            }}
           />
         </View>
         <FlatList

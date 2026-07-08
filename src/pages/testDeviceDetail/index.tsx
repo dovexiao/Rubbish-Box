@@ -509,6 +509,8 @@ export default function TestDeviceDetailScreen() {
                             testResult: TEST_RESULT.QUALIFIED,
                             aboveCheckMethod: 1,
                           } as Partial<TestDeviceDetail>);
+
+                          await fetchDetail();
                         } else {
                           hideLoading();
                           showToast({
@@ -2024,6 +2026,7 @@ export default function TestDeviceDetailScreen() {
             testResult: TEST_RESULT.FAIL,
             testReason: reason.trim(),
           } as any);
+          await fetchDetail();
           return true;
         }}
       />
