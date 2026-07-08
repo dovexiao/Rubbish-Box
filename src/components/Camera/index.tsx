@@ -217,6 +217,13 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
   // present="modal" 时通过 modalVisible 控制 Modal 是否挂载，slideAnim 控制进场/退场动画
   const [modalVisible, setModalVisible] = useState(false);
   const slideAnim = useRef(new Animated.Value(0)).current;
+  // Modal 打开后冻结布局尺寸，避免扫码过程中安全区/窗口变化导致 UI 缓慢位移
+  const [frozenModalLayout, setFrozenModalLayout] = useState<{
+    top: number;
+    bottom: number;
+    width: number;
+    height: number;
+  } | null>(null);
 
   // 触发一次扫码后会锁定，避免连续回调；需要继续扫码时调用 rescan() 解除
   const scanLockedRef = useRef(false);
@@ -250,17 +257,47 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
     }
     // 打开弹层时默认重置扫码状态，避免带着上一次的锁进入
     rescan();
+    setFrozenModalLayout({
+      top: insets.top,
+      bottom: insets.bottom,
+      width: screenWidth,
+      height: screenHeight,
+    });
+    slideAnim.setValue(mask ? 0 : 1);
     setModalVisible(true);
-    Animated.timing(slideAnim, {
-      toValue: 1,
-      duration: 280,
-      easing: Easing.out(Easing.ease),
-      useNativeDriver: true,
-    }).start();
-  }, [ensurePermission, isModal, onClose, rescan, slideAnim]);
+    if (mask) {
+      Animated.timing(slideAnim, {
+        toValue: 1,
+        duration: 280,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [
+    ensurePermission,
+    insets.bottom,
+    insets.top,
+    isModal,
+    mask,
+    onClose,
+    rescan,
+    screenHeight,
+    screenWidth,
+    slideAnim,
+  ]);
 
   const close = useCallback(() => {
     if (!isModal) return;
+    const finishClose = () => {
+      setModalVisible(false);
+      setFrozenModalLayout(null);
+      slideAnim.setValue(0);
+      onClose?.();
+    };
+    if (!mask) {
+      finishClose();
+      return;
+    }
     Animated.timing(slideAnim, {
       toValue: 0,
       duration: 280,
@@ -268,11 +305,9 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
       useNativeDriver: true,
     }).start(({ finished }) => {
       if (!finished) return;
-      setModalVisible(false);
-      // close 完成后触发 onClose，交给页面恢复状态栏等副作用
-      onClose?.();
+      finishClose();
     });
-  }, [isModal, onClose, slideAnim]);
+  }, [isModal, mask, onClose, slideAnim]);
 
   // 向外暴露 imperative API（open/close/rescan/pauseScan/resumeScan）
   useImperativeHandle(
@@ -386,6 +421,11 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
     );
   }, [errorPopupVisible, lastResult, lastValue, renderErrorPopup, rescan]);
 
+  const overlayTopInset =
+    isModal && frozenModalLayout ? frozenModalLayout.top : insets.top;
+  const overlayBottomInset =
+    isModal && frozenModalLayout ? frozenModalLayout.bottom : insets.bottom;
+
   const cameraNode = (() => {
     // 默认 header：只有 title 存在时才渲染（用于扫码页统一的“返回 + 标题”样式）
     const headerNode = title ? (
@@ -430,20 +470,12 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
       <View style={[styles.container, style]}>
         {/* 相机预览层：始终铺满 */}
         <RNCamera
-          style={[
-            {
-              width: screenWidth,
-              height: screenHeight,
-              position: 'absolute',
-              top: 0,
-              left: 0,
-            },
-            cameraStyle,
-          ]}
+          style={[StyleSheet.absoluteFillObject, cameraStyle]}
           device={device}
           isActive={isModal ? active && modalVisible : active}
           codeScanner={codeScanner}
           resizeMode="cover"
+          enableZoomGesture={false}
         />
         {/* 覆盖层：承载 header/content/footer（扫描框与提示 UI） */}
         <View style={[styles.overlay, overlayStyle]} pointerEvents="box-none">
@@ -451,7 +483,7 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
             <View
               style={[
                 styles.header,
-                safeAreaTop && { paddingTop: px(insets.top) },
+                safeAreaTop && { paddingTop: px(overlayTopInset) },
               ]}
               pointerEvents="box-none"
             >
@@ -472,7 +504,7 @@ const Camera = forwardRef<CameraRef, CameraProps>(function Camera(
             <View
               style={[
                 styles.footer,
-                safeAreaBottom && { paddingBottom: px(insets.bottom) },
+                safeAreaBottom && { paddingBottom: px(overlayBottomInset) },
               ]}
               pointerEvents="box-none"
             >
@@ -545,9 +577,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000000',
+    overflow: 'hidden',
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
+    flexDirection: 'column',
   },
   header: {
     width: '100%',
@@ -576,6 +610,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   content: {
+    flex: 1,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',

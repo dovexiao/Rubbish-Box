@@ -266,7 +266,7 @@ export default function CombineDeviece() {
       <View style={styles.container}>
         {deviceSn ? (
           <View style={styles.row}>
-            <Text style={styles.label}>SN码：</Text>
+            <Text style={styles.label}>设备编号：</Text>
             <Text style={styles.value}>{deviceSn}</Text>
           </View>
         ) : null}

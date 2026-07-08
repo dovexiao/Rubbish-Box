@@ -71,6 +71,7 @@ const TEST_OT_STATUS = {
 interface TestReasonItem {
   failureReason: string;
   testTime: number;
+  result: number;
 }
 
 interface TestDeviceDetail {
@@ -553,12 +554,14 @@ export default function TestDeviceDetailScreen() {
             style={styles.historyUnqualifiedReason}
             onPress={() => setReasonPopupVisible(true)}
           >
-            历史不合格原因》
+            历史测试》
           </Text>
         )}
       </Flex>
     );
   };
+
+  console.log('detail', reasonList);
 
   return (
     <PageContainer
@@ -600,7 +603,7 @@ export default function TestDeviceDetailScreen() {
                       style={styles.lockContentText}
                       onPress={() => {
                         setCurrentReason(detail.testReason);
-                        unqualifiedPopupRef.current?.open();
+                        setUnqualifiedPopupVisible(true);
                       }}
                     >
                       查看原因
@@ -1974,24 +1977,36 @@ export default function TestDeviceDetailScreen() {
       <Popup
         visible={reasonPopupVisible}
         onClose={() => setReasonPopupVisible(false)}
-        title="历史不合格原因"
+        title="历史测试"
       >
         <View style={styles.popupBody}>
           {reasonList.map(item => (
             <View key={item.testTime} style={styles.popupLine}>
-              <Text style={styles.popupLineText}>
-                {new Date(item.testTime).toLocaleString()}
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  setCurrentReason(item.failureReason);
-                  setUnqualifiedPopupVisible(true);
-                }}
-              >
-                <Text style={[styles.popupLineText, { color: '#2F77FF' }]}>
-                  查看原因
+              <View style={styles.popupLineContent}>
+                <Text style={styles.popupLineText}>
+                  {new Date(item.testTime).toLocaleString()}
                 </Text>
-              </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.popupLineText,
+                    { color: item.result === 0 ? '#E86B6E' : '#70B601' },
+                  ]}
+                >
+                  检测{item.result === 0 ? '不合格' : '合格'}
+                </Text>
+              </View>
+              {item.result === 0 && (
+                <TouchableOpacity
+                  onPress={() => {
+                    setCurrentReason(item.failureReason);
+                    setUnqualifiedPopupVisible(true);
+                  }}
+                >
+                  <Text style={[styles.popupLineText, { color: '#2F77FF' }]}>
+                    查看原因
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           ))}
         </View>

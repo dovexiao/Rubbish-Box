@@ -359,7 +359,7 @@ const ManageComposite = () => {
         <View>
           {deviceSn && (
             <Flex justify="between" align="center" style={styles.itemContent}>
-              <Text style={styles.label}>SN码：</Text>
+              <Text style={styles.label}>设备编号：</Text>
               <Text style={styles.value}>{deviceSn}</Text>
             </Flex>
           )}

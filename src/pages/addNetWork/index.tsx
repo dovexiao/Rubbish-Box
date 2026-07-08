@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   Image,
+  type StatusBarStyle,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import PageContainer from '@/components/PageContainer';
@@ -25,6 +26,8 @@ export default function AddNetWork() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const [sn, setSn] = useState('');
+  const [statusBarStyle, setStatusBarStyle] =
+    useState<StatusBarStyle>('dark-content');
   const deviceSn = route.params?.deviceSn ?? '';
 
   const handlePress = () => {
@@ -35,13 +38,17 @@ export default function AddNetWork() {
   const scanCameraRef = useRef<CameraRef>(null);
 
   const handleScan = useCallback(() => {
-    scanCameraRef.current?.open();
+    Keyboard.dismiss();
+    setStatusBarStyle('light-content');
+    setTimeout(() => {
+      scanCameraRef.current?.open();
+    }, 350);
   }, []);
 
   const handleQrScan = useCallback(async (value: string) => {
     const snValue = value.trim();
     if (!snValue) {
-      return { ok: false as const, message: '未识别到SN码' };
+      return { ok: false as const, message: '未识别到设备编号' };
     }
     setSn(snValue);
     scanCameraRef.current?.close();
@@ -77,6 +84,7 @@ export default function AddNetWork() {
   return (
     <PageContainer
       backgroundColor="#FFFFFF"
+      statusBarStyle={statusBarStyle}
       statusBarBackgroundColor={'transparent'}
       scrollable={false}
       safeAreaEdges={['top']}
@@ -90,13 +98,13 @@ export default function AddNetWork() {
       <TouchableWithoutFeedback onPress={handlePress}>
         <View style={styles.contentBox}>
           <Text style={styles.contentBoxItemTitle}>
-            {deviceSn ? `原SN码： ${deviceSn}` : '添加433网关'}
+            {deviceSn ? `原设备编号： ${deviceSn}` : '添加433网关'}
           </Text>
           <View style={styles.contentBoxContent}>
             <View style={styles.contentBoxContentTop}>
               <View style={styles.contentBoxContentTopLeft}>
                 <Text style={styles.requiredLabel}>*</Text>
-                <Text style={styles.contentBoxContentTopTitle}>SN码:</Text>
+                <Text style={styles.contentBoxContentTopTitle}>设备编号:</Text>
               </View>
               <TouchableOpacity onPress={handleScan}>
                 <AppIcon name="camera1" size={px(20)} color="#333333" />
@@ -105,7 +113,7 @@ export default function AddNetWork() {
 
             <TextInput
               style={styles.contentBoxContentTopInput}
-              placeholder="请输入SN码"
+              placeholder="请输入设备编号"
               value={sn}
               onChangeText={setSn}
             />
@@ -127,7 +135,8 @@ export default function AddNetWork() {
         present="modal"
         mask={false}
         maskClosable={false}
-        title="扫描SN码"
+        title="扫描设备编号"
+        onClose={() => setStatusBarStyle('dark-content')}
         onScan={handleQrScan}
         content={
           <View style={styles.scanFrameWrapper}>
