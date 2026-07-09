@@ -9,6 +9,14 @@
   overflow: auto;
 }
 
+.navTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
 .infoBox {
   width: 100%;
   height: 60px;

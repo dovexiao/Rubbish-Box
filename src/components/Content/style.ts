@@ -271,4 +271,33 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     width: '100%',
   },
+  videoContent: {
+    position: 'relative',
+    width: '100%',
+    height: px(160),
+    borderRadius: px(12),
+    overflow: 'hidden',
+    marginTop: px(12),
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  video: {
+    width: '100%',
+    height: '100%',
+  },
+  videoPlayBtn: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  videoPlayCircle: {
+    width: px(120),
+    height: px(120),
+    borderRadius: px(60),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

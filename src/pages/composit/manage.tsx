@@ -35,6 +35,7 @@ const ManageComposite = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const lockId: number | string | undefined = route.params?.lockId;
+  const deviceSn = route.params?.gatewayKeySn || undefined;
 
   const [list, setList] = useState<ListItem[]>([]);
   const [complete, setComplete] = useState(false);
@@ -285,7 +286,16 @@ const ManageComposite = () => {
       safeAreaEdges={['top', 'bottom']}
       scrollable={false}
       pageNavProps={{
-        text: '编辑组合设备',
+        customTitle: (
+          <View style={styles.navTitle}>
+            <Text style={styles.navTitleText}>编辑组合设备</Text>
+            {deviceSn ? (
+              <View style={styles.gatewayName}>
+                <Text style={styles.gatewayNameText}>433网关</Text>
+              </View>
+            ) : null}
+          </View>
+        ),
         showBack: true,
         background: '#FFFFFF',
       }}
@@ -294,10 +304,42 @@ const ManageComposite = () => {
           justify="center"
           style={[styles.btnContainerWrapper, { paddingHorizontal: px(16) }]}
         >
+          {!!deviceSn && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={{
+                flex: 1,
+                maxWidth: px(188),
+                backgroundColor: '#ffffff',
+                borderRadius: px(16),
+                height: px(48),
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderWidth: 1,
+                borderColor: 'rgba(0, 0, 0, 0.1)',
+              }}
+              onPress={() => {
+                navigation.navigate('AddNetWork', {
+                  deviceSn: deviceSn,
+                });
+              }}
+            >
+              <Text
+                style={[
+                  styles.buttonTitle,
+                  { color: '#999999', fontWeight: '400' },
+                ]}
+              >
+                网关变更
+              </Text>
+            </TouchableOpacity>
+          )}
+
           <TouchableOpacity
             activeOpacity={0.8}
             style={{
-              width: px(188),
+              maxWidth: px(188),
+              flex: 1,
               backgroundColor: '#333333',
               borderRadius: px(16),
               height: px(48),
@@ -315,6 +357,12 @@ const ManageComposite = () => {
     >
       <View style={{ flex: 1 }}>
         <View>
+          {deviceSn && (
+            <Flex justify="between" align="center" style={styles.itemContent}>
+              <Text style={styles.label}>设备编号：</Text>
+              <Text style={styles.value}>{deviceSn}</Text>
+            </Flex>
+          )}
           <Flex justify="between" align="center" style={styles.itemContent}>
             <Text style={styles.label}>组合名称：</Text>
             <TextInput
@@ -342,7 +390,7 @@ const ManageComposite = () => {
                 void openAddPopup();
               }}
             >
-              <Text style={styles.addBtnText}>新增【市电款】设备</Text>
+              <Text style={styles.addBtnText}>新增设备</Text>
               <AppIcon name="add" size={px(12)} color="#333333" />
             </Flex>
           </Flex>
@@ -393,7 +441,7 @@ const ManageComposite = () => {
             style={styles.paddingH16}
           >
             <Text style={{ width: px(24), height: px(24) }}></Text>
-            <Text style={styles.popTitle}>新增【市电款】设备</Text>
+            <Text style={styles.popTitle}>新增设备</Text>
             <AppIcon
               onPress={() => setAddDeviceVisible(false)}
               name={'close'}

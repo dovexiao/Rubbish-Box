@@ -110,11 +110,12 @@ const LockVisual: React.FC<LockVisualProps> = props => {
   const handlePressAction = () => {
     if (!showActionButton) return;
     if (detail?.isGroup) {
-      navigation.navigate('CombineDevice', {
-        id: detail?.id,
-        lockName: detail?.lockName,
-        type: false,
-      });
+      // navigation.navigate('CombineDevice', {
+      //   id: detail?.id,
+      //   lockName: detail?.lockName,
+      //   type: false,
+      // });
+      navigation.navigate('NetWorkMiddle' as any);
       return;
     } else {
       navigation.navigate('BindDevice');
@@ -217,27 +218,34 @@ const LockVisual: React.FC<LockVisualProps> = props => {
           </View>
 
           {detail?.isGroup && (
-            <Flex
-              direction="row"
-              justify="center"
-              align={'center'}
-              style={styles.groupCount}
-            >
-              <AppIcon
-                style={{ marginRight: px(4), marginTop: px(4) }}
-                name={'multiplication'}
-                size={px(14)}
-                color={themeType === 'dark' ? '#ffffff' : '#333333'}
-              />
-              <Text
-                style={[
-                  styles.groupCountText,
-                  { color: themeType === 'dark' ? '#ffffff' : '#333333' },
-                ]}
+            <>
+              <Flex
+                direction="row"
+                justify="center"
+                align={'center'}
+                style={styles.groupCount}
               >
-                {detail?.groupCount}
-              </Text>
-            </Flex>
+                <AppIcon
+                  style={{ marginRight: px(4), marginTop: px(4) }}
+                  name={'multiplication'}
+                  size={px(14)}
+                  color={themeType === 'dark' ? '#ffffff' : '#333333'}
+                />
+                <Text
+                  style={[
+                    styles.groupCountText,
+                    { color: themeType === 'dark' ? '#ffffff' : '#333333' },
+                  ]}
+                >
+                  {detail?.groupCount}
+                </Text>
+              </Flex>
+              {!!detail?.isGateway && (
+                <Flex style={styles.gatewayTagContainer}>
+                  <Text style={styles.gatewayTag}>433网关</Text>
+                </Flex>
+              )}
+            </>
           )}
         </Flex>
       ) : null}

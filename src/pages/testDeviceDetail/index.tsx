@@ -71,6 +71,7 @@ const TEST_OT_STATUS = {
 interface TestReasonItem {
   failureReason: string;
   testTime: number;
+  result: number;
 }
 
 interface TestDeviceDetail {
@@ -115,13 +116,14 @@ interface TestDeviceDetail {
 
 type RouteParams = {
   deviceNo: string;
+  type: number;
 };
 
 export default function TestDeviceDetailScreen() {
   const navigation = useAppNavigation();
   const route = useRoute<any>();
   const deviceNo: string = route.params?.deviceNo;
-
+  const type = route.params?.type ?? 1;
   const [detail, setDetail] = useState<TestDeviceDetail | null>(null);
   const [testResult, setTestResult] = useState<0 | 1 | 2 | undefined>(0);
   const [reasonList, setReasonList] = useState<TestReasonItem[]>([]);
@@ -151,7 +153,7 @@ export default function TestDeviceDetailScreen() {
   const fetchDetail = useCallback(async () => {
     if (!deviceNo) return;
     try {
-      const res: any = await getTestDeviceDetail({ deviceNo });
+      const res: any = await getTestDeviceDetail({ deviceNo, testType: type });
       const d: TestDeviceDetail = res?.data ?? res ?? {};
       setDetail(d);
       setTestResult(d.testReason ? (d.testResult as any) : undefined);
@@ -160,18 +162,18 @@ export default function TestDeviceDetailScreen() {
     } finally {
       setLoading(false);
     }
-  }, [deviceNo]);
+  }, [deviceNo, type]);
 
   const fetchReasons = useCallback(async () => {
     if (!deviceNo) return;
     try {
-      const res: any = await getTestDeviceReason({ deviceNo });
+      const res: any = await getTestDeviceReason({ deviceNo, testType: type });
       const list: TestReasonItem[] = res?.list || res?.data?.list || [];
       setReasonList(list);
     } catch (e) {
       console.error('getTestDeviceReason error:', e);
     }
-  }, [deviceNo]);
+  }, [deviceNo, type]);
 
   const checkConnection = useCallback(async () => {
     if (!detail?.lockId) {
@@ -245,7 +247,6 @@ export default function TestDeviceDetailScreen() {
             ) {
               hasShownSwitchSuccess = true;
               hideLoading();
-              showToast({ title: '切换成功', icon: 'info' });
             }
             // 若后端返回了最终测试结果，则刷新详情并停止轮询
             const tr = (res?.data ?? res)?.testResult;
@@ -299,11 +300,18 @@ export default function TestDeviceDetailScreen() {
     }, [detail, checkConnection]),
   );
 
-  useEffect(() => {
-    if (detail?.deviceNo) {
-      handleTestDeviceReslt();
-    }
-  }, [detail?.deviceNo, handleTestDeviceReslt]);
+  useFocusEffect(
+    useCallback(() => {
+      if (detail?.deviceNo) {
+        handleTestDeviceReslt();
+      }
+
+      return () => {
+        testStatusPollingRef.current?.stop?.();
+        testStatusPollingRef.current = null;
+      };
+    }, [detail?.deviceNo, handleTestDeviceReslt]),
+  );
 
   useEffect(() => {
     return () => {
@@ -319,6 +327,7 @@ export default function TestDeviceDetailScreen() {
       const payload: any = {
         deviceNo,
         ...params,
+        testType: type,
       };
       const res: any = await modifyTestDevice(payload);
       if (res === true || Number(res?.code) === 200) {
@@ -399,7 +408,7 @@ export default function TestDeviceDetailScreen() {
     if (!deviceNo) return;
     showLoading({ title: '重测中...' });
     try {
-      const res: any = await resetTestDevice({ deviceNo });
+      const res: any = await resetTestDevice({ deviceNo, testType: type });
       if (res === true || Number(res?.code) === 200) {
         hideLoading();
         await fetchDetail();
@@ -505,6 +514,8 @@ export default function TestDeviceDetailScreen() {
                             testResult: TEST_RESULT.QUALIFIED,
                             aboveCheckMethod: 1,
                           } as Partial<TestDeviceDetail>);
+
+                          await fetchDetail();
                         } else {
                           hideLoading();
                           showToast({
@@ -550,14 +561,15 @@ export default function TestDeviceDetailScreen() {
             style={styles.historyUnqualifiedReason}
             onPress={() => setReasonPopupVisible(true)}
           >
-            历史不合格原因》
+            历史测试》
           </Text>
         )}
       </Flex>
     );
   };
 
-  console.log(detail, 'detail?.model');
+  console.log('detail', reasonList);
+
   return (
     <PageContainer
       backgroundColor="#FFFFFF"
@@ -598,7 +610,7 @@ export default function TestDeviceDetailScreen() {
                       style={styles.lockContentText}
                       onPress={() => {
                         setCurrentReason(detail.testReason);
-                        unqualifiedPopupRef.current?.open();
+                        setUnqualifiedPopupVisible(true);
                       }}
                     >
                       查看原因
@@ -985,7 +997,7 @@ export default function TestDeviceDetailScreen() {
                       isTouchView
                       onPress={() => {
                         if (!detail.keyCount) {
-                          if (detail.buttonKeyFlag) {
+                          if (!detail.buttonKeyFlag) {
                             navigation.navigate('RemoteKeyPairingVideo');
                           } else {
                             navigation.navigate('RemoteKeyPairingVideo', {
@@ -1972,24 +1984,36 @@ export default function TestDeviceDetailScreen() {
       <Popup
         visible={reasonPopupVisible}
         onClose={() => setReasonPopupVisible(false)}
-        title="历史不合格原因"
+        title="历史测试"
       >
         <View style={styles.popupBody}>
           {reasonList.map(item => (
             <View key={item.testTime} style={styles.popupLine}>
-              <Text style={styles.popupLineText}>
-                {new Date(item.testTime).toLocaleString()}
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  setCurrentReason(item.failureReason);
-                  setUnqualifiedPopupVisible(true);
-                }}
-              >
-                <Text style={[styles.popupLineText, { color: '#2F77FF' }]}>
-                  查看原因
+              <View style={styles.popupLineContent}>
+                <Text style={styles.popupLineText}>
+                  {new Date(item.testTime).toLocaleString()}
                 </Text>
-              </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.popupLineText,
+                    { color: item.result === 0 ? '#E86B6E' : '#70B601' },
+                  ]}
+                >
+                  检测{item.result === 0 ? '不合格' : '合格'}
+                </Text>
+              </View>
+              {item.result === 0 && (
+                <TouchableOpacity
+                  onPress={() => {
+                    setCurrentReason(item.failureReason);
+                    setUnqualifiedPopupVisible(true);
+                  }}
+                >
+                  <Text style={[styles.popupLineText, { color: '#2F77FF' }]}>
+                    查看原因
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           ))}
         </View>
@@ -2007,6 +2031,7 @@ export default function TestDeviceDetailScreen() {
             testResult: TEST_RESULT.FAIL,
             testReason: reason.trim(),
           } as any);
+          await fetchDetail();
           return true;
         }}
       />

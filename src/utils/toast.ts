@@ -70,11 +70,23 @@ export function showToast(options: ShowToastOptions | string): void {
   // 如果有 icon，退回到 @ant-design/react-native 旧逻辑
   scheduleToast(() => {
     if (icon === 'success') {
-      Toast.success({ content: title, duration: seconds });
+      Toast.success({
+        content: title,
+        duration: seconds,
+        styles: { content: { textAlign: 'center' } },
+      });
     } else if (icon === 'error') {
-      Toast.fail({ content: title, duration: seconds });
+      Toast.fail({
+        content: title,
+        duration: seconds,
+        styles: { content: { textAlign: 'center' } },
+      });
     } else {
-      Toast.info({ content: title, duration: seconds });
+      Toast.info({
+        content: title,
+        duration: seconds,
+        styles: { content: { textAlign: 'center' } },
+      });
     }
   });
 }

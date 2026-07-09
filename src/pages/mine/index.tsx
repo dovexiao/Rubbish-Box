@@ -29,6 +29,7 @@ type MineInfo = {
   isTest?: boolean;
   inPushFlag?: number; //站内推送开关：0-关闭 1-开启
   mobPushFlag?: number; //设备端推送开关：0-关闭 1-开启，无设备注册时为null
+  isStoreTest?: boolean;
 };
 
 type OrderStat = {
@@ -178,6 +179,7 @@ export default function Mine() {
             isTest: info?.isTest,
             inPushFlag: info?.inPushFlag, //站内推送开关：0-关闭 1-开启
             mobPushFlag: info?.mobPushFlag, //设备端推送开关：0-关闭 1-开启，无设备注册时为null
+            isStoreTest: info?.isStoreTest,
           }),
       },
     ],

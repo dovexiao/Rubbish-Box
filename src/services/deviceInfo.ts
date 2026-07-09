@@ -139,13 +139,13 @@ export const testStartPairingResult = createFetch<any, any>(
 // 绑定钥匙
 export const testBindKey = createFetch<any, any>(
   '/boke/deviceTest/key/bind',
-  'GET',
+  'POST',
 );
 
 //绑定钥匙结果
 export const testBindKeyResult = createFetch<any, any>(
   '/boke/deviceTest/key/bindRes',
-  'GET',
+  'POST',
 );
 
 export const getDeviceTestKeyResponse = createFetch<any, any>(
@@ -162,5 +162,17 @@ export const allDeleteKey = createFetch<any, any>(
 // 全部删除钥匙结果
 export const allDeleteKeyResult = createFetch<any, any>(
   '/boke/userLock/key/unbindAllRes',
+  'POST',
+);
+
+// 校验sn
+export const checkSn = createFetch<any, any>(
+  '/boke/userLock/gateway/group/bind',
+  'POST',
+);
+
+// 网关变更
+export const gatewayChange = createFetch<any, any>(
+  '/boke/userLock/update/gateway/group',
   'POST',
 );

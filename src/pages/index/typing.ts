@@ -156,6 +156,12 @@ export interface LockInfoDTO {
   resetTime: string;
 
   closeCarCheck: number;
+
+  /* 是否是433网关 */
+  isGateway?: number;
+
+  /* 433网关SN码 */
+  gatewaySn?: string;
 }
 
 interface LowBatteryNoticeList {

@@ -230,6 +230,11 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
   },
+  popupLineContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: px(12),
+  },
 });
 
 export default styles;

@@ -590,8 +590,6 @@ const DeviceInfo = () => {
     getDeviceKeys();
   }, [lockInfo?.deviceNo]);
 
-  // console.log('===lockInfo', lockInfo);
-
   return (
     <PageContainer
       ref={pageContainerRef}
@@ -919,7 +917,6 @@ const DeviceInfo = () => {
               </TouchableOpacity>
             </Flex>
           )}
-
 
           {lockInfo?.closeCarCheck === 0 && lockInfo?.has433Key && (
             <Flex style={styles.cardRows}>

@@ -1,53 +1,39 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   Image,
-  ListRenderItem,
-  StyleSheet,
+  ImageStyle,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { PageContainer, TextInput, Flex } from '@/components';
+import { PageContainer, TextInput, Flex, Popup } from '@/components';
 import AppIcon from '@/components/AppIcon';
 import { useRoute } from '@react-navigation/native';
 import { defaultName, groupChooseList, saveGroup } from '@/services';
 import { hideLoading, setStorage, showLoading, showToast } from '@/utils';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
-import { fontSize, px } from '@/utils/ui';
+import { px } from '@/utils/ui';
+import { styles } from './styles';
+import IconFont from '@/iconfont';
 
 type DeviceItem = {
   id: number;
   lockName?: string;
   imageUrl?: string;
+  checked?: boolean;
 };
-
-const PAGE_SIZE = 20;
 
 export default function CombineDeviece() {
   const navigation = useAppNavigation();
   const route = useRoute<any>();
-
-  const lockNameFromRoute: string | undefined = route.params?.lockName;
-  const derivedCurrentDeviceId: number | undefined = useMemo(() => {
-    const lockId = route.params?.id;
-    const type = route.params?.type;
-    if (type && String(type) !== 'false' && lockId != null) {
-      return Number(lockId);
-    }
-    return undefined;
-  }, [route.params?.id, route.params?.type]);
+  const deviceSn = route.params?.deviceSn ?? '';
 
   const [groupName, setGroupName] = useState('');
-  const [selectedDevices, setSelectedDevices] = useState<number[]>([]);
   const [deviceList, setDeviceList] = useState<DeviceItem[]>([]);
-  const [total, setTotal] = useState(0);
-  const [complete, setComplete] = useState(false);
-
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [addDeviceVisible, setAddDeviceVisible] = useState(false);
+  const [chooseList, setChooseList] = useState<DeviceItem[]>([]);
+  const [chooseLoading, setChooseLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -65,107 +51,115 @@ export default function CombineDeviece() {
     })();
   }, []);
 
-  const loadList = useCallback(
-    async (refresh: boolean) => {
-      if (refresh) {
-        setRefreshing(true);
-      } else {
-        setLoadingMore(true);
-      }
-      try {
-        const offset = refresh ? 0 : deviceList.length;
-        const res = await groupChooseList({
-          offset,
-          pageSize: PAGE_SIZE,
-          id: derivedCurrentDeviceId || 0,
-          lockName: lockNameFromRoute || undefined,
-        } as any);
-
-        if (res?.code === 200 && res?.success) {
-          const data: any = res?.data || {};
-          const rows: DeviceItem[] = Array.isArray(data.list)
-            ? data.list
-            : data.list ?? [];
-
-          setTotal(Number(data.total || 0));
-          setComplete(rows.length < PAGE_SIZE);
-
-          setDeviceList(prev => {
-            if (refresh) return rows;
-            const exists = new Set(prev.map(it => it.id));
-            const merged = [...prev];
-            rows.forEach(it => {
-              if (!exists.has(it.id)) merged.push(it);
-            });
-            return merged;
-          });
-
-          setSelectedDevices(prev => {
-            if (refresh) {
-              return derivedCurrentDeviceId ? [derivedCurrentDeviceId] : [];
-            }
-            if (
-              derivedCurrentDeviceId &&
-              !prev.includes(derivedCurrentDeviceId)
-            ) {
-              return [derivedCurrentDeviceId, ...prev];
-            }
-            return prev;
-          });
-        } else {
-          showToast({ title: res?.msg || res?.message, icon: 'info' });
-        }
-      } catch {
-        showToast({ title: '加载设备列表失败', icon: 'info' });
-      } finally {
-        setInitialLoading(false);
-        setRefreshing(false);
-        setLoadingMore(false);
-      }
-    },
-    [derivedCurrentDeviceId, deviceList.length, lockNameFromRoute],
-  );
-
-  useEffect(() => {
-    void loadList(true);
-    const unsubscribe = navigation.addListener('focus', () => {
-      void loadList(true);
-    });
-    return unsubscribe;
-  }, [loadList, navigation]);
-
-  const toggleDevice = useCallback(
-    (deviceId: number) => {
-      if (derivedCurrentDeviceId === deviceId) return;
-      setSelectedDevices(prev => {
-        const isSelected = prev.includes(deviceId);
-        return isSelected
-          ? prev.filter(d => d !== deviceId)
-          : [...prev, deviceId];
-      });
-    },
-    [derivedCurrentDeviceId],
-  );
-
   const canCreate = useMemo(() => {
-    return !!groupName?.trim() && selectedDevices.length > 1;
-  }, [groupName, selectedDevices.length]);
+    return !!groupName?.trim() && deviceList.length > 1;
+  }, [groupName, deviceList.length]);
+
+  const hasSelectedInPopup = useMemo(
+    () => chooseList.some(item => item.checked),
+    [chooseList],
+  );
+
+  const syncChooseChecked = useCallback(
+    (rows: DeviceItem[]) => {
+      const exists = new Set(deviceList.map(item => item.id));
+      return rows.map(item => ({
+        ...item,
+        checked: exists.has(item.id),
+      }));
+    },
+    [deviceList],
+  );
+
+  const openAddPopup = useCallback(async () => {
+    setAddDeviceVisible(true);
+
+    if (chooseList.length > 0) {
+      setChooseList(prev => syncChooseChecked(prev));
+      return;
+    }
+    if (chooseLoading) return;
+
+    try {
+      setChooseLoading(true);
+      const res = await groupChooseList({
+        pageSize: 50,
+        offset: 0,
+      } as any);
+
+      if (res.code === 200 && res.success) {
+        const data: any = res.data || {};
+        const rows: DeviceItem[] = Array.isArray(data.list)
+          ? data.list
+          : data.list ?? [];
+        setChooseList(syncChooseChecked(rows));
+      } else {
+        showToast({
+          title: res.msg || res.message || '加载可选设备失败',
+          icon: 'info',
+        });
+      }
+    } catch {
+      showToast({ title: '加载可选设备失败', icon: 'info' });
+    } finally {
+      setChooseLoading(false);
+    }
+  }, [chooseList.length, chooseLoading, syncChooseChecked]);
+
+  const toggleChooseItem = useCallback((item: DeviceItem) => {
+    setChooseList(prev =>
+      prev.map(it =>
+        it.id === item.id ? { ...it, checked: !it.checked } : it,
+      ),
+    );
+  }, []);
+
+  const handleAddConfirm = useCallback(() => {
+    const selected = chooseList.filter(item => item.checked);
+    if (selected.length === 0) {
+      setAddDeviceVisible(false);
+      return;
+    }
+
+    const currentIds = new Set(deviceList.map(item => item.id));
+    const newItems = selected.filter(item => !currentIds.has(item.id));
+
+    if (newItems.length > 0) {
+      setDeviceList(prev => [...newItems, ...prev]);
+    }
+    setAddDeviceVisible(false);
+  }, [chooseList, deviceList]);
+
+  const handleRemoveDevice = useCallback((id: number) => {
+    setDeviceList(prev => prev.filter(item => item.id !== id));
+    setChooseList(prev =>
+      prev.map(it => (it.id === id ? { ...it, checked: false } : it)),
+    );
+  }, []);
 
   const handleCreateGroup = useCallback(async () => {
     if (!groupName?.trim()) {
       showToast({ title: '请填写设备名称', icon: 'info' });
       return;
     }
-    if (selectedDevices.length < 2) {
+    if (deviceList.length < 2) {
       showToast({ title: '至少选择两个设备', icon: 'info' });
       return;
     }
 
     showLoading({ title: '创建中...' });
     try {
-      const res = await saveGroup({
-        ids: selectedDevices,
+      const params: any = {
+        ids: deviceList.map(item => item.id),
         lockName: groupName.trim(),
+      };
+
+      if (deviceSn) {
+        params.gatewayKeySn = deviceSn;
+      }
+
+      const res = await saveGroup({
+        ...params,
       } as any);
 
       if (res?.code === 200 && res?.success) {
@@ -182,7 +176,54 @@ export default function CombineDeviece() {
       hideLoading();
       showToast({ title: '创建失败', icon: 'info' });
     }
-  }, [groupName, navigation, selectedDevices]);
+  }, [groupName, navigation, deviceList]);
+
+  const renderItem = useCallback(
+    ({ item }: { item: DeviceItem }) => {
+      return (
+        <Flex justify="between" align="center" style={styles.deviceItem}>
+          <Image
+            source={{ uri: item.imageUrl || '' }}
+            style={{ width: px(36), height: px(36) } as ImageStyle}
+          />
+          <Text
+            numberOfLines={1}
+            style={[styles.username, { flex: 1, marginLeft: px(12) }]}
+          >
+            {item.lockName || ''}
+          </Text>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => handleRemoveDevice(item.id)}
+          >
+            <Image
+              source={{
+                uri: 'https://g.18qjz.cn/img/boklock/icon_delete.png',
+              }}
+              style={{ width: px(20), height: px(20) } as ImageStyle}
+            />
+          </TouchableOpacity>
+        </Flex>
+      );
+    },
+    [handleRemoveDevice],
+  );
+
+  const keyExtractor = useCallback(
+    (item: DeviceItem, index: number) => String(item.id ?? index),
+    [],
+  );
+
+  const empty = (
+    <View style={styles.emptyContainer}>
+      <Image
+        source={{ uri: 'https://g.18qjz.cn/img/boklock/order_empty.png' }}
+        style={styles.emptyImage}
+        resizeMode="contain"
+      />
+      <Text style={styles.emptyText}>空空如也</Text>
+    </View>
+  );
 
   const footer = (
     <View style={styles.pageFooter}>
@@ -197,56 +238,6 @@ export default function CombineDeviece() {
     </View>
   );
 
-  const renderItem: ListRenderItem<DeviceItem> = useCallback(
-    ({ item }) => {
-      const checked =
-        selectedDevices.includes(item.id) || derivedCurrentDeviceId === item.id;
-      return (
-        <TouchableOpacity
-          activeOpacity={0.85}
-          style={styles.deviceItem}
-          onPress={() => toggleDevice(item.id)}
-        >
-          <Image
-            source={{ uri: item.imageUrl || '' }}
-            style={styles.deviceImg}
-            resizeMode="contain"
-          />
-          <Text style={styles.itemName} numberOfLines={1}>
-            {item.lockName || ''}
-          </Text>
-          <Image
-            source={{
-              uri: `https://g.18qjz.cn/img/boklock/${
-                checked ? 'radio_checked' : 'radio_default'
-              }.png`,
-            }}
-            style={styles.radioImg}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-      );
-    },
-    [derivedCurrentDeviceId, selectedDevices, toggleDevice],
-  );
-
-  const empty = (
-    <View style={styles.emptyContainer}>
-      <Image
-        source={{ uri: 'https://g.18qjz.cn/img/boklock/order_empty.png' }}
-        style={styles.emptyImage}
-        resizeMode="contain"
-      />
-      <Text style={styles.emptyText}>空空如也</Text>
-    </View>
-  );
-
-  const listFooter = loadingMore ? (
-    <View style={{ paddingVertical: px(12) }}>
-      <ActivityIndicator color="#333333" />
-    </View>
-  ) : null;
-
   return (
     <PageContainer
       backgroundColor="#FFFFFF"
@@ -255,16 +246,30 @@ export default function CombineDeviece() {
       safeAreaEdges={['top', 'bottom']}
       scrollable={false}
       pageNavProps={{
-        text: '创建组合设备',
+        customTitle: (
+          <View style={styles.navTitle}>
+            <Text style={styles.navTitleText}>创建组合设备</Text>
+            {deviceSn ? (
+              <View style={styles.gatewayName}>
+                <Text style={styles.gatewayNameText}>433网关</Text>
+              </View>
+            ) : null}
+          </View>
+        ),
         showBack: true,
         background: '#FFFFFF',
       }}
       navBorder
-      loading={initialLoading}
       footer={footer}
       padding={0}
     >
       <View style={styles.container}>
+        {deviceSn ? (
+          <View style={styles.row}>
+            <Text style={styles.label}>设备编号：</Text>
+            <Text style={styles.value}>{deviceSn}</Text>
+          </View>
+        ) : null}
         <View style={styles.row}>
           <Text style={styles.label}>组合名称：</Text>
           <TextInput
@@ -282,164 +287,139 @@ export default function CombineDeviece() {
 
         <View style={styles.deviceSectionBox}>
           <Text style={styles.deviceSection}>选择设备：</Text>
-          <Text style={styles.bindDeviceToast}>
-            (仅市电款、新版电池款的地锁可创建组合设备)
-          </Text>
+          <TouchableOpacity
+            style={styles.roundBg}
+            onPress={() => {
+              void openAddPopup();
+            }}
+          >
+            <Text style={styles.labels}>新增设备</Text>
+            <IconFont name="add" size={14} color="#333333" />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.deviceContent}>
-          {deviceList.length === 0 && !initialLoading ? (
+          {deviceList.length === 0 ? (
             empty
           ) : (
             <FlatList
               data={deviceList}
-              keyExtractor={item => String(item.id)}
+              keyExtractor={keyExtractor}
               renderItem={renderItem}
-              onEndReachedThreshold={0.3}
-              onEndReached={() => {
-                if (!refreshing && !loadingMore && !complete) {
-                  void loadList(false);
-                }
-              }}
-              refreshing={refreshing}
-              onRefresh={() => void loadList(true)}
-              ListFooterComponent={listFooter}
               showsVerticalScrollIndicator={false}
             />
           )}
         </View>
       </View>
+
+      <Popup
+        visible={addDeviceVisible}
+        showClose={false}
+        onClose={() => setAddDeviceVisible(false)}
+      >
+        <View style={{ paddingTop: px(16) }}>
+          <Flex
+            direction="row"
+            justify="between"
+            align="start"
+            style={styles.paddingH16}
+          >
+            <Text style={{ width: px(24), height: px(24) }}></Text>
+            <Text style={styles.popTitle}>新增设备</Text>
+            <AppIcon
+              onPress={() => setAddDeviceVisible(false)}
+              name={'close'}
+              size={px(24)}
+              color={'#333333'}
+            />
+          </Flex>
+          <Text style={styles.popSubTip}>仅可选择未被使用的地锁</Text>
+          <View style={{ flex: 1 }}>
+            {chooseLoading ? (
+              <Text style={{ textAlign: 'center', marginTop: px(16) }}>
+                加载中...
+              </Text>
+            ) : (
+              <FlatList
+                data={chooseList}
+                style={{ maxHeight: px(200) }}
+                keyExtractor={(item, index) => String(item.id ?? index)}
+                renderItem={({ item }) => (
+                  <Flex
+                    justify="between"
+                    align="center"
+                    style={styles.card}
+                    isTouchView
+                    onPress={() => toggleChooseItem(item)}
+                  >
+                    <Image
+                      source={{
+                        uri: item.imageUrl,
+                      }}
+                      style={{ width: px(36), height: px(36) } as ImageStyle}
+                    />
+                    <Text
+                      numberOfLines={1}
+                      style={[styles.username, { flex: 1, marginLeft: px(12) }]}
+                    >
+                      {item.lockName}
+                    </Text>
+                    <Image
+                      source={{
+                        uri: item.checked
+                          ? 'https://g.18qjz.cn/img/boklock/radio_checked.png'
+                          : 'https://g.18qjz.cn/img/boklock/radio_default.png',
+                      }}
+                      style={{ width: px(20), height: px(20) } as ImageStyle}
+                    />
+                  </Flex>
+                )}
+                ListEmptyComponent={
+                  <Flex
+                    justify="center"
+                    align="center"
+                    style={{ marginTop: px(32) }}
+                  >
+                    <Image
+                      source={{
+                        uri: 'https://g.18qjz.cn/img/boklock/empty.png',
+                      }}
+                      style={{ width: px(80), height: px(80) } as ImageStyle}
+                    />
+                  </Flex>
+                }
+              />
+            )}
+          </View>
+
+          <Flex
+            justify="between"
+            align="center"
+            style={[styles.btnContainerWrapper, styles.paddingH16]}
+          >
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={[styles.btnContainer, styles.btnContainerClose]}
+              onPress={() => setAddDeviceVisible(false)}
+            >
+              <Text style={styles.btnContainerCloseText}>取消</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={[
+                styles.btnContainer,
+                {
+                  backgroundColor: hasSelectedInPopup ? '#333333' : '#999999',
+                },
+              ]}
+              disabled={!hasSelectedInPopup}
+              onPress={handleAddConfirm}
+            >
+              <Text style={styles.btnContainerConfirmText}>确定</Text>
+            </TouchableOpacity>
+          </Flex>
+        </View>
+      </Popup>
     </PageContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-    flexDirection: 'column',
-    alignItems: 'center',
-    paddingLeft: px(24),
-    paddingRight: px(24),
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    marginTop: px(12),
-  },
-  label: {
-    fontSize: fontSize(14),
-    fontWeight: '700',
-    color: '#333333',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    width: px(88),
-  },
-  input: {
-    flex: 1,
-    fontSize: fontSize(14),
-    textAlign: 'right',
-  },
-  deviceSectionBox: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  deviceSection: {
-    fontWeight: '700',
-    fontSize: fontSize(14),
-    color: '#333333',
-    lineHeight: px(20),
-    textAlign: 'left',
-    marginTop: px(16),
-    marginBottom: px(12),
-  },
-  bindDeviceToast: {
-    height: px(17),
-    fontWeight: '400',
-    fontSize: fontSize(12),
-    color: '#ff873d',
-    lineHeight: px(17),
-    textAlign: 'left',
-  },
-  deviceContent: {
-    width: '100%',
-    flex: 1,
-  },
-  deviceItem: {
-    width: '100%',
-    height: px(60),
-    backgroundColor: '#f7f7fb',
-    borderRadius: px(12),
-    padding: px(12),
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: px(12),
-  },
-  deviceImg: {
-    width: px(36),
-    height: px(36),
-  },
-  itemName: {
-    fontWeight: '700',
-    fontSize: fontSize(14),
-    color: '#333333',
-    lineHeight: px(20),
-    textAlign: 'left',
-    flex: 1,
-    paddingLeft: px(12),
-  },
-  radioImg: {
-    width: px(20),
-    height: px(20),
-  },
-  pageFooter: {
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: px(8),
-  },
-  createToast: {
-    marginBottom: px(12),
-    fontWeight: '400',
-    fontSize: fontSize(14),
-    color: '#999999',
-    lineHeight: px(20),
-    textAlign: 'center',
-  },
-  sureCreateBtn: {
-    width: px(196),
-    height: px(48),
-    backgroundColor: '#333333',
-    borderRadius: px(16),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sureCreateBtnText: {
-    color: '#ffffff',
-    fontSize: fontSize(16),
-    fontWeight: '500',
-  },
-  disabledBtn: {
-    backgroundColor: '#999999',
-  },
-  emptyContainer: {
-    flexGrow: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: '100%',
-    marginTop: px(50),
-  },
-  emptyImage: {
-    width: px(120),
-    height: px(120),
-  },
-  emptyText: {
-    fontSize: fontSize(14),
-    color: '#666666',
-    marginTop: px(16),
-  },
-});

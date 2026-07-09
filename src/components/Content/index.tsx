@@ -51,6 +51,7 @@ import { bluetoothOperationLockFallStatusStore } from '@/store/store';
 import { PopConfirmRef } from '../popConfirm';
 import PopCenter from '../PopCenter';
 import { px } from '@/utils/ui';
+import Video from 'react-native-video';
 
 interface ContentProps {
   detail?: LockInfoDTO;
@@ -85,7 +86,9 @@ const Content: React.FC<ContentProps> = ({
   const [lockFallStatus, setLockStatus] = useAtom(
     bluetoothOperationLockFallStatusStore,
   );
-
+  const [videoKey, setVideoKey] = useState(0);
+  const [showPlayBtn, setShowPlayBtn] = useState(true);
+  const [paused, setPaused] = useState(true);
   const popRef = useRef<AutoOperatePopRef>(null);
   const coverOpenRef = useRef<PopConfirmRef>(null);
   const manageMultipleRef = useRef<AnimationPopRef>(null);
@@ -95,6 +98,7 @@ const Content: React.FC<ContentProps> = ({
   const keyTipPopRef = useRef<AutoOperatePopRef>(null);
   const deviceNum = useRef<number>(0);
   const optionRef = useRef<string>('');
+  const videoRef = useRef<any>(null);
 
   useEffect(() => {
     if (detail?.isGroup) {
@@ -457,6 +461,12 @@ const Content: React.FC<ContentProps> = ({
     });
   };
 
+  const resetVideo = useCallback(() => {
+    setShowPlayBtn(true);
+    setPaused(true);
+    setVideoKey(k => k + 1);
+  }, []);
+
   const handleSetAutoOperate = (detail: any) => {
     if (detail?.role === 2 && !detail?.bluetoothStatus) {
       showToast({
@@ -792,6 +802,8 @@ const Content: React.FC<ContentProps> = ({
               manageMultipleRef.current?.close();
               navigation.navigate('CompositeManage', {
                 lockId: detail.id,
+                isGateway: detail?.isGateway,
+                gatewayKeySn: detail?.gatewaySn,
               });
             }}
           >
@@ -820,11 +832,55 @@ const Content: React.FC<ContentProps> = ({
 
       <PopConfirm
         visible={eleInstallRef}
-        title={`市电联系${detail?.customerServicePhone}进行安装`}
+        title={
+          <Flex direction="column" align="center">
+            <Text>市电联系{detail?.customerServicePhone}进行安装</Text>
+            <View style={styles.videoContent}>
+              <Video
+                key={videoKey}
+                ref={videoRef}
+                paused={paused}
+                controls={false}
+                poster="https://g.18qjz.cn/video/installmini/installDemo1.jpg"
+                posterResizeMode="cover"
+                source={{
+                  uri: 'https://g.18qjz.cn/video/installmini/installDemo1.mp4',
+                }}
+                resizeMode={'contain'}
+                onEnd={() => {
+                  resetVideo();
+                }}
+                onError={() => {
+                  showToast({ title: '视频加载失败', icon: 'info' });
+                  resetVideo();
+                }}
+                style={styles.video}
+              />
+              {showPlayBtn && (
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    setShowPlayBtn(false);
+                    setPaused(false);
+                  }}
+                  style={styles.videoPlayBtn}
+                >
+                  <View style={styles.videoPlayCircle}>
+                    <AppIcon name="play" size={px(48)} color="#FFFFFF" />
+                  </View>
+                </TouchableOpacity>
+              )}
+            </View>
+          </Flex>
+        }
         confirmText="前往拨打"
         cancelText="取消"
-        onCancel={() => setEleInstallRef(false)}
+        onCancel={() => {
+          resetVideo();
+          setEleInstallRef(false);
+        }}
         onConfirm={async () => {
+          resetVideo();
           setEleInstallRef(false);
           await makePhoneCall({
             phoneNumber: detail?.customerServicePhone || '',

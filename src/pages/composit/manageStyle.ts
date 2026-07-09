@@ -8,7 +8,32 @@ export const styles = StyleSheet.create({
     borderRadius: px(12),
     padding: px(12),
   },
-
+  navTitle: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: px(8),
+  },
+  gatewayName: {
+    paddingHorizontal: px(7),
+    paddingVertical: px(4),
+    backgroundColor: '#dcedff',
+    borderRadius: px(6),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  gatewayNameText: {
+    fontSize: fontSize(12),
+    fontWeight: '400',
+    color: '#1890ff',
+    lineHeight: px(17),
+  },
+  navTitleText: {
+    fontSize: fontSize(16),
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   username: {
     fontWeight: 'bold',
     fontSize: fontSize(14),
@@ -94,6 +119,10 @@ export const styles = StyleSheet.create({
   input: {
     textAlign: 'right',
   },
+  value: {
+    textAlign: 'right',
+    flex: 1,
+  },
 
   ml12: {
     marginLeft: px(6),
@@ -133,6 +162,11 @@ export const styles = StyleSheet.create({
   btnContainerWrapper: {
     paddingTop: px(16),
     paddingBottom: px(8),
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: px(15),
   },
 
   btnContainer: {
