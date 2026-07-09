@@ -294,7 +294,7 @@ export default function CombineDeviece() {
             }}
           >
             <Text style={styles.labels}>新增设备</Text>
-            <IconFont name="add" size={14} color="#333333" />
+            <AppIcon name="add" size={14} color="#333333" />
           </TouchableOpacity>
         </View>
 
@@ -326,12 +326,15 @@ export default function CombineDeviece() {
           >
             <Text style={{ width: px(24), height: px(24) }}></Text>
             <Text style={styles.popTitle}>新增设备</Text>
-            <AppIcon
+            <TouchableOpacity onPress={() => setAddDeviceVisible(false)}>
+              <AppIcon name={'close'} color="#333" size={px(24)} />
+            </TouchableOpacity>
+            {/* <AppIcon
               onPress={() => setAddDeviceVisible(false)}
               name={'close'}
               size={px(24)}
               color={'#333333'}
-            />
+            /> */}
           </Flex>
           <Text style={styles.popSubTip}>仅可选择未被使用的地锁</Text>
           <View style={{ flex: 1 }}>

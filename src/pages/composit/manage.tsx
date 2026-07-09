@@ -431,9 +431,11 @@ const ManageComposite = () => {
       <Popup
         visible={addDeviceVisible}
         showClose={false}
-        onClose={() => setAddDeviceVisible(false)}
+        onClose={() => {
+          setAddDeviceVisible(false);
+        }}
       >
-        <View style={{ paddingTop: px(16) }}>
+        <View style={{ paddingTop: px(16), position: 'relative' }}>
           <Flex
             direction="row"
             justify="between"
@@ -442,12 +444,9 @@ const ManageComposite = () => {
           >
             <Text style={{ width: px(24), height: px(24) }}></Text>
             <Text style={styles.popTitle}>新增设备</Text>
-            <AppIcon
-              onPress={() => setAddDeviceVisible(false)}
-              name={'close'}
-              size={px(24)}
-              color={'#333333'}
-            />
+            <TouchableOpacity onPress={() => setAddDeviceVisible(false)}>
+              <AppIcon name={'close'} color="#333" size={px(24)} />
+            </TouchableOpacity>
           </Flex>
           <Text style={styles.popSubTip}>仅可选择未被使用的地锁</Text>
           <View style={{ flex: 1 }}>
