@@ -50,7 +50,7 @@ export const routes = {
     },
     {
       name: 'LoginSms',
-      component: require('@/pages/LoginSms').default,
+      component: require('@/pages/loginSms').default,
       label: '登录短信',
     },
     {

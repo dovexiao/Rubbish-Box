@@ -178,6 +178,7 @@ const Content: React.FC<ContentProps> = ({
         } as any);
 
         if (res?.code === 601) {
+          hideLoading();
           keyTipPopRef.current?.open();
           return;
         }
