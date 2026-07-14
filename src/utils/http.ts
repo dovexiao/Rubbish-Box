@@ -9,6 +9,7 @@ import type {
 const axios = require('axios/dist/browser/axios.cjs') as typeof import('axios');
 import dayjs from 'dayjs';
 import { BASE_URL, DEPLOY_ENV, DEPLOY_VERSION, GRAY } from '@/config';
+import { getApiBaseUrl } from '@/utils/apiBaseUrl';
 import { tokenStorage } from '@/utils/storage';
 import { navigateToLogin } from '@/utils/navigation';
 import { cacheGetSync, cacheRemove } from '@/utils/cache';
@@ -186,6 +187,9 @@ function handleReLoginByCode(code: number) {
 http.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     try {
+      // 0) Dev 自定义基址：业务 http 实例统一走动态 getApiBaseUrl()
+      config.baseURL = getApiBaseUrl();
+
       // 1) 给 url 增加时间戳（防缓存）
       const timestamp = dayjs().valueOf();
       const separator = config.url?.includes('?') ? '&' : '?';

@@ -55,11 +55,12 @@ import {
 import { Toast } from '@ant-design/react-native';
 import GradientButton from '@/components/GradientButton';
 import { AppUpdateDialogHost } from '@/components/AppUpdateDialog';
-import { GlobalLoading, GlobalToast } from '@/components';
+import { GlobalLoading, GlobalToast, DevTools } from '@/components';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { StoreProvider } from '@/store/provider';
 import { fontSize, px } from '@/utils/ui';
 import { MessageNoticeDialogHost } from '@/components/MessageNoticeDialog';
+import { initCustomApiBaseUrl, isDevToolsEnabled } from '@/utils/apiBaseUrl';
 
 // Harmony debug mode: silence in-app LogBox overlays.
 // if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
@@ -141,6 +142,13 @@ function App() {
       setNavigationRef(null);
     };
   }, [navigationRef]);
+
+  // Dev 环境尽早加载自定义 API 基址，避免首批请求仍走默认地址
+  useEffect(() => {
+    if (isDevToolsEnabled()) {
+      initCustomApiBaseUrl();
+    }
+  }, []);
 
   const [privacyReady, setPrivacyReady] = useState<boolean>(false);
 
@@ -1083,6 +1091,7 @@ function App() {
                     {globalPopConfirmConfig?.children || undefined}
                   </PopConfirm>
                   <MessageNoticeDialogHost />
+                  <DevTools />
                 </SafeAreaProvider>
               </GestureHandlerRootView>
             </ThemeProvider>

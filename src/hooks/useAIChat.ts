@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { BASE_URL } from '@/config';
+import { getApiBaseUrl } from '@/utils/apiBaseUrl';
 import { showToast } from '@/utils';
 import { triggerLightHaptic } from '@/utils/haptics';
 import { aiWebSocketService, WSMessage } from '@/services/aiWebSocketService';
@@ -26,7 +26,8 @@ const createMessageId = () =>
   `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
 const getWebSocketUrl = (): string => {
-  const wsDomain = BASE_URL.replace(/^http:\/\//, 'ws://')
+  const wsDomain = getApiBaseUrl()
+    .replace(/^http:\/\//, 'ws://')
     .replace(/^https:\/\//, 'wss://')
     .replace(/\/$/, '');
   return `${wsDomain}/boke/ws/user/chat`;
