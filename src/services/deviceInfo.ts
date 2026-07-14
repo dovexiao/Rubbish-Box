@@ -85,6 +85,11 @@ export const getDeviceKeyResponse = createFetch<any, any>(
   'GET',
 );
 
+// 获取设备测试钥匙响应
+export const getTestDeviceKeyResponse = createFetch<any, any>(
+  '/boke/deviceTest/key/lastResponse',
+  'GET',
+);
 // 解绑钥匙短信
 export const unbindKeySms = createFetch<any, any>(
   '/boke/userLock/key/unbindSms',
@@ -97,9 +102,21 @@ export const unbindKey = createFetch<any, any>(
   'POST',
 );
 
+// 解绑钥匙测试
+export const unbindKeyTest = createFetch<any, any>(
+  '/boke/deviceTest/key/unbind',
+  'POST',
+);
+
 //解绑钥匙结果
 export const unbindKeyResult = createFetch<any, any>(
   '/boke/userLock/key/unbindRes',
+  'POST',
+);
+
+// 解绑钥匙测试结果
+export const unbindKeyTestResult = createFetch<any, any>(
+  '/boke/deviceTest/key/unbindRes',
   'POST',
 );
 
@@ -159,9 +176,21 @@ export const allDeleteKey = createFetch<any, any>(
   'POST',
 );
 
+// 全部删除测试钥匙
+export const testAllDeleteKey = createFetch<any, any>(
+  '/boke/deviceTest/key/unbindAll',
+  'POST',
+);
+
 // 全部删除钥匙结果
 export const allDeleteKeyResult = createFetch<any, any>(
   '/boke/userLock/key/unbindAllRes',
+  'POST',
+);
+
+// 全部删除测试钥匙结果
+export const testAllDeleteKeyResult = createFetch<any, any>(
+  '/boke/deviceTest/key/unbindAllRes',
   'POST',
 );
 

@@ -184,7 +184,7 @@ export default function UnbindDevice() {
         if (pollSuccess) {
           stop();
           showToast({ title: '解绑成功', icon: 'success' });
-          setTimeout(() => navigation.pop(2), 800);
+          setTimeout(() => reLaunch('Index'), 800);
         } else {
           showToast({ title: '解绑失败', icon: 'info' });
         }

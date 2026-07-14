@@ -14,8 +14,13 @@ import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { useCountDown } from '@/hooks/useCountDown';
 import {
   getDeviceKeyResponse,
+  getTestDeviceKeyResponse,
   startPairing,
   startPairingResult,
+  testStartPairing,
+  testStartPairingResult,
+  unbindKeyTest,
+  unbindKeyTestResult,
 } from '@/services/deviceInfo';
 import { getLockInfo } from '@/services';
 import { hideLoading, loopFunc, showLoading, showToast } from '@/utils';
@@ -40,6 +45,7 @@ export default function RemoteKeyUnbind() {
       key?: string;
       id?: number;
       hasButtonKeyFlag?: boolean;
+      pageType?: string;
     };
   };
   const navigation = useAppNavigation();
@@ -48,12 +54,14 @@ export default function RemoteKeyUnbind() {
   const videoRef = useRef<any>(null);
 
   const deviceNo = params?.deviceNo || '';
+  const isTest = params?.pageType === 'test';
 
   const [showPlayBtn, setShowPlayBtn] = useState(true);
   const [paused, setPaused] = useState(true);
   const [videoKey, setVideoKey] = useState(0);
   const [phase, setPhase] = useState<UnbindPhase>('idle');
   const [keyResponse, setKeyResponse] = useState('');
+  const [unbinding, setUnbinding] = useState(false);
 
   const {
     start: startCountdown,
@@ -90,7 +98,9 @@ export default function RemoteKeyUnbind() {
     stopKeyResponsePoll();
     const { start, stop } = loopFunc(async () => {
       try {
-        const res: any = await getDeviceKeyResponse({ deviceNo });
+        const res: any = isTest
+          ? await getTestDeviceKeyResponse({ deviceNo })
+          : await getDeviceKeyResponse({ deviceNo });
         if (res?.code === 200 && res?.success && res?.data) {
           countdownActiveRef.current = false;
           stopCountdown();
@@ -115,7 +125,9 @@ export default function RemoteKeyUnbind() {
       let timeoutTimer: ReturnType<typeof setTimeout> | null = null;
       const { start: startPoll, stop: stopPoll } = loopFunc(async () => {
         try {
-          const res: any = await startPairingResult({ deviceNo });
+          const res: any = isTest
+            ? await testStartPairingResult({ deviceNo })
+            : await startPairingResult({ deviceNo });
           if (res?.data) {
             stopPoll();
             if (timeoutTimer) {
@@ -147,7 +159,9 @@ export default function RemoteKeyUnbind() {
     showLoading({ title: '配对中...' });
 
     try {
-      const res: any = await startPairing({ deviceNo });
+      const res: any = isTest
+        ? await testStartPairing({ deviceNo })
+        : await startPairing({ deviceNo });
       if (!(res?.code === 200 && res?.success)) {
         hideLoading();
         setPhase('idle');
@@ -205,22 +219,97 @@ export default function RemoteKeyUnbind() {
     });
   }, [deviceNo, keyResponse, navigation, params?.id]);
 
+  const handleUnbindKey = useCallback(async () => {
+    if (!deviceNo || !keyResponse || unbinding) return;
+
+    setUnbinding(true);
+    stopKeyResponsePoll();
+    showLoading({ title: '解绑中...' });
+
+    try {
+      const res: any = await unbindKeyTest({ deviceNo, keyNo: keyResponse });
+      if (!(res?.code === 200 && res?.success)) {
+        hideLoading();
+        setUnbinding(false);
+        showToast({
+          title: res?.message || res?.msg || '解绑失败',
+          icon: 'info',
+        });
+        return;
+      }
+
+      const pollSuccess = await new Promise<boolean>(resolve => {
+        let timeoutTimer: ReturnType<typeof setTimeout> | null = null;
+        const { start: startPoll, stop: stopPoll } = loopFunc(async () => {
+          try {
+            const result: any = await unbindKeyTestResult({
+              deviceNo,
+              keyNo: keyResponse,
+            });
+            if (result?.data) {
+              stopPoll();
+              if (timeoutTimer) {
+                clearTimeout(timeoutTimer);
+                timeoutTimer = null;
+              }
+              pollStopRef.current = null;
+              resolve(true);
+              return false;
+            }
+          } catch (e) {
+            console.error('unbindKeyTestResult error:', e);
+          }
+          return true;
+        }, POLL_INTERVAL_MS);
+
+        pollStopRef.current = stopPoll;
+        timeoutTimer = setTimeout(() => {
+          stopPoll();
+          pollStopRef.current = null;
+          resolve(false);
+        }, POLL_TIMEOUT_MS);
+        startPoll();
+      });
+
+      hideLoading();
+      if (pollSuccess) {
+        showToast({ title: '解绑成功', icon: 'success' });
+        setTimeout(() => navigation.goBack(), 800);
+      } else {
+        setUnbinding(false);
+        showToast({ title: '解绑失败', icon: 'info' });
+      }
+    } catch {
+      hideLoading();
+      setUnbinding(false);
+      showToast({ title: '解绑失败', icon: 'info' });
+    }
+  }, [deviceNo, keyResponse, navigation, stopKeyResponsePoll, unbinding]);
+
   const handleActionPress = useCallback(() => {
     if (phase === 'idle') {
       void handleStartUnbind();
       return;
     }
     if (phase === 'readyUnbind' && keyResponse) {
-      void handleUnbind();
+      isTest ? void handleUnbindKey() : void handleUnbind();
     }
-  }, [handleStartUnbind, handleUnbind, keyResponse, phase]);
+  }, [
+    handleStartUnbind,
+    handleUnbind,
+    handleUnbindKey,
+    isTest,
+    keyResponse,
+    phase,
+  ]);
 
   const disableUnbind = useMemo(() => {
+    if (unbinding) return true;
     if (phase === 'pairing') return true;
     if (phase === 'waitingUnbind') return true;
     if (phase === 'readyUnbind') return false;
     return false;
-  }, [phase]);
+  }, [phase, unbinding]);
 
   const showCountdown = useMemo(
     () => phase === 'waitingUnbind' || phase === 'readyUnbind',

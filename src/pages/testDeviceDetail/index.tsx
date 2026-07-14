@@ -10,8 +10,14 @@ import {
 import type { StyleProp, TextStyle } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/core';
-import { Button } from '@ant-design/react-native';
-import { GradientButton, PageContainer, Popup, Tag } from '@/components';
+import { Button, PickerView } from '@ant-design/react-native';
+import {
+  GradientButton,
+  PageContainer,
+  PopConfirm,
+  Popup,
+  Tag,
+} from '@/components';
 import Flex from '@/components/Flex';
 import Video from 'react-native-video';
 import {
@@ -37,6 +43,10 @@ import PopCenter from '@/components/PopCenter';
 import UnqualifiedPop, { UnqualifiedPopRef } from './UnqualifiedPop';
 import { px } from '@/utils/ui';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
+import {
+  testAllDeleteKey,
+  testAllDeleteKeyResult,
+} from '@/services/deviceInfo';
 
 const TEST_RESULT = {
   NORMAL: 0,
@@ -112,6 +122,8 @@ interface TestDeviceDetail {
   keyAutoTestStatus: number;
   /* 是否有按钮钥匙 */
   buttonKeyFlag: boolean;
+  /* 433钥匙 */
+  key433?: any;
 }
 
 type RouteParams = {
@@ -142,6 +154,9 @@ export default function TestDeviceDetailScreen() {
   const [reasonPopupVisible, setReasonPopupVisible] = useState(false);
   const [unqualifiedPopupVisible, setUnqualifiedPopupVisible] = useState(false);
   const [howToConnectVisible, setHowToConnectVisible] = useState(false);
+  const [selectedDeviceKey, setSelectedDeviceKey] = useState<
+    string | undefined
+  >(undefined);
   const [confirmPopup, setConfirmPopup] = useState<{
     visible: boolean;
     title: string;
@@ -149,6 +164,8 @@ export default function TestDeviceDetailScreen() {
   }>({ visible: false, title: '' });
 
   const unqualifiedPopupRef = useRef<UnqualifiedPopRef | null>(null);
+  const unbindPopupRef = useRef<any>(null);
+  const allDeletePopRef = useRef<any>(null);
 
   const fetchDetail = useCallback(async () => {
     if (!deviceNo) return;
@@ -460,6 +477,7 @@ export default function TestDeviceDetailScreen() {
     },
     [detail, deviceNo, isLink, linkDevice?.deviceId],
   );
+
   const renderFooterButtons = () => {
     return (
       <Flex
@@ -568,7 +586,50 @@ export default function TestDeviceDetailScreen() {
     );
   };
 
-  console.log('detail', reasonList);
+  // 解绑所有钥匙
+  const handleallDeleteKey = async () => {
+    showLoading({ title: '删除中...' });
+    const res = await testAllDeleteKey({ deviceNo: detail?.deviceNo });
+    if (res.code === 200 && res.success) {
+      return await loopallDeleteKey();
+    }
+    hideLoading();
+    showToast({ title: res.message || '删除失败', icon: 'info' });
+    return false;
+  };
+
+  // 解绑所有钥匙结果
+  const loopallDeleteKey = (): Promise<boolean> => {
+    return new Promise(resolve => {
+      let timer: ReturnType<typeof setTimeout> | null = null;
+      const { start, stop } = loopFunc(async () => {
+        const res = await testAllDeleteKeyResult({
+          deviceNo: detail?.deviceNo,
+        });
+        if (res.data) {
+          fetchDetail();
+          stop();
+          if (timer) {
+            clearTimeout(timer);
+            timer = null;
+          }
+          hideLoading();
+          allDeletePopRef.current?.close();
+          showToast({ title: '操作成功', icon: 'success' });
+          resolve(true);
+          return false;
+        }
+        return true;
+      }, 1000);
+      timer = setTimeout(() => {
+        stop();
+        hideLoading();
+        showToast({ title: '操作失败', icon: 'info' });
+        resolve(false);
+      }, 10000);
+      start();
+    });
+  };
 
   return (
     <PageContainer
@@ -1005,6 +1066,8 @@ export default function TestDeviceDetailScreen() {
                               pageType: 'test',
                             });
                           }
+                        } else {
+                          unbindPopupRef.current?.open();
                         }
                       }}
                     >
@@ -1017,7 +1080,9 @@ export default function TestDeviceDetailScreen() {
                               : styles.modeTextFail
                           }
                         >
-                          {detail.keyCount ? '已绑定' : '未绑定,新增钥匙>'}
+                          {detail.keyCount
+                            ? '已绑定,去解绑>'
+                            : '未绑定,新增钥匙>'}
                         </Text>
                       </Text>
                     </Flex>
@@ -1133,10 +1198,16 @@ export default function TestDeviceDetailScreen() {
                       isTouchView
                       onPress={() => {
                         if (!detail.keyCount) {
-                          navigation.navigate('RemoteKeyPairingVideo', {
-                            lockId: deviceNo,
-                            pageType: 'test',
-                          });
+                          if (!detail.buttonKeyFlag) {
+                            navigation.navigate('RemoteKeyPairingVideo');
+                          } else {
+                            navigation.navigate('RemoteKeyPairingVideo', {
+                              lockId: deviceNo,
+                              pageType: 'test',
+                            });
+                          }
+                        } else {
+                          unbindPopupRef.current?.open();
                         }
                       }}
                     >
@@ -1149,7 +1220,9 @@ export default function TestDeviceDetailScreen() {
                               : styles.modeTextFail
                           }
                         >
-                          {detail.keyCount ? '已绑定' : '未绑定,新增钥匙>'}
+                          {detail.keyCount
+                            ? '已绑定,去解绑>'
+                            : '未绑定,新增钥匙>'}
                         </Text>
                       </Text>
                     </Flex>
@@ -2091,6 +2164,86 @@ export default function TestDeviceDetailScreen() {
           </View>
         </View>
       </Popup>
+      {/* 433钥匙解绑 */}
+      <PopCenter
+        ref={unbindPopupRef}
+        height={px(350)}
+        title={
+          <View style={[styles.editContainer, { paddingBottom: px(8) }]}>
+            <View style={styles.header}>
+              <Text style={styles.headerTitle}>遥控钥匙</Text>
+            </View>
+
+            <View style={styles.pickerContent}>
+              <PickerView
+                data={detail?.key433?.map((item: any) => ({
+                  value: item,
+                  label: item,
+                }))}
+                cascade={false}
+                style={{ height: px(174) }}
+                itemHeight={px(44)}
+                itemStyle={{
+                  padding: 0,
+                }}
+                defaultValue={[detail?.key433?.[0]]}
+                onChange={value => {
+                  setSelectedDeviceKey((value[0] as string) || '');
+                }}
+              />
+            </View>
+
+            {detail?.buttonKeyFlag && (
+              <View style={styles.closeIcon}>
+                <Flex
+                  isTouchView
+                  align="center"
+                  justify="center"
+                  style={{ gap: px(4) }}
+                  onPress={e => {
+                    e && e.stopPropagation?.();
+                    allDeletePopRef.current?.open();
+                  }}
+                >
+                  <Text style={styles.cardValueLinkText}>全部删除</Text>
+                </Flex>
+              </View>
+            )}
+          </View>
+        }
+        // height={px(130)}
+        cancelText="新增钥匙"
+        confirmText="解绑"
+        onConfirm={() => {
+          unbindPopupRef.current?.close();
+          navigation.navigate('RemoteKeyUnbind', {
+            deviceNo: detail?.deviceNo,
+            key: selectedDeviceKey,
+            id: detail?.id,
+            hasButtonKeyFlag: detail?.buttonKeyFlag,
+            pageType: 'test',
+          });
+        }}
+        onCancel={() => {
+          unbindPopupRef.current?.close();
+          if (!detail?.buttonKeyFlag) {
+            navigation.navigate('RemoteKeyPairingVideo');
+          } else {
+            navigation.navigate('RemoteKeyPairingVideo', {
+              lockId: detail?.deviceNo,
+              pageType: 'test',
+            });
+          }
+        }}
+      />
+
+      {/* 全部删除弹窗 */}
+      <PopConfirm
+        ref={allDeletePopRef}
+        title="确认解绑所有钥匙吗？"
+        confirmText="确定"
+        onConfirm={async () => await handleallDeleteKey()}
+      />
     </PageContainer>
   );
 }

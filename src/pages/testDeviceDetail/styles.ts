@@ -235,6 +235,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: px(12),
   },
+  editContainer: {
+    backgroundColor: '#fff',
+    borderRadius: px(16),
+    paddingTop: px(16),
+    paddingHorizontal: px(24),
+    position: 'relative',
+  },
+  header: {
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: fontSize(16),
+    fontWeight: '500',
+    color: '#333',
+  },
+  pickerContent: {
+    marginTop: px(12),
+    backgroundColor: 'red',
+  },
+  closeIcon: {
+    position: 'absolute',
+    top: px(16),
+    right: px(16),
+  },
+  cardValueLinkText: {
+    color: '#333333',
+    fontSize: fontSize(14),
+    lineHeight: px(20),
+  },
 });
 
 export default styles;
