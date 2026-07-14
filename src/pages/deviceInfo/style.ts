@@ -455,6 +455,5 @@ export const styles = StyleSheet.create({
   },
   pickerContent: {
     marginTop: px(12),
-    backgroundColor: 'red',
   },
 });

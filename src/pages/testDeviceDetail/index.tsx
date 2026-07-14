@@ -588,6 +588,7 @@ export default function TestDeviceDetailScreen() {
 
   // 解绑所有钥匙
   const handleallDeleteKey = async () => {
+    unbindPopupRef.current?.close();
     showLoading({ title: '删除中...' });
     const res = await testAllDeleteKey({ deviceNo: detail?.deviceNo });
     if (res.code === 200 && res.success) {
@@ -2209,6 +2210,16 @@ export default function TestDeviceDetailScreen() {
                 </Flex>
               </View>
             )}
+
+            <TouchableOpacity
+              style={styles.closeIcons}
+              activeOpacity={1}
+              onPress={() => {
+                unbindPopupRef.current?.close();
+              }}
+            >
+              <Text style={styles.cardValueLinkText}>关闭</Text>
+            </TouchableOpacity>
           </View>
         }
         // height={px(130)}

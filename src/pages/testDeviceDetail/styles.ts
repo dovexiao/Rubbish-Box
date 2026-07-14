@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   editContainer: {
     backgroundColor: '#fff',
     borderRadius: px(16),
-    paddingTop: px(16),
+    // paddingTop: px(16),
     paddingHorizontal: px(24),
     position: 'relative',
   },
@@ -252,17 +252,20 @@ const styles = StyleSheet.create({
   },
   pickerContent: {
     marginTop: px(12),
-    backgroundColor: 'red',
   },
   closeIcon: {
     position: 'absolute',
-    top: px(16),
+    // top: px(16),
     right: px(16),
   },
   cardValueLinkText: {
     color: '#333333',
     fontSize: fontSize(14),
     lineHeight: px(20),
+  },
+  closeIcons: {
+    position: 'absolute',
+    left: px(16),
   },
 });
 
