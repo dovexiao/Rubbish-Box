@@ -69,6 +69,7 @@ import {
 import { fontSize, px } from '@/utils/ui';
 import MyEmpty from '@/components/MyEmpty';
 import SimpleLoading from '@/components/SimpleLoading';
+import { useFocusEffect } from '@react-navigation/core';
 
 const DeviceInfo = () => {
   const { params } = useRoute() as {
@@ -345,14 +346,6 @@ const DeviceInfo = () => {
     pageContainerRef.current?.refresh();
   };
 
-  useEffect(() => {
-    fetchLockInfo();
-  }, [fetchLockInfo]);
-
-  useEffect(() => {
-    void fetchChargeRuleList();
-  }, [fetchChargeRuleList]);
-
   const handleBindQrCodeScan = useCallback(
     async (value: string) => {
       showLoading({ title: '绑定中...' });
@@ -589,6 +582,13 @@ const DeviceInfo = () => {
     if (!lockInfo?.deviceNo) return;
     getDeviceKeys();
   }, [lockInfo?.deviceNo]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchLockInfo();
+      void fetchChargeRuleList();
+    }, [fetchLockInfo, fetchChargeRuleList]),
+  );
 
   return (
     <PageContainer
