@@ -32,7 +32,7 @@ export default function ConfirmCard({ data, onCancel, onConfirm }: Props) {
             {data.title || '需要确认'}
           </Text>
           <MarkdownView
-            content={data.content || '是否执行？'}
+            content={data.content || '是否确认执行该操作？'}
             style={styles.contentMarkdown}
           />
           {showActions ? (

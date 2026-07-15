@@ -573,9 +573,20 @@ const isSameConfirmCard = (card: ConfirmMessage, sessionId?: string) => {
 };
 
 const DEFAULT_CONFIRM_TITLE = '需要确认';
-const DEFAULT_CONFIRM_CONTENT = '是否执行？';
+const DEFAULT_CONFIRM_CONTENT = '是否确认执行该操作？';
 
 const isPlaceholderConfirmCard = (card: ConfirmMessage): boolean => {
+  // 已交互/已有回复的确认卡不是占位，不能被后续轮次清理掉
+  if (
+    card.submitted ||
+    card.processing ||
+    card.approved ||
+    card.rejected ||
+    Boolean(card.replyContent?.trim()) ||
+    Boolean(card.isReplyStreaming)
+  ) {
+    return false;
+  }
   const title = card.title?.trim() || '';
   const content = card.content?.trim() || '';
   return (
@@ -584,13 +595,38 @@ const isPlaceholderConfirmCard = (card: ConfirmMessage): boolean => {
   );
 };
 
+/** 仅进行中的确认（等待结果），不含已 approved 完成的历史卡 */
 const findActiveConfirmIndex = (messages: ChatMessage[]): number =>
   messages.findIndex(
     msg =>
       msg.type === 'confirm' &&
       !msg.rejected &&
-      (msg.submitted || msg.processing || msg.approved),
+      !msg.approved &&
+      (msg.submitted || msg.processing || Boolean(msg.isReplyStreaming)),
   );
+
+const isIncomingConfirmForTarget = (
+  incomingSessionId: string,
+  target?: ConfirmTarget | null,
+  pending?: { sessionId: string; confirmMessageId?: string } | null,
+): boolean => {
+  if (!incomingSessionId) return false;
+  if (
+    pending &&
+    (pending.sessionId === incomingSessionId ||
+      pending.confirmMessageId === incomingSessionId)
+  ) {
+    return true;
+  }
+  if (
+    target &&
+    (target.sessionId === incomingSessionId ||
+      target.confirmMessageId === incomingSessionId)
+  ) {
+    return true;
+  }
+  return false;
+};
 
 const mergeConfirmCardIntoMessages = (
   messages: ChatMessage[],
@@ -684,10 +720,7 @@ const materializeJsonCardsFromText = (
   let insertAt = textContent.trim() ? textIndex + 1 : textIndex;
   for (const card of cards) {
     if (card.type === 'confirm') {
-      if (
-        isPlaceholderConfirmCard(card) &&
-        findActiveConfirmIndex(next) >= 0
-      ) {
+      if (isPlaceholderConfirmCard(card) && findActiveConfirmIndex(next) >= 0) {
         continue;
       }
       next = mergeConfirmCardIntoMessages(next, card, sessionId);
@@ -833,7 +866,9 @@ const mapTopLevelConfirmMessage = (
   if (parsed) {
     return {
       ...mapConfirmPayloadToCard(parsed, fallbackId),
-      content: content || parsed.content || parsed.message || '',
+      content:
+        content || parsed.content || parsed.message || DEFAULT_CONFIRM_CONTENT,
+      title: parsed.title || parsed.pageName || DEFAULT_CONFIRM_TITLE,
     };
   }
 
@@ -841,7 +876,7 @@ const mapTopLevelConfirmMessage = (
     id: fallbackId,
     role: 'assistant',
     type: 'confirm',
-    content: content || '是否执行？',
+    content: content || DEFAULT_CONFIRM_CONTENT,
     sessionId: fallbackId,
     replyId: fallbackId,
   };
@@ -1172,16 +1207,23 @@ export const useAIChat = (options?: UseAIChatOptions) => {
       }
 
       if (type === 'confirm') {
-        if (
-          pendingConfirmRef.current?.approved ||
-          lastApprovedConfirmTargetRef.current
-        ) {
+        const incomingSessionId = getStreamMessageId(wsMessage);
+        // 只忽略「当前已确认会话」的重复 confirm，不能误伤下一轮新 session
+        const shouldIgnoreDuplicateConfirm =
+          (Boolean(pendingConfirmRef.current?.approved) ||
+            Boolean(lastApprovedConfirmTargetRef.current)) &&
+          isIncomingConfirmForTarget(
+            incomingSessionId,
+            lastApprovedConfirmTargetRef.current,
+            pendingConfirmRef.current,
+          );
+        if (shouldIgnoreDuplicateConfirm) {
           return;
         }
         setIsLoading(false);
         const cardMessage = mapTopLevelConfirmMessage(wsMessage);
         if (cardMessage) {
-          const sessionId = getStreamMessageId(wsMessage);
+          const sessionId = incomingSessionId;
           commitMessages(prev => {
             let finalized = finalizeStreamingMessages(prev);
             finalized = removeEmptyAssistantTexts(finalized);
@@ -1201,10 +1243,16 @@ export const useAIChat = (options?: UseAIChatOptions) => {
         if (type === 'execute' && isSpecialCardMessage(wsMessage)) {
           const cardMessage = mapWSMessageToChatMessage(wsMessage);
           if (cardMessage) {
+            const incomingSessionId = getStreamMessageId(wsMessage);
             if (
               cardMessage.type === 'confirm' &&
-              (pendingConfirmRef.current?.approved ||
-                lastApprovedConfirmTargetRef.current)
+              (Boolean(pendingConfirmRef.current?.approved) ||
+                Boolean(lastApprovedConfirmTargetRef.current)) &&
+              isIncomingConfirmForTarget(
+                incomingSessionId,
+                lastApprovedConfirmTargetRef.current,
+                pendingConfirmRef.current,
+              )
             ) {
               return;
             }
@@ -1495,11 +1543,7 @@ export const useAIChat = (options?: UseAIChatOptions) => {
         return false;
       }
     },
-    [
-      abortActiveAssistantStream,
-      clearScheduledClose,
-      openChatWebSocket,
-    ],
+    [abortActiveAssistantStream, clearScheduledClose, openChatWebSocket],
   );
 
   const initWebSocket = useCallback(
