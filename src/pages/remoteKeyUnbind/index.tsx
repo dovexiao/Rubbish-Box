@@ -5,14 +5,15 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import Video from 'react-native-video';
 import PageContainer from '@/components/PageContainer';
 import AppIcon from '@/components/AppIcon';
+import Flex from '@/components/Flex';
 import { useAppNavigation } from '@/hooks/useAppNavigation';
-import { useCountDown } from '@/hooks/useCountDown';
 import {
+  getDeviceKeyList,
   getDeviceKeyResponse,
   getTestDeviceKeyResponse,
   startPairing,
@@ -33,45 +34,53 @@ const DEFAULT_VIDEO_URL =
   'https://g.18qjz.cn/img/boklock/remoteKeyUnbindVideo.mp4';
 
 const POLL_INTERVAL_MS = 1000;
-const POLL_TIMEOUT_MS = 10000;
-const KEY_RESPONSE_COUNTDOWN = 180;
+const PAIRING_POLL_TIMEOUT_MS = 5000;
+const UNBIND_POLL_TIMEOUT_MS = 10000;
 
-type UnbindPhase = 'idle' | 'pairing' | 'waitingUnbind' | 'readyUnbind';
+type KeyItem = { label: string; value: string };
 
 export default function RemoteKeyUnbind() {
   const { params } = useRoute<any>() as {
     params?: {
       deviceNo?: string;
       key?: string;
-      id?: number;
-      hasButtonKeyFlag?: boolean;
+      id?: number | string;
+      hasButtonKeyFlag?: boolean | string | number;
       pageType?: string;
     };
   };
   const navigation = useAppNavigation();
-  const pollStopRef = useRef<(() => void) | null>(null);
-  const countdownActiveRef = useRef(false);
-  const videoRef = useRef<any>(null);
 
   const deviceNo = params?.deviceNo || '';
+  const lockId = params?.id;
   const isTest = params?.pageType === 'test';
+  const hasButtonKey = useMemo(() => {
+    const flag = params?.hasButtonKeyFlag;
+    return flag === true || flag === 1 || flag === '1' || flag === 'true';
+  }, [params?.hasButtonKeyFlag]);
 
   const [showPlayBtn, setShowPlayBtn] = useState(true);
   const [paused, setPaused] = useState(true);
   const [videoKey, setVideoKey] = useState(0);
-  const [phase, setPhase] = useState<UnbindPhase>('idle');
-  const [keyResponse, setKeyResponse] = useState('');
+  const [showNotice, setShowNotice] = useState(false);
+  const [keyList, setKeyList] = useState<KeyItem[]>([]);
+  const [recognizedKeys, setRecognizedKeys] = useState<string[]>([]);
+  const [selectedKey, setSelectedKey] = useState('');
   const [unbinding, setUnbinding] = useState(false);
 
-  const {
-    start: startCountdown,
-    stop: stopCountdown,
-    count,
-    isCounting,
-  } = useCountDown(KEY_RESPONSE_COUNTDOWN);
+  const videoRef = useRef<any>(null);
+  const stopKeyPollRef = useRef<(() => void) | null>(null);
+  const stopPairingPollRef = useRef<(() => void) | null>(null);
+  const keyListRef = useRef(keyList);
+  const recognizedKeysRef = useRef(recognizedKeys);
 
-  const videoUrl = DEFAULT_VIDEO_URL;
-  const posterUrl = DEFAULT_POSTER_URL;
+  useEffect(() => {
+    keyListRef.current = keyList;
+  }, [keyList]);
+
+  useEffect(() => {
+    recognizedKeysRef.current = recognizedKeys;
+  }, [recognizedKeys]);
 
   const resetVideo = useCallback(() => {
     setShowPlayBtn(true);
@@ -79,155 +88,155 @@ export default function RemoteKeyUnbind() {
     setVideoKey(k => k + 1);
   }, []);
 
-  const stopKeyResponsePoll = useCallback(() => {
-    pollStopRef.current?.();
-    pollStopRef.current = null;
+  const stopAllPoll = useCallback(() => {
+    stopPairingPollRef.current?.();
+    stopPairingPollRef.current = null;
+    stopKeyPollRef.current?.();
+    stopKeyPollRef.current = null;
   }, []);
 
-  const resetToIdle = useCallback(() => {
-    stopKeyResponsePoll();
-    stopCountdown();
-    countdownActiveRef.current = false;
-    setKeyResponse('');
-    setPhase('idle');
-  }, [stopCountdown, stopKeyResponsePoll]);
+  // 拉取钥匙列表
+  useEffect(() => {
+    if (!deviceNo || !hasButtonKey) return;
 
-  const startKeyResponsePoll = useCallback(() => {
-    if (!deviceNo) return;
-
-    stopKeyResponsePoll();
-    const { start, stop } = loopFunc(async () => {
+    let cancelled = false;
+    (async () => {
       try {
-        const res: any = isTest
-          ? await getTestDeviceKeyResponse({ deviceNo })
-          : await getDeviceKeyResponse({ deviceNo });
-        if (res?.code === 200 && res?.success && res?.data) {
-          countdownActiveRef.current = false;
-          stopCountdown();
-          setKeyResponse(String(res.data));
-          setPhase('readyUnbind');
-          stop();
-          pollStopRef.current = null;
-          return false;
+        const res: any = await getDeviceKeyList({ deviceNo });
+        if (cancelled) return;
+        if (res?.code === 200 && res?.success && Array.isArray(res?.data)) {
+          setKeyList(
+            res.data.map((item: any) => ({
+              label: String(item),
+              value: String(item),
+            })),
+          );
         }
-      } catch (e) {
-        console.error('getDeviceKeyResponse error:', e);
+      } catch {
+        // 列表拉取失败时保持空列表
       }
-      return true;
-    }, POLL_INTERVAL_MS);
+    })();
 
-    pollStopRef.current = stop;
-    start();
-  }, [deviceNo, stopCountdown, stopKeyResponsePoll]);
+    return () => {
+      cancelled = true;
+    };
+  }, [deviceNo, hasButtonKey]);
 
-  const pollPairingResult = useCallback((): Promise<boolean> => {
-    return new Promise(resolve => {
-      let timeoutTimer: ReturnType<typeof setTimeout> | null = null;
-      const { start: startPoll, stop: stopPoll } = loopFunc(async () => {
+  // 进入页面后自动配对，成功后轮询钥匙响应
+  useEffect(() => {
+    if (!deviceNo || !hasButtonKey) return;
+
+    let cancelled = false;
+
+    const startKeyResponsePoll = () => {
+      stopKeyPollRef.current?.();
+      const { start, stop } = loopFunc(async () => {
         try {
           const res: any = isTest
-            ? await testStartPairingResult({ deviceNo })
-            : await startPairingResult({ deviceNo });
-          if (res?.data) {
-            stopPoll();
-            if (timeoutTimer) {
-              clearTimeout(timeoutTimer);
-              timeoutTimer = null;
+            ? await getTestDeviceKeyResponse({ deviceNo })
+            : await getDeviceKeyResponse({ deviceNo });
+          if (res?.code === 200 && res?.success && res?.data) {
+            const key = String(res.data);
+            const inList = keyListRef.current?.some(
+              item => String(item.value) === key,
+            );
+            if (inList && !recognizedKeysRef.current.includes(key)) {
+              setRecognizedKeys([...recognizedKeysRef.current, key]);
             }
-            resolve(true);
-            return false;
           }
-        } catch (e) {
-          console.error('startPairingResult error:', e);
+        } catch {
+          // 继续轮询
         }
         return true;
       }, POLL_INTERVAL_MS);
+      stopKeyPollRef.current = stop;
+      start();
+    };
 
-      timeoutTimer = setTimeout(() => {
-        stopPoll();
-        resolve(false);
-      }, POLL_TIMEOUT_MS);
-      startPoll();
-    });
-  }, [deviceNo]);
+    const runPairingThenPoll = async () => {
+      try {
+        const res: any = isTest
+          ? await testStartPairing({ deviceNo })
+          : await startPairing({ deviceNo });
+        if (cancelled) return;
+        if (!(res?.code === 200 && res?.success)) {
+          showToast({
+            title: res?.message || res?.msg || '启动解绑失败',
+            icon: 'info',
+          });
+          return;
+        }
 
-  const handleStartUnbind = useCallback(async () => {
-    if (!deviceNo || phase === 'pairing') return;
+        const pollSuccess = await new Promise<boolean>(resolve => {
+          let timeoutTimer: ReturnType<typeof setTimeout> | null = null;
+          const { start: startPoll, stop: stopPoll } = loopFunc(async () => {
+            if (cancelled) {
+              stopPoll();
+              resolve(false);
+              return false;
+            }
+            try {
+              const result: any = isTest
+                ? await testStartPairingResult({ deviceNo })
+                : await startPairingResult({ deviceNo });
+              if (result?.code === 200 && result?.success && result?.data) {
+                stopPoll();
+                if (timeoutTimer) clearTimeout(timeoutTimer);
+                resolve(true);
+                return false;
+              }
+            } catch {
+              // 继续轮询
+            }
+            return true;
+          }, POLL_INTERVAL_MS);
 
-    setPhase('pairing');
-    setKeyResponse('');
-    showLoading({ title: '配对中...' });
-
-    try {
-      const res: any = isTest
-        ? await testStartPairing({ deviceNo })
-        : await startPairing({ deviceNo });
-      if (!(res?.code === 200 && res?.success)) {
-        hideLoading();
-        setPhase('idle');
-        showToast({
-          title: res?.message || res?.msg || '配对失败',
-          icon: 'info',
+          stopPairingPollRef.current = stopPoll;
+          timeoutTimer = setTimeout(() => {
+            stopPoll();
+            resolve(false);
+          }, PAIRING_POLL_TIMEOUT_MS);
+          startPoll();
         });
-        return;
+
+        if (cancelled) return;
+        if (pollSuccess) {
+          startKeyResponsePoll();
+        } else {
+          showToast({ title: '解绑失败,稍后重试', icon: 'info' });
+        }
+      } catch {
+        if (!cancelled) {
+          showToast({ title: '解绑失败,稍后重试', icon: 'info' });
+        }
       }
+    };
 
-      const pairOk = await pollPairingResult();
-      hideLoading();
+    runPairingThenPoll();
 
-      if (!pairOk) {
-        setPhase('idle');
-        showToast({ title: '配对失败', icon: 'info' });
-        return;
-      }
+    return () => {
+      cancelled = true;
+      stopAllPoll();
+    };
+  }, [deviceNo, hasButtonKey, isTest, stopAllPoll]);
 
-      setPhase('waitingUnbind');
-      countdownActiveRef.current = true;
-      startCountdown();
-      startKeyResponsePoll();
-    } catch {
-      hideLoading();
-      setPhase('idle');
-      showToast({ title: '配对失败', icon: 'info' });
-    }
-  }, [
-    deviceNo,
-    phase,
-    pollPairingResult,
-    startCountdown,
-    startKeyResponsePoll,
-  ]);
+  const handleSelectKey = useCallback(
+    (value: string) => {
+      if (!recognizedKeys.includes(value)) return;
+      setSelectedKey(value);
+    },
+    [recognizedKeys],
+  );
 
-  const handleUnbind = useCallback(async () => {
-    if (!keyResponse || !params?.id) return;
-
-    const res: any = await getLockInfo({ id: params.id });
-    if (res?.code === 200 && res?.success) {
-      const phoneNumber = res?.data?.adminMobile;
-      navigation.navigate('UnbindDevice', {
-        deviceNo,
-        key: keyResponse,
-        phoneNumber,
-        type: 'remoteKey',
-        id: params.id,
-      });
-      return;
-    }
-    showToast({
-      title: res?.message || res?.msg || '获取设备信息失败',
-      icon: 'info',
-    });
-  }, [deviceNo, keyResponse, navigation, params?.id]);
-
-  const handleUnbindKey = useCallback(async () => {
-    if (!deviceNo || !keyResponse || unbinding) return;
+  const handleUnbindKeyTest = useCallback(async () => {
+    if (!deviceNo || !selectedKey || unbinding) return;
 
     setUnbinding(true);
-    stopKeyResponsePoll();
+    stopAllPoll();
     showLoading({ title: '解绑中...' });
 
     try {
-      const res: any = await unbindKeyTest({ deviceNo, keyNo: keyResponse });
+      const res: any = await unbindKeyTest({ deviceNo, keyNo: selectedKey });
       if (!(res?.code === 200 && res?.success)) {
         hideLoading();
         setUnbinding(false);
@@ -244,7 +253,7 @@ export default function RemoteKeyUnbind() {
           try {
             const result: any = await unbindKeyTestResult({
               deviceNo,
-              keyNo: keyResponse,
+              keyNo: selectedKey,
             });
             if (result?.data) {
               stopPoll();
@@ -252,7 +261,6 @@ export default function RemoteKeyUnbind() {
                 clearTimeout(timeoutTimer);
                 timeoutTimer = null;
               }
-              pollStopRef.current = null;
               resolve(true);
               return false;
             }
@@ -262,12 +270,11 @@ export default function RemoteKeyUnbind() {
           return true;
         }, POLL_INTERVAL_MS);
 
-        pollStopRef.current = stopPoll;
+        stopKeyPollRef.current = stopPoll;
         timeoutTimer = setTimeout(() => {
           stopPoll();
-          pollStopRef.current = null;
           resolve(false);
-        }, POLL_TIMEOUT_MS);
+        }, UNBIND_POLL_TIMEOUT_MS);
         startPoll();
       });
 
@@ -284,71 +291,57 @@ export default function RemoteKeyUnbind() {
       setUnbinding(false);
       showToast({ title: '解绑失败', icon: 'info' });
     }
-  }, [deviceNo, keyResponse, navigation, stopKeyResponsePoll, unbinding]);
+  }, [deviceNo, navigation, selectedKey, stopAllPoll, unbinding]);
 
-  const handleActionPress = useCallback(() => {
-    if (phase === 'idle') {
-      void handleStartUnbind();
-      return;
-    }
-    if (phase === 'readyUnbind' && keyResponse) {
-      isTest ? void handleUnbindKey() : void handleUnbind();
-    }
-  }, [
-    handleStartUnbind,
-    handleUnbind,
-    handleUnbindKey,
-    isTest,
-    keyResponse,
-    phase,
-  ]);
+  const handleUnbind = useCallback(async () => {
+    if (!selectedKey || !lockId) return;
 
-  const disableUnbind = useMemo(() => {
-    if (unbinding) return true;
-    if (phase === 'pairing') return true;
-    if (phase === 'waitingUnbind') return true;
-    if (phase === 'readyUnbind') return false;
-    return false;
-  }, [phase, unbinding]);
-
-  const showCountdown = useMemo(
-    () => phase === 'waitingUnbind' || phase === 'readyUnbind',
-    [phase],
-  );
-
-  const actionBtnText = useMemo(() => {
-    if (phase === 'idle') return '开始解绑';
-    if (phase === 'pairing') return '配对中...';
-    if (phase === 'waitingUnbind') return '解绑';
-    if (phase === 'readyUnbind') return `解绑${keyResponse}`;
-    return '开始解绑';
-  }, [keyResponse, phase]);
-
-  useEffect(() => {
-    if (
-      !countdownActiveRef.current ||
-      isCounting ||
-      count > 0 ||
-      phase !== 'waitingUnbind'
-    ) {
+    if (isTest) {
+      void handleUnbindKeyTest();
       return;
     }
 
-    countdownActiveRef.current = false;
-    resetToIdle();
+    const res: any = await getLockInfo({ id: lockId });
+    if (res?.code === 200 && res?.success) {
+      const phoneNumber = res?.data?.adminMobile;
+      navigation.navigate('UnbindDevice' as any, {
+        deviceNo,
+        key: selectedKey,
+        phoneNumber,
+        type: 'remoteKey',
+        id: lockId,
+      });
+      return;
+    }
     showToast({
-      title: '未识别到要解绑的钥匙，请重试',
+      title: res?.message || res?.msg || '获取设备信息失败',
       icon: 'info',
     });
-  }, [count, isCounting, phase, resetToIdle]);
+  }, [deviceNo, handleUnbindKeyTest, isTest, lockId, navigation, selectedKey]);
 
-  useEffect(() => {
-    return () => {
-      stopKeyResponsePoll();
-      stopCountdown();
-      countdownActiveRef.current = false;
-    };
-  }, [stopCountdown, stopKeyResponsePoll]);
+  const unbindBtnDisabled = !selectedKey || unbinding;
+
+  const footer = useMemo(() => {
+    if (!hasButtonKey) return undefined;
+    return (
+      <View style={styles.footerWrap}>
+        <TouchableOpacity
+          activeOpacity={unbindBtnDisabled ? 1 : 0.85}
+          disabled={unbindBtnDisabled}
+          style={[
+            styles.unbindBtn,
+            unbindBtnDisabled ? styles.unbindBtnDisabled : null,
+          ]}
+          onPress={() => {
+            if (unbindBtnDisabled) return;
+            void handleUnbind();
+          }}
+        >
+          <Text style={styles.unbindBtnText}>确定解绑</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }, [handleUnbind, hasButtonKey, unbindBtnDisabled]);
 
   return (
     <PageContainer
@@ -361,30 +354,35 @@ export default function RemoteKeyUnbind() {
         showBack: true,
       }}
       scrollable={false}
+      footer={footer}
     >
       <View style={styles.container}>
-        {showCountdown ? (
-          <View style={styles.countdownSection}>
-            <Text style={styles.countdownLabel}>
-              {phase === 'readyUnbind'
-                ? '已检测到钥匙，请尽快解绑'
-                : '请按视频操作遥控钥匙'}
-            </Text>
-            {isCounting ? (
-              <Text style={styles.countdownNumber}>{count}s</Text>
-            ) : null}
-          </View>
-        ) : null}
+        <View style={styles.sectionHead}>
+          <Text style={styles.sectionTitle}>遥控钥匙解绑视频</Text>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.tips}
+            onPress={() => setShowNotice(v => !v)}
+          >
+            <Text style={styles.tipsText}>解绑须知</Text>
+            <AppIcon name="explain" size={px(18)} color="#333333" />
+          </TouchableOpacity>
 
-        <Text style={styles.sectionTitle}>遥控钥匙解绑视频</Text>
+          {showNotice ? (
+            <Text style={styles.noticeText}>
+              地锁解除遥控钥匙后，将无法使用遥控钥匙控制地锁升降
+            </Text>
+          ) : null}
+        </View>
+
         <View style={styles.videoWrap}>
           <Video
             key={videoKey}
             ref={videoRef}
-            source={{ uri: videoUrl }}
+            source={{ uri: DEFAULT_VIDEO_URL }}
             paused={paused}
             controls={false}
-            poster={posterUrl}
+            poster={DEFAULT_POSTER_URL}
             posterResizeMode="cover"
             resizeMode="cover"
             onEnd={resetVideo}
@@ -410,30 +408,59 @@ export default function RemoteKeyUnbind() {
           ) : null}
         </View>
 
-        <View style={styles.noticeSection}>
-          <Text style={styles.sectionTitle}>解除绑定须知</Text>
-          <View style={styles.noticeBox}>
-            <Text style={styles.noticeText}>
-              地锁解除遥控钥匙后，将无法使用遥控钥匙控制地锁升降
-            </Text>
-          </View>
-        </View>
-
-        {params?.hasButtonKeyFlag && (
-          <View style={styles.footerWrap}>
-            <TouchableOpacity
-              activeOpacity={disableUnbind ? 1 : 0.85}
-              disabled={disableUnbind}
-              style={[
-                styles.unbindBtn,
-                disableUnbind ? styles.unbindBtnDisabled : {},
-              ]}
-              onPress={handleActionPress}
+        {hasButtonKey ? (
+          <View style={styles.keyListWrap}>
+            <ScrollView
+              style={styles.keyListScroll}
+              nestedScrollEnabled
+              showsVerticalScrollIndicator={false}
             >
-              <Text style={styles.unbindBtnText}>{actionBtnText}</Text>
-            </TouchableOpacity>
+              <Flex direction="column">
+                {keyList.map(item => {
+                  const value = String(item.value);
+                  const isRecognized = recognizedKeys.includes(value);
+                  const isSelected = selectedKey === value;
+                  return (
+                    <Flex
+                      key={value}
+                      isTouchView
+                      direction="row"
+                      align="center"
+                      justify="between"
+                      style={styles.keyItem}
+                      onPress={() => handleSelectKey(value)}
+                    >
+                      <View style={styles.left}>
+                        <Text style={styles.keyItemText}>{item.label}</Text>
+                        <Text
+                          style={[
+                            styles.status,
+                            isRecognized
+                              ? styles.statusCompleted
+                              : styles.statusUncompleted,
+                          ]}
+                        >
+                          {isRecognized ? '已识别到钥匙' : '未识别到钥匙'}
+                        </Text>
+                      </View>
+                      <View style={styles.right}>
+                        <Image
+                          source={{
+                            uri: `https://g.18qjz.cn/img/boklock/${
+                              isSelected ? 'radio_checked' : 'radio_default'
+                            }.png`,
+                          }}
+                          style={styles.radioImg}
+                          resizeMode="contain"
+                        />
+                      </View>
+                    </Flex>
+                  );
+                })}
+              </Flex>
+            </ScrollView>
           </View>
-        )}
+        ) : null}
       </View>
     </PageContainer>
   );

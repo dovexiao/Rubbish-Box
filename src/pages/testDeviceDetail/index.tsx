@@ -295,10 +295,12 @@ export default function TestDeviceDetailScreen() {
     [detail?.deviceNo, detail?.testResult, fetchDetail],
   );
 
-  useEffect(() => {
-    void fetchDetail();
-    void fetchReasons();
-  }, [fetchDetail, fetchReasons]);
+  useFocusEffect(
+    useCallback(() => {
+      void fetchDetail();
+      void fetchReasons();
+    }, [fetchDetail, fetchReasons]),
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -2194,7 +2196,7 @@ export default function TestDeviceDetailScreen() {
               />
             </View>
 
-            {detail?.buttonKeyFlag && (
+            {/* {detail?.buttonKeyFlag && (
               <View style={styles.closeIcon}>
                 <Flex
                   isTouchView
@@ -2209,7 +2211,7 @@ export default function TestDeviceDetailScreen() {
                   <Text style={styles.cardValueLinkText}>全部删除</Text>
                 </Flex>
               </View>
-            )}
+            )} */}
 
             <TouchableOpacity
               style={styles.closeIcons}

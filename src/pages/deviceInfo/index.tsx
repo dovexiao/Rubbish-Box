@@ -9,6 +9,7 @@ import {
 } from '@/components';
 import { PickerView } from '@ant-design/react-native';
 import {
+  FlatList,
   Image,
   Platform,
   StatusBarStyle,
@@ -1362,9 +1363,9 @@ const DeviceInfo = () => {
                 padding: 0,
               }}
               defaultValue={[deviceKeys[0]?.value]}
-              onChange={value => {
-                setSelectedDeviceKey((value[0] as string) || '');
-              }}
+              // onChange={value => {
+              //   setSelectedDeviceKey((value[0] as string) || '');
+              // }}
             />
           </View>
           <View style={styles.editFooter}>
@@ -1399,7 +1400,7 @@ const DeviceInfo = () => {
             </TouchableOpacity>
           </View>
 
-          {lockInfo?.buttonKeyFlag && (
+          {/* {lockInfo?.buttonKeyFlag && (
             <View style={styles.closeIcon}>
               <Flex
                 isTouchView
@@ -1414,7 +1415,7 @@ const DeviceInfo = () => {
                 <Text style={styles.cardValueLinkText}>全部删除</Text>
               </Flex>
             </View>
-          )}
+          )} */}
         </View>
       </Popup>
 

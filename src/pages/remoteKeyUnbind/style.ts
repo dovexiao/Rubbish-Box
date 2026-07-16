@@ -7,31 +7,45 @@ export const styles = StyleSheet.create({
     paddingHorizontal: px(24),
     paddingTop: px(24),
   },
+  sectionHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: px(8),
+    position: 'relative',
+    zIndex: 2,
+  },
   sectionTitle: {
     fontSize: fontSize(14),
     fontWeight: '500',
     color: '#333333',
     lineHeight: px(20),
-    marginBottom: px(8),
   },
-  countdownSection: {
-    marginTop: px(24),
+  tips: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: px(16),
+    gap: px(4),
   },
-  countdownLabel: {
-    fontSize: fontSize(18),
-    fontWeight: '400',
-    color: '#333333',
-    lineHeight: px(20),
-    marginBottom: px(8),
-  },
-  countdownNumber: {
-    fontSize: fontSize(20),
+  tipsText: {
+    fontSize: fontSize(14),
     fontWeight: '500',
     color: '#333333',
-    lineHeight: px(28),
+    lineHeight: px(20),
+  },
+  noticeText: {
+    position: 'absolute',
+    right: 0,
+    top: px(28),
+    paddingHorizontal: px(12),
+    paddingVertical: px(8),
+    backgroundColor: '#333333',
+    borderRadius: px(12),
+    zIndex: 10,
+    overflow: 'hidden',
+    fontSize: fontSize(12),
+    lineHeight: px(17),
+    color: '#FFFFFF',
+    maxWidth: px(260),
   },
   videoWrap: {
     position: 'relative',
@@ -40,6 +54,8 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     borderRadius: px(12),
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
   },
   video: {
     width: '100%',
@@ -61,25 +77,62 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  noticeSection: {
-    marginTop: px(20),
-  },
-  noticeBox: {
-    paddingHorizontal: px(16),
-    paddingVertical: px(16),
+  keyListWrap: {
+    marginTop: px(15),
+    padding: px(16),
     backgroundColor: '#F7F7FB',
     borderRadius: px(12),
+    maxHeight: px(240),
   },
-  noticeText: {
-    fontSize: fontSize(14),
-    fontWeight: '400',
+  keyListScroll: {
+    width: '100%',
+  },
+  keyItem: {
+    width: '100%',
+    minHeight: px(32),
+    marginBottom: px(12),
+  },
+  left: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: px(9),
+    flex: 1,
+    minWidth: 0,
+  },
+  keyItemText: {
+    fontSize: fontSize(16),
     color: '#333333',
     lineHeight: px(20),
   },
+  status: {
+    fontSize: fontSize(9),
+    color: '#FFFFFF',
+    paddingHorizontal: px(5),
+    paddingVertical: px(2),
+    borderRadius: px(10),
+    overflow: 'hidden',
+  },
+  statusCompleted: {
+    backgroundColor: '#FD8E62',
+  },
+  statusUncompleted: {
+    backgroundColor: '#999999',
+  },
+  right: {
+    marginLeft: px(8),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioImg: {
+    width: px(20),
+    height: px(20),
+  },
   footerWrap: {
     alignItems: 'center',
-    paddingVertical: px(16),
-    marginTop: px(80),
+    justifyContent: 'center',
+    paddingVertical: px(12),
+    paddingHorizontal: px(24),
+    backgroundColor: '#FFFFFF',
   },
   unbindBtn: {
     width: px(196),
@@ -89,12 +142,12 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  unbindBtnDisabled: {
+    backgroundColor: '#999999',
+  },
   unbindBtnText: {
     fontSize: fontSize(16),
     fontWeight: '700',
     color: '#FFFFFF',
-  },
-  unbindBtnDisabled: {
-    backgroundColor: '#999999',
   },
 });

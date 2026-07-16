@@ -21,6 +21,8 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     borderRadius: px(12),
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
   },
   video: {
     width: '100%',

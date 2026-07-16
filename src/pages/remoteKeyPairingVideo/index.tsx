@@ -53,6 +53,8 @@ export default function RemoteKeyPairingVideo() {
   const popConfirmRef = useRef<PopConfirmRef>(null);
   const pollStopRef = useRef<(() => void) | null>(null);
   const countdownActiveRef = useRef(false);
+  /** 仅在倒计时真正跑过（isCounting true→false）后才判定超时，避免初始 count=0 误触发 */
+  const wasCountingRef = useRef(false);
   const videoRef = useRef<any>(null);
 
   const deviceNo = params?.lockId ? String(params.lockId) : '';
@@ -87,9 +89,10 @@ export default function RemoteKeyPairingVideo() {
   }, []);
 
   const resetToIdle = useCallback(() => {
+    countdownActiveRef.current = false;
+    wasCountingRef.current = false;
     stopKeyResponsePoll();
     stopCountdown();
-    countdownActiveRef.current = false;
     setKeyResponse('');
     setPhase('idle');
   }, [stopCountdown, stopKeyResponsePoll]);
@@ -106,6 +109,7 @@ export default function RemoteKeyPairingVideo() {
             : await getDeviceKeyResponse({ deviceNo });
         if (res?.code === 200 && res?.success && res?.data) {
           countdownActiveRef.current = false;
+          wasCountingRef.current = false;
           stopCountdown();
           setKeyResponse(String(res.data));
           setPhase('readyBind');
@@ -195,7 +199,7 @@ export default function RemoteKeyPairingVideo() {
 
     setPhase('pairing');
     setKeyResponse('');
-    showLoading({ title: '配对中...' });
+    showLoading({ title: '开始绑定...' });
 
     try {
       const res: any =
@@ -206,7 +210,7 @@ export default function RemoteKeyPairingVideo() {
         hideLoading();
         setPhase('idle');
         showToast({
-          title: res?.message || res?.msg || '配对失败',
+          title: res?.message || res?.msg || '绑定失败',
           icon: 'info',
         });
         return;
@@ -217,18 +221,19 @@ export default function RemoteKeyPairingVideo() {
 
       if (!pairOk) {
         setPhase('idle');
-        showToast({ title: '配对失败', icon: 'info' });
+        showToast({ title: '绑定失败', icon: 'info' });
         return;
       }
 
-      setPhase('waitingBind');
-      countdownActiveRef.current = true;
+      wasCountingRef.current = false;
       startCountdown();
+      countdownActiveRef.current = true;
+      setPhase('waitingBind');
       startKeyResponsePoll();
     } catch {
       hideLoading();
       setPhase('idle');
-      showToast({ title: '配对失败', icon: 'info' });
+      showToast({ title: '绑定失败', icon: 'info' });
     }
   }, [
     deviceNo,
@@ -307,17 +312,23 @@ export default function RemoteKeyPairingVideo() {
   );
 
   const actionBtnText = useMemo(() => {
-    if (phase === 'idle') return '开始配对';
-    if (phase === 'pairing') return '配对中...';
+    if (phase === 'idle') return '开始绑定';
+    if (phase === 'pairing') return '查找钥匙中...';
     if (phase === 'waitingBind') return '绑定';
     if (phase === 'readyBind') return `绑定${keyResponse}`;
-    return '开始配对';
+    return '开始绑定';
   }, [count, isCounting, keyResponse, phase]);
 
   useEffect(() => {
+    if (isCounting) {
+      wasCountingRef.current = true;
+      return;
+    }
+
+    // 必须曾进入过倒计时，再变为结束，才算超时（避免刚进入 waitingBind 时 count/isCounting 仍是初值误触发）
     if (
       !countdownActiveRef.current ||
-      isCounting ||
+      !wasCountingRef.current ||
       count > 0 ||
       phase !== 'waitingBind'
     ) {
@@ -325,9 +336,10 @@ export default function RemoteKeyPairingVideo() {
     }
 
     countdownActiveRef.current = false;
+    wasCountingRef.current = false;
     resetToIdle();
     showToast({
-      title: '未识别到要绑定的钥匙，请重新配对',
+      title: '未识别到要绑定的钥匙，请重新',
       icon: 'info',
     });
   }, [count, isCounting, phase, resetToIdle]);
@@ -337,6 +349,7 @@ export default function RemoteKeyPairingVideo() {
       stopKeyResponsePoll();
       stopCountdown();
       countdownActiveRef.current = false;
+      wasCountingRef.current = false;
     };
   }, [stopCountdown, stopKeyResponsePoll]);
 

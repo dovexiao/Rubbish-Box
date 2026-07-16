@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   },
   closeIcons: {
     position: 'absolute',
-    left: px(16),
+    right: px(16),
   },
 });
 

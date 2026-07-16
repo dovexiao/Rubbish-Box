@@ -179,6 +179,7 @@ const Content: React.FC<ContentProps> = ({
 
         if (res?.code === 601) {
           hideLoading();
+          eventCenter.trigger('onOptioned', false);
           keyTipPopRef.current?.open();
           return;
         }
@@ -995,6 +996,7 @@ const Content: React.FC<ContentProps> = ({
           <TouchableOpacity
             style={styles.openSwitchBtn}
             onPress={() => {
+              eventCenter.trigger('onOptioned', false);
               keyTipPopRef.current?.close();
             }}
           >
