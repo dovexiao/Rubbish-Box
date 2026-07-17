@@ -881,7 +881,7 @@ const Content: React.FC<ContentProps> = ({
                   onPress={() => {
                     setShowPlayBtn(false);
                     setPaused(false);
-                    setShowPoster(true);
+                    setShowPoster(false);
                   }}
                   style={styles.videoPlayBtn}
                 >

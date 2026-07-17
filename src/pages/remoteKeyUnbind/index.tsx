@@ -414,7 +414,7 @@ export default function RemoteKeyUnbind() {
               onPress={() => {
                 setShowPlayBtn(false);
                 setPaused(false);
-                setShowPoster(true);
+                setShowPoster(false);
               }}
             >
               <View style={styles.playCircle}>

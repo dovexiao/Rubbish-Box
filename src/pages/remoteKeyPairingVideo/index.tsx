@@ -362,7 +362,7 @@ export default function RemoteKeyPairingVideo() {
       safeAreaEdges={['top', 'bottom']}
       navBorder
       pageNavProps={{
-        text: '遥控钥匙配对视频',
+        text: '遥控钥1配对视频',
         showBack: true,
       }}
       scrollable={false}
@@ -417,7 +417,7 @@ export default function RemoteKeyPairingVideo() {
               onPress={() => {
                 setShowPlayBtn(false);
                 setPaused(false);
-                setShowPoster(true);
+                setShowPoster(false);
               }}
             >
               <View style={styles.playCircle}>

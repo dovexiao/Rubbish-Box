@@ -136,7 +136,7 @@ export const BatteryReminderPop = forwardRef<
               onPress={() => {
                 setShowPlayBtn(false);
                 setPaused(false);
-                setShowPoster(true);
+                setShowPoster(false);
               }}
             >
               <View style={styles.playCircle}>

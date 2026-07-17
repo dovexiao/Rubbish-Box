@@ -24,7 +24,7 @@ export default function VideoGuideCard({ data }: Props) {
   const handlePlay = () => {
     setPaused(false);
     setShowPlayBtn(false);
-    setShowPoster(true);
+    setShowPoster(false);
   };
 
   return (
