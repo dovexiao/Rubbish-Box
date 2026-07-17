@@ -582,7 +582,7 @@ const DeviceInfo = () => {
   useEffect(() => {
     if (!lockInfo?.deviceNo) return;
     getDeviceKeys();
-  }, [lockInfo?.deviceNo]);
+  }, [lockInfo?.deviceNo, lockInfo?.keyCount]);
 
   useFocusEffect(
     useCallback(() => {

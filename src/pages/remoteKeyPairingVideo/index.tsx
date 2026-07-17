@@ -35,7 +35,7 @@ const DEFAULT_VIDEO_URL =
   'https://g.18qjz.cn/img/boklock/remoteKeyPairingVideo.mp4';
 
 const POLL_INTERVAL_MS = 1000;
-const POLL_TIMEOUT_MS = 10000;
+const POLL_TIMEOUT_MS = 1000 * 60;
 const KEY_RESPONSE_COUNTDOWN = 180;
 
 type PairingPhase = 'idle' | 'pairing' | 'waitingBind' | 'readyBind';

@@ -195,6 +195,7 @@ export default function UnbindDevice() {
       let deviceId: string | null = null;
       const checkRes: any = await unbindSmsCheck({ id: lockId, code: pure });
       if (!(checkRes?.code === 200 && checkRes?.success && checkRes?.data)) {
+        hideLoading();
         showToast({
           title: checkRes?.message || checkRes?.msg || '验证码错误',
           icon: 'info',

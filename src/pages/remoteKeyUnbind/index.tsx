@@ -34,7 +34,7 @@ const DEFAULT_VIDEO_URL =
   'https://g.18qjz.cn/img/boklock/remoteKeyUnbindVideo.mp4';
 
 const POLL_INTERVAL_MS = 1000;
-const PAIRING_POLL_TIMEOUT_MS = 5000;
+const PAIRING_POLL_TIMEOUT_MS = 1000 * 60;
 const UNBIND_POLL_TIMEOUT_MS = 10000;
 
 type KeyItem = { label: string; value: string };
@@ -225,7 +225,7 @@ export default function RemoteKeyUnbind() {
   const handleSelectKey = useCallback(
     (value: string) => {
       if (!recognizedKeys.includes(value)) return;
-      setSelectedKey(value);
+      setSelectedKey(prev => (prev === value ? '' : value));
     },
     [recognizedKeys],
   );
