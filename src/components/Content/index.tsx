@@ -89,6 +89,7 @@ const Content: React.FC<ContentProps> = ({
   const [videoKey, setVideoKey] = useState(0);
   const [showPlayBtn, setShowPlayBtn] = useState(true);
   const [paused, setPaused] = useState(true);
+  const [showPoster, setShowPoster] = useState(true);
   const popRef = useRef<AutoOperatePopRef>(null);
   const coverOpenRef = useRef<PopConfirmRef>(null);
   const manageMultipleRef = useRef<AnimationPopRef>(null);
@@ -466,6 +467,7 @@ const Content: React.FC<ContentProps> = ({
   const resetVideo = useCallback(() => {
     setShowPlayBtn(true);
     setPaused(true);
+    setShowPoster(true);
     setVideoKey(k => k + 1);
   }, []);
 
@@ -843,12 +845,18 @@ const Content: React.FC<ContentProps> = ({
                 ref={videoRef}
                 paused={paused}
                 controls={false}
-                poster="https://g.18qjz.cn/video/installmini/installDemo1.jpg"
-                posterResizeMode="cover"
                 source={{
                   uri: 'https://g.18qjz.cn/video/installmini/installDemo1.mp4',
                 }}
                 resizeMode={'contain'}
+                onLoadStart={() => {
+                  setShowPoster(true);
+                }}
+                onReadyForDisplay={() => {
+                  if (!paused) {
+                    setShowPoster(false);
+                  }
+                }}
                 onEnd={() => {
                   resetVideo();
                 }}
@@ -858,12 +866,22 @@ const Content: React.FC<ContentProps> = ({
                 }}
                 style={styles.video}
               />
+              {showPoster ? (
+                <Image
+                  source={{
+                    uri: 'https://g.18qjz.cn/video/installmini/installDemo1.jpg',
+                  }}
+                  resizeMode="cover"
+                  style={styles.videoPoster}
+                />
+              ) : null}
               {showPlayBtn && (
                 <TouchableOpacity
                   activeOpacity={0.8}
                   onPress={() => {
                     setShowPlayBtn(false);
                     setPaused(false);
+                    setShowPoster(true);
                   }}
                   style={styles.videoPlayBtn}
                 >

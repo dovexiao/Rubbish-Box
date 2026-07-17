@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import Video from 'react-native-video';
 import MarkdownView from '@/components/MarkdownView';
 import AppIcon from '@/components/AppIcon';
@@ -19,10 +19,12 @@ export default function VideoGuideCard({ data }: Props) {
   const posterUrl = data.posterUrl || pageConfig?.imgUrl || '';
   const [showPlayBtn, setShowPlayBtn] = useState(true);
   const [paused, setPaused] = useState(true);
+  const [showPoster, setShowPoster] = useState(true);
 
   const handlePlay = () => {
     setPaused(false);
     setShowPlayBtn(false);
+    setShowPoster(true);
   };
 
   return (
@@ -36,15 +38,26 @@ export default function VideoGuideCard({ data }: Props) {
               style={styles.video}
               controls={!showPlayBtn}
               paused={paused}
-              poster={posterUrl}
-              posterResizeMode="cover"
               resizeMode="cover"
-              onPlay={() => setShowPlayBtn(false)}
-              onPause={() => setShowPlayBtn(true)}
+              onLoadStart={() => {
+                setShowPoster(true);
+              }}
+              onReadyForDisplay={() => {
+                if (!paused) {
+                  setShowPoster(false);
+                }
+              }}
               onError={() => {
                 showToast({ title: '视频加载失败', icon: 'none' });
               }}
             />
+            {showPoster ? (
+              <Image
+                source={{ uri: posterUrl }}
+                resizeMode="cover"
+                style={styles.poster}
+              />
+            ) : null}
             {showPlayBtn ? (
               <TouchableOpacity
                 activeOpacity={0.85}
@@ -52,7 +65,11 @@ export default function VideoGuideCard({ data }: Props) {
                 onPress={handlePlay}
               >
                 <View style={styles.playBtn}>
-                  <AppIcon name="a-Videoguidance" size={px(24)} color="#ffffff" />
+                  <AppIcon
+                    name="a-Videoguidance"
+                    size={px(24)}
+                    color="#ffffff"
+                  />
                 </View>
               </TouchableOpacity>
             ) : null}

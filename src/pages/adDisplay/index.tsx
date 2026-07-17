@@ -16,7 +16,6 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
-import Video from 'react-native-video';
 import { useNavigation } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { PageContainer, Flex, MediaCarousel } from '@/components';

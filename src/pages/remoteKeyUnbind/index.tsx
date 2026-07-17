@@ -62,6 +62,7 @@ export default function RemoteKeyUnbind() {
   const [showPlayBtn, setShowPlayBtn] = useState(true);
   const [paused, setPaused] = useState(true);
   const [videoKey, setVideoKey] = useState(0);
+  const [showPoster, setShowPoster] = useState(true);
   const [showNotice, setShowNotice] = useState(false);
   const [keyList, setKeyList] = useState<KeyItem[]>([]);
   const [recognizedKeys, setRecognizedKeys] = useState<string[]>([]);
@@ -85,6 +86,7 @@ export default function RemoteKeyUnbind() {
   const resetVideo = useCallback(() => {
     setShowPlayBtn(true);
     setPaused(true);
+    setShowPoster(true);
     setVideoKey(k => k + 1);
   }, []);
 
@@ -382,9 +384,15 @@ export default function RemoteKeyUnbind() {
             source={{ uri: DEFAULT_VIDEO_URL }}
             paused={paused}
             controls={false}
-            poster={DEFAULT_POSTER_URL}
-            posterResizeMode="cover"
             resizeMode="cover"
+            onLoadStart={() => {
+              setShowPoster(true);
+            }}
+            onReadyForDisplay={() => {
+              if (!paused) {
+                setShowPoster(false);
+              }
+            }}
             onEnd={resetVideo}
             onError={() => {
               showToast({ title: '视频加载失败', icon: 'info' });
@@ -392,6 +400,13 @@ export default function RemoteKeyUnbind() {
             }}
             style={styles.video}
           />
+          {showPoster ? (
+            <Image
+              source={{ uri: DEFAULT_POSTER_URL }}
+              resizeMode="cover"
+              style={styles.poster}
+            />
+          ) : null}
           {showPlayBtn ? (
             <TouchableOpacity
               activeOpacity={0.9}
@@ -399,6 +414,7 @@ export default function RemoteKeyUnbind() {
               onPress={() => {
                 setShowPlayBtn(false);
                 setPaused(false);
+                setShowPoster(true);
               }}
             >
               <View style={styles.playCircle}>

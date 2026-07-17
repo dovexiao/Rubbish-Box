@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import AppIcon from '@/components/AppIcon';
 import AnimationPop, { type AnimationPopRef } from '@/components/AnimationPop';
 import Video from 'react-native-video';
@@ -36,6 +36,7 @@ export const BatteryReminderPop = forwardRef<
   const [paused, setPaused] = useState(true);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [videoKey, setVideoKey] = useState(0);
+  const [showPoster, setShowPoster] = useState(true);
 
   const [visible, setVisible] = useState(false);
   const videoRef = useRef<any>(null);
@@ -44,6 +45,7 @@ export const BatteryReminderPop = forwardRef<
     setShowPlayBtn(true);
     setPaused(true);
     setIsFullScreen(false);
+    setShowPoster(true);
     setVideoKey(k => k + 1);
   }, []);
 
@@ -94,10 +96,16 @@ export const BatteryReminderPop = forwardRef<
             paused={paused}
             // controls={!showPlayBtn}
             controls={false}
-            poster={POSTER_URL}
-            posterResizeMode="cover"
             // resizeMode={isFullScreen ? 'contain' : 'cover'}
             resizeMode={'contain'}
+            onLoadStart={() => {
+              setShowPoster(true);
+            }}
+            onReadyForDisplay={() => {
+              if (!paused) {
+                setShowPoster(false);
+              }
+            }}
             onEnd={() => {
               resetVideo();
             }}
@@ -113,6 +121,13 @@ export const BatteryReminderPop = forwardRef<
             }}
             style={styles.video}
           />
+          {showPoster ? (
+            <Image
+              source={{ uri: POSTER_URL }}
+              resizeMode="cover"
+              style={styles.poster}
+            />
+          ) : null}
 
           {showPlayBtn ? (
             <TouchableOpacity
@@ -121,6 +136,7 @@ export const BatteryReminderPop = forwardRef<
               onPress={() => {
                 setShowPlayBtn(false);
                 setPaused(false);
+                setShowPoster(true);
               }}
             >
               <View style={styles.playCircle}>

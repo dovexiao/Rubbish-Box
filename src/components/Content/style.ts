@@ -284,6 +284,15 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  videoPoster: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100%',
+  },
   videoPlayBtn: {
     position: 'absolute',
     left: 0,

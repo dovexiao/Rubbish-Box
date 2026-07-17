@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import Video from 'react-native-video';
 import PageContainer from '@/components/PageContainer';
@@ -62,6 +62,7 @@ export default function RemoteKeyPairingVideo() {
 
   const [showPlayBtn, setShowPlayBtn] = useState(true);
   const [paused, setPaused] = useState(true);
+  const [showPoster, setShowPoster] = useState(true);
   const [videoKey, setVideoKey] = useState(0);
   const [phase, setPhase] = useState<PairingPhase>('idle');
   const [keyResponse, setKeyResponse] = useState('');
@@ -80,6 +81,7 @@ export default function RemoteKeyPairingVideo() {
   const resetVideo = useCallback(() => {
     setShowPlayBtn(true);
     setPaused(true);
+    setShowPoster(true);
     setVideoKey(k => k + 1);
   }, []);
 
@@ -385,9 +387,15 @@ export default function RemoteKeyPairingVideo() {
             source={{ uri: videoUrl }}
             paused={paused}
             controls={false}
-            poster={posterUrl}
-            posterResizeMode="cover"
             resizeMode="cover"
+            onLoadStart={() => {
+              setShowPoster(true);
+            }}
+            onReadyForDisplay={() => {
+              if (!paused) {
+                setShowPoster(false);
+              }
+            }}
             onEnd={resetVideo}
             onError={() => {
               showToast({ title: '视频加载失败', icon: 'info' });
@@ -395,6 +403,13 @@ export default function RemoteKeyPairingVideo() {
             }}
             style={styles.video}
           />
+          {showPoster ? (
+            <Image
+              source={{ uri: posterUrl }}
+              resizeMode="cover"
+              style={styles.poster}
+            />
+          ) : null}
           {showPlayBtn ? (
             <TouchableOpacity
               activeOpacity={0.9}
@@ -402,6 +417,7 @@ export default function RemoteKeyPairingVideo() {
               onPress={() => {
                 setShowPlayBtn(false);
                 setPaused(false);
+                setShowPoster(true);
               }}
             >
               <View style={styles.playCircle}>
