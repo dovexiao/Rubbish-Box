@@ -362,7 +362,7 @@ export default function RemoteKeyPairingVideo() {
       safeAreaEdges={['top', 'bottom']}
       navBorder
       pageNavProps={{
-        text: '遥控钥1配对视频',
+        text: '遥控钥匙配对视频',
         showBack: true,
       }}
       scrollable={false}
